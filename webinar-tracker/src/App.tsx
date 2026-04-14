@@ -2,23 +2,18 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import {
   Plus,
-  TrendingUp,
   Download,
   Upload,
   Trash2,
   Database,
-  Settings as SettingsIcon,
   Search,
   ChevronDown,
   CheckCircle2,
-  ArrowRight,
   FileText,
   Sun,
   Moon,
   AlertCircle,
-  Lock,
-  ShieldAlert,
-  History
+  Lock
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -32,6 +27,7 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js';
+// @ts-ignore
 import { Bar, Pie } from 'react-chartjs-2';
 import type { Entry, Settings, SecuritySettings, SecurityRecord } from './types';
 import { createClient } from './utils/supabase/client';
@@ -514,10 +510,6 @@ export default function App() {
     if (!isLoading) migrateData();
   }, [isLoading, entries.length]);
 
-  const [sessionUnlocked, setSessionUnlocked] = useState({
-    analysis: false,
-    settings: false
-  });
 
   useEffect(() => {
     document.body.className = theme;
