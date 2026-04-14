@@ -47,7 +47,7 @@ import {
 import { Bar, Pie } from 'react-chartjs-2';
 import type { Entry, Settings, SecuritySettings, SecurityRecord } from './types';
 import { createClient } from './utils/supabase/client';
-import Logo from './assets/Logo.svg';
+import Logo from './assets/logo.svg';
 import './styles.css';
 
 const supabase = createClient();
