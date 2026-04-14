@@ -319,7 +319,11 @@ function SearchableSelect({
             <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
             <input
               autoFocus
-              style={{ paddingLeft: '2.5rem', marginBottom: 0, padding: '0.75rem' }}
+              style={{ 
+                padding: '0.75rem 0.75rem 0.75rem 2.75rem', 
+                marginBottom: 0,
+                width: '100%'
+              }}
               placeholder={placeholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -1087,17 +1091,21 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
         <div className="charts-container">
           <div className="glass-panel chart-card">
             <h3>Top 5 Webinar Specialists</h3>
-            <Bar data={chartData.topSpecialists} options={commonOptions} />
+            <div style={{ width: '100%', height: '350px', position: 'relative' }}>
+              <Bar data={chartData.topSpecialists} options={commonOptions} />
+            </div>
           </div>
           <div className="glass-panel chart-card">
             <h3>Mistake Distribution by Planet</h3>
-            <div style={{ height: '300px' }}>
+            <div style={{ width: '100%', height: '350px', position: 'relative' }}>
               <Pie data={chartData.planetPie} options={{ ...commonOptions, scales: undefined }} />
             </div>
           </div>
           <div className="glass-panel chart-card">
             <h3>Errors per Creator</h3>
-            <Bar data={chartData.creatorBar} options={commonOptions} />
+            <div style={{ width: '100%', height: '350px', position: 'relative' }}>
+              <Bar data={chartData.creatorBar} options={commonOptions} />
+            </div>
           </div>
         </div>
       )}
