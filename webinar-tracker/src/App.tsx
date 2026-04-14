@@ -14,7 +14,21 @@ import {
   Moon,
   AlertCircle,
   Lock,
-  Pencil
+  Pencil,
+  LayoutDashboard,
+  Settings,
+  BarChart3,
+  Menu,
+  X,
+  FileInput,
+  TrendingUp,
+  Calendar,
+  Users,
+  AlertTriangle,
+  Activity,
+  Eye,
+  Save,
+  Check
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -87,6 +101,32 @@ const INITIAL_SECURITY: SecuritySettings = {
   history: []
 };
 
+// ==================== TOAST NOTIFICATIONS ====================
+type ToastType = 'success' | 'error' | 'warning' | 'info';
+
+interface Toast {
+  id: string;
+  message: string;
+  type: ToastType;
+}
+
+function ToastContainer({ toasts, removeToast }: { toasts: Toast[], removeToast: (id: string) => void }) {
+  return (
+    <div className="toast-container">
+      {toasts.map(toast => (
+        <div key={toast.id} className={`toast ${toast.type}`} onClick={() => removeToast(toast.id)}>
+          {toast.type === 'success' && <CheckCircle2 size={20} color="var(--success)" />}
+          {toast.type === 'error' && <AlertCircle size={20} color="var(--danger)" />}
+          {toast.type === 'warning' && <AlertTriangle size={20} color="var(--warning)" />}
+          {toast.type === 'info' && <Activity size={20} color="var(--info)" />}
+          <span className="toast-message">{toast.message}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ==================== MODALS ====================
 function EditRecordModal({
   entry,
   settings,
@@ -179,7 +219,7 @@ function EditRecordModal({
           </div>
 
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-            <button type="submit" style={{ flex: 1 }}>Save Changes</button>
+            <button type="submit" style={{ flex: 1 }}><Save size={18} /> Save Changes</button>
             <button type="button" className="secondary" onClick={onCancel} style={{ flex: 1 }}>Cancel</button>
           </div>
         </form>
@@ -187,15 +227,6 @@ function EditRecordModal({
     </div>
   );
 }
-
-// --- Helper Functions ---
-
-const getMonthYear = (dateStr: string) => {
-  const date = new Date(dateStr + 'T12:00:00'); // Prevent timezone shifts
-  return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-};
-
-// --- Components ---
 
 function DeleteConfirmationModal({
   onConfirm,
@@ -207,7 +238,7 @@ function DeleteConfirmationModal({
   return (
     <div className="modal-overlay">
       <div className="modal-content" style={{ padding: '2.5rem' }}>
-        <div className="modal-icon" style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+        <div className="modal-icon danger">
           <AlertCircle size={32} />
         </div>
         <h2 style={{ marginBottom: '1rem' }}>Delete</h2>
@@ -216,10 +247,10 @@ function DeleteConfirmationModal({
         </p>
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
           <button className="confirm-delete-btn" onClick={onConfirm} style={{ padding: '1rem 2.5rem' }}>
-            YES
+            <Check size={18} /> YES
           </button>
           <button className="cancel-delete-btn" onClick={onCancel} style={{ padding: '1rem 2.5rem' }}>
-            NO
+            <X size={18} /> NO
           </button>
         </div>
       </div>
@@ -237,7 +268,7 @@ function SuccessModal({
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <div className="modal-icon">
+        <div className="modal-icon success">
           <CheckCircle2 size={32} />
         </div>
         <h2>Data Recorded</h2>
@@ -246,7 +277,10 @@ function SuccessModal({
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <button onClick={onAddAnother} style={{ width: '100%' }}>
-            Add Another Entry
+            <Plus size={18} /> Add Another Entry
+          </button>
+          <button className="secondary" onClick={onGoToAnalysis} style={{ width: '100%' }}>
+            <Eye size={18} /> View Analysis
           </button>
         </div>
       </div>
@@ -289,13 +323,13 @@ function SearchableSelect({
 
   return (
     <div className="form-group" ref={wrapperRef} style={{ position: 'relative' }}>
-      <label>{label} {required && <span style={{ color: '#ef4444' }}>*</span>}</label>
+      <label>{label} {required && <span style={{ color: 'var(--danger)' }}>*</span>}</label>
       <div
         className="searchable-select-trigger"
         onClick={() => setIsOpen(!isOpen)}
-        style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem' }}
+        style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.875rem 1rem' }}
       >
-        <span style={{ fontSize: '1.1rem' }}>{value || 'Select an option'}</span>
+        <span style={{ fontSize: '1rem' }}>{value || 'Select an option'}</span>
         <ChevronDown size={18} style={{ opacity: 0.5 }} />
       </div>
 
@@ -313,7 +347,7 @@ function SearchableSelect({
             maxHeight: '300px',
             overflowY: 'auto',
             background: 'var(--bg-color)',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+            boxShadow: 'var(--shadow-lg)'
           }}
         >
           <div style={{ position: 'relative', marginBottom: '1rem' }}>
@@ -342,14 +376,14 @@ function SearchableSelect({
                     setSearchTerm('');
                   }}
                   style={{
-                    padding: '1rem',
+                    padding: '0.875rem',
                     cursor: 'pointer',
                     borderRadius: '8px',
-                    background: value === opt ? 'rgba(128, 128, 128, 0.1)' : 'transparent',
+                    background: value === opt ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
                     fontWeight: value === opt ? '600' : '400'
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(128, 128, 128, 0.05)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = value === opt ? 'rgba(128, 128, 128, 0.1)' : 'transparent')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = value === opt ? 'rgba(59, 130, 246, 0.1)' : 'transparent')}
                 >
                   {opt}
                 </div>
@@ -408,382 +442,230 @@ function PasswordGateway({
             />
           </div>
           {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>Incorrect password. Please try again.</p>}
-          <button type="submit" style={{ width: '100%' }}>Unlock Access</button>
+          <button type="submit" style={{ width: '100%' }}><Lock size={18} /> Unlock Access</button>
         </form>
       </div>
     </div>
   );
 }
 
-// --- Main App ---
+// ==================== HELPER FUNCTIONS ====================
+const getMonthYear = (dateStr: string) => {
+  const date = new Date(dateStr + 'T12:00:00');
+  return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+};
 
-export default function App() {
-  const [currentPage, setCurrentPage] = useState<'input' | 'analysis' | 'settings'>('input');
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    const saved = localStorage.getItem('app_theme');
-    if (saved === 'light' || saved === 'dark') return saved;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+const formatDate = (dateStr: string) => {
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
   });
+};
 
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [settings, setSettings] = useState<Settings>(INITIAL_SETTINGS);
-  const [security, setSecurity] = useState<SecuritySettings>(INITIAL_SECURITY);
+// ==================== SETTINGS SECTION COMPONENT ====================
+const SettingsSection = ({ 
+  title, 
+  items, 
+  keyName, 
+  value, 
+  onChange, 
+  onAdd, 
+  onDelete,
+  onEdit
+}: { 
+  title: string, 
+  items: string[], 
+  keyName: keyof Settings, 
+  value: string, 
+  onChange: (val: string) => void, 
+  onAdd: () => void, 
+  onDelete: (val: string) => void,
+  onEdit: (oldVal: string) => void
+}) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const filteredItems = items.filter(item => 
+    item.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  return (
+    <div className="glass-panel card" style={{ marginBottom: '1rem' }}>
+      <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>{title}</h3>
+      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+        <input 
+          placeholder={`Add ${title.toLowerCase()}...`}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          style={{ padding: '0.75rem', fontSize: '1rem' }}
+        />
+        <button onClick={onAdd} style={{ padding: '0.75rem 1rem' }}><Plus size={18} /></button>
+      </div>
+      <div style={{ position: 'relative', marginBottom: '1rem' }}>
+        <Search 
+          size={16} 
+          style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} 
+        />
+        <input
+          type="text"
+          placeholder={`Search ${title.toLowerCase()}...`}
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', fontSize: '1rem', width: '100%' }}
+        />
+      </div>
+      <div className="scroll-list">
+        {filteredItems.map(item => (
+          <div key={item} className="list-item">
+            <span style={{ fontSize: '0.95rem' }}>{item}</span>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <button className="icon-only secondary" onClick={() => onEdit(item)} title="Edit">
+                <Pencil size={14} />
+              </button>
+              <button className="icon-only" onClick={() => onDelete(item)} title="Delete" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>
+                <Trash2 size={14} />
+              </button>
+            </div>
+          </div>
+        ))}
+        {filteredItems.length === 0 && (
+          <div style={{ padding: '1rem', opacity: 0.3, textAlign: 'center' }}>
+            {items.length === 0 ? 'No items added' : 'No results found'}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
-  const [sessionUnlocked, setSessionUnlocked] = useState({
-    analysis: false,
-    settings: false
-  });
-
-  // --- Supabase Data Fetching ---
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        // Fetch Entries
-        const { data: entriesData } = await supabase
-          .from('webinar_entries')
-          .select('*')
-          .order('date', { ascending: false });
-        
-        if (entriesData) setEntries(entriesData);
-
-        // Fetch Settings
-        const { data: settingsData } = await supabase
-          .from('webinar_settings')
-          .select('*')
-          .single();
-        
-        if (settingsData) {
-          setSettings({
-            planets: settingsData.planets,
-            specialists: settingsData.specialists,
-            creators: settingsData.creators,
-            mistakes: settingsData.mistakes
-          });
-        }
-
-        // Fetch Security
-        const { data: securityData } = await supabase
-          .from('webinar_security')
-          .select('*')
-          .single();
-        
-        if (securityData) {
-          setSecurity({
-            passwords: securityData.passwords,
-            history: securityData.history || []
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // --- Supabase Realtime Subscriptions ---
-  useEffect(() => {
-    const channel = supabase.channel('schema-db-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'webinar_entries' },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            setEntries(prev => [payload.new as Entry, ...prev]);
-          } else if (payload.eventType === 'UPDATE') {
-            setEntries(prev => prev.map(e => e.id === payload.new.id ? (payload.new as Entry) : e));
-          } else if (payload.eventType === 'DELETE') {
-            setEntries(prev => prev.filter(e => e.id !== payload.old.id));
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'webinar_settings' },
-        (payload) => {
-          if (
-            payload.new &&
-            Array.isArray(payload.new.planets) &&
-            Array.isArray(payload.new.specialists) &&
-            Array.isArray(payload.new.creators) &&
-            Array.isArray(payload.new.mistakes)
-          ) {
-            setSettings({
-              planets: payload.new.planets,
-              specialists: payload.new.specialists,
-              creators: payload.new.creators,
-              mistakes: payload.new.mistakes
-            });
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'webinar_security' },
-        (payload) => {
-          if (payload.new && payload.new.passwords) {
-            setSecurity({
-              passwords: payload.new.passwords,
-              history: payload.new.history || []
-            });
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  // --- Migration Logic ---
-  useEffect(() => {
-    const migrateData = async () => {
-      const localEntries = localStorage.getItem('webinar_entries');
-      const hasMigrated = localStorage.getItem('supabase_migrated');
-
-      if (localEntries && !hasMigrated && entries.length === 0 && !isLoading) {
-        const parsed = JSON.parse(localEntries);
-        if (parsed.length > 0) {
-          const { error } = await supabase.from('webinar_entries').insert(
-            parsed.map((e: any) => ({
-              date: e.date,
-              planet: e.planet,
-              specialist: e.specialist,
-              creator: e.creator,
-              mistakes: e.mistakes
-            }))
-          );
-          if (!error) {
-            localStorage.setItem('supabase_migrated', 'true');
-            // Refresh entries
-            const { data } = await supabase.from('webinar_entries').select('*');
-            if (data) setEntries(data);
-          }
-        }
-      }
-    };
-    if (!isLoading) migrateData();
-  }, [isLoading, entries.length]);
-
-
-  useEffect(() => {
-    document.body.className = theme;
-    localStorage.setItem('app_theme', theme);
-  }, [theme]);
-
-  const addEntry = async (entry: Omit<Entry, 'id'>) => {
-    const { error } = await supabase
-      .from('webinar_entries')
-      .insert([entry]);
+// ==================== DASHBOARD COMPONENT ====================
+function DashboardPage({ entries, settings, onNavigate }: { entries: Entry[], settings: Settings, onNavigate: (page: string) => void }) {
+  const stats = useMemo(() => {
+    const totalWebinars = entries.length;
+    const totalMistakes = entries.reduce((acc, e) => acc + e.mistakes.length, 0);
+    const uniqueCreators = new Set(entries.map(e => e.creator)).size;
+    const uniquePlanets = new Set(entries.map(e => e.planet)).size;
     
-    if (!error) {
-      setShowSuccessModal(true); // Realtime listener will add the entry to state
-    }
-  };
-
-  const updateEntry = async (updatedEntry: Entry) => {
-    const { error } = await supabase
-      .from('webinar_entries')
-      .update(updatedEntry)
-      .eq('id', updatedEntry.id);
-    
-    if (error) {
-      console.error('Update entry error:', error.message);
-      alert('Error updating entry. Check permissions.');
-    }
-    // Realtime listener handles state update
-  };
-
-  const deleteEntry = async (id: string) => {
-    const { error } = await supabase
-      .from('webinar_entries')
-      .delete()
-      .eq('id', id);
-    
-    if (error) {
-      console.error('Delete entry error:', error.message);
-      alert('Error deleting entry.');
-    }
-    // Realtime listener handles state update
-  };
-
-  const updateSettings = async (key: keyof Settings, value: string[]) => {
-    const newSettings = { ...settings, [key]: value };
-    const { error } = await supabase
-      .from('webinar_settings')
-      .update({ [key]: value })
-      .eq('id', 1);
-    
-    if (error) {
-      console.error('Update settings error:', error.message);
-      alert('Settings not saved! Ensure record with ID 1 exists and RLS is disabled or configured.');
-    } else {
-      setSettings(newSettings);
-    }
-  };
-
-  const updatePasswords = async (target: 'analysis' | 'settings', newPass: string) => {
-    const lastPass = security.passwords[target];
-    const newRecord: SecurityRecord = {
-      id: nanoid(),
-      date: new Date().toLocaleString(),
-      target,
-      lastPassword: lastPass,
-      newPassword: newPass
-    };
-    
-    const newPasswords = { ...security.passwords, [target]: newPass };
-    const newHistory = [newRecord, ...security.history];
-
-    const { error } = await supabase
-      .from('webinar_security')
-      .update({ 
-        passwords: newPasswords,
-        history: newHistory
-      })
-      .eq('id', 1);
-
-    if (!error) {
-      setSecurity({
-        passwords: newPasswords,
-        history: newHistory
+    const mistakeCounts: Record<string, number> = {};
+    entries.forEach(e => {
+      e.mistakes.forEach(m => {
+        mistakeCounts[m] = (mistakeCounts[m] || 0) + 1;
       });
-    }
-  };
-
-  const exportData = () => {
-    const data = JSON.stringify({ entries, settings }, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `webinar_data_backup_${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-  };
-
-  const importData = (content: string) => {
-    try {
-      const data = JSON.parse(content);
-      if (data.entries && data.settings) {
-        setEntries(data.entries);
-        setSettings(data.settings);
-        alert('Data imported successfully!');
-      }
-    } catch (err) {
-      alert('Error importing file.');
-    }
-  };
+    });
+    
+    const topMistake = Object.entries(mistakeCounts).sort((a, b) => b[1] - a[1])[0];
+    
+    const recentEntries = entries.slice(0, 5);
+    
+    return { totalWebinars, totalMistakes, uniqueCreators, uniquePlanets, topMistake, recentEntries };
+  }, [entries]);
 
   return (
-    <div style={{ minHeight: '100vh' }}>
-      <header className="app-header">
-        <div className="logo-container">
-          <FileText size={24} />
-          <span>Webinar Analysis File</span>
+    <div>
+      <div className="page-header">
+        <h1>Dashboard</h1>
+        <p>Welcome back! Here's an overview of your webinar data.</p>
+      </div>
+
+      <div className="stats-grid">
+        <div className="glass-panel stat-card">
+          <div className="stat-icon primary">
+            <FileText size={24} />
+          </div>
+          <div className="stat-info">
+            <h3>{stats.totalWebinars}</h3>
+            <p>Total Webinars</p>
+          </div>
         </div>
-        <button
-          className="theme-toggle"
-          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-          title="Toggle Theme"
-        >
-          {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-        </button>
-      </header>
-
-      <div className="nav-bar-dark">
-        <a
-          href="#"
-          className={`nav-link ${currentPage === 'input' ? 'active' : ''}`}
-          onClick={(e) => { e.preventDefault(); setCurrentPage('input'); }}
-        >
-          Input
-        </a>
-        <a
-          href="#"
-          className={`nav-link ${currentPage === 'analysis' ? 'active' : ''}`}
-          onClick={(e) => { e.preventDefault(); setCurrentPage('analysis'); }}
-        >
-          Analysis
-        </a>
-        <a
-          href="#"
-          className={`nav-link ${currentPage === 'settings' ? 'active' : ''}`}
-          onClick={(e) => { e.preventDefault(); setCurrentPage('settings'); }}
-        >
-          Settings
-        </a>
+        
+        <div className="glass-panel stat-card">
+          <div className="stat-icon danger">
+            <AlertTriangle size={24} />
+          </div>
+          <div className="stat-info">
+            <h3>{stats.totalMistakes}</h3>
+            <p>Total Mistakes</p>
+          </div>
+        </div>
+        
+        <div className="glass-panel stat-card">
+          <div className="stat-icon success">
+            <Users size={24} />
+          </div>
+          <div className="stat-info">
+            <h3>{stats.uniqueCreators}</h3>
+            <p>Active Creators</p>
+          </div>
+        </div>
+        
+        <div className="glass-panel stat-card">
+          <div className="stat-icon warning">
+            <TrendingUp size={24} />
+          </div>
+          <div className="stat-info">
+            <h3>{stats.uniquePlanets}</h3>
+            <p>Planets</p>
+          </div>
+        </div>
       </div>
 
-      <div className={currentPage === 'input' ? 'container-narrow' : 'container'} style={{ paddingBottom: '5rem' }}>
-        <main>
-          {isLoading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh', flexDirection: 'column', gap: '1rem' }}>
-              <div className="modal-icon" style={{ animation: 'spin 1s linear infinite' }}>
-                <Database size={32} />
+      <div className="grid-2">
+        <div className="glass-panel card">
+          <h3>Recent Activity</h3>
+          <div className="activity-feed">
+            {stats.recentEntries.length > 0 ? (
+              stats.recentEntries.map(entry => (
+                <div key={entry.id} className="activity-item">
+                  <div className="activity-dot"></div>
+                  <div className="activity-content">
+                    <p>
+                      <strong>{entry.specialist}</strong> recorded on <strong>{entry.planet}</strong>
+                    </p>
+                    <span className="activity-time">{formatDate(entry.date)}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="empty-state">
+                <FileText size={48} />
+                <p>No recent activity</p>
               </div>
-              <p style={{ opacity: 0.5 }}>Connecting to Supabase...</p>
-            </div>
-          ) : (
-            <>
-              {currentPage === 'input' && <DataInputPage settings={settings} onSave={addEntry} />}
-              {currentPage === 'analysis' && (
-                !sessionUnlocked.analysis ? (
-                  <PasswordGateway 
-                    target="Analysis" 
-                    correctPassword={security.passwords.analysis} 
-                    onUnlock={() => setSessionUnlocked({ ...sessionUnlocked, analysis: true })}
-                  />
-                ) : (
-                  <DataAnalysisPage entries={entries} settings={settings} />
-                )
-              )}
-              {currentPage === 'settings' && (
-                !sessionUnlocked.settings ? (
-                  <PasswordGateway 
-                    target="Settings" 
-                    correctPassword={security.passwords.settings} 
-                    onUnlock={() => setSessionUnlocked({ ...sessionUnlocked, settings: true })}
-                  />
-                ) : (
-                  <SettingsPage 
-                    settings={settings} 
-                    entries={entries}
-                    security={security}
-                    onUpdate={updateSettings} 
-                    onUpdateEntry={updateEntry}
-                    onDeleteEntry={deleteEntry}
-                    onUpdatePasswords={updatePasswords}
-                    onExport={exportData} 
-                    onImport={importData} 
-                  />
-                )
-              )}
-            </>
-          )}
-        </main>
-      </div>
+            )}
+          </div>
+        </div>
 
-      {showSuccessModal && (
-        <SuccessModal
-          onAddAnother={() => setShowSuccessModal(false)}
-          onGoToAnalysis={() => {
-            setShowSuccessModal(false);
-            setCurrentPage('analysis');
-          }}
-        />
-      )}
+        <div className="glass-panel card">
+          <h3>Quick Actions</h3>
+          <div className="quick-actions">
+            <div className="quick-action-btn" onClick={() => onNavigate('input')}>
+              <FileInput size={32} />
+              <span>New Entry</span>
+            </div>
+            <div className="quick-action-btn" onClick={() => onNavigate('analysis')}>
+              <BarChart3 size={32} />
+              <span>View Analysis</span>
+            </div>
+            <div className="quick-action-btn" onClick={() => onNavigate('settings')}>
+              <Settings size={32} />
+              <span>Settings</span>
+            </div>
+          </div>
+          
+          {stats.topMistake && (
+            <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'var(--bg-secondary)', borderRadius: '12px' }}>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Most Common Mistake</p>
+              <p style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--danger)' }}>
+                {stats.topMistake[0]} <span style={{ fontSize: '0.95rem', fontWeight: '500', color: 'var(--text-muted)' }}>({stats.topMistake[1]} times)</span>
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
-// --- Sub-Pages ---
-
+// ==================== INPUT PAGE ====================
 function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
@@ -819,91 +701,98 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
   };
 
   return (
-    <div className="glass-panel card">
-      <h1 style={{ textAlign: 'center' }}>Entry Log</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Date <span style={{ color: '#ef4444' }}>*</span></label>
-          <input
-            type="date"
+    <div className="container-narrow">
+      <div className="page-header">
+        <h1>Entry Log</h1>
+        <p>Record a new webinar session</p>
+      </div>
+      
+      <div className="glass-panel card">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Date <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <input
+              type="date"
+              required
+              value={formData.date}
+              onChange={e => setFormData({ ...formData, date: e.target.value })}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Planet <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <select
+              required
+              value={formData.planet}
+              onChange={e => setFormData({ ...formData, planet: e.target.value })}
+            >
+              <option value="">Select Planet</option>
+              {settings.planets.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+
+          <SearchableSelect
             required
-            value={formData.date}
-            onChange={e => setFormData({ ...formData, date: e.target.value })}
+            label="Webinar Specialist"
+            options={settings.specialists}
+            value={formData.specialist}
+            onChange={val => setFormData({ ...formData, specialist: val })}
+            placeholder="Search specialist..."
           />
-        </div>
 
-        <div className="form-group">
-          <label>Planet <span style={{ color: '#ef4444' }}>*</span></label>
-          <select
+          <SearchableSelect
             required
-            value={formData.planet}
-            onChange={e => setFormData({ ...formData, planet: e.target.value })}
-          >
-            <option value="">Select Planet</option>
-            {settings.planets.map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
-        </div>
+            label="Creator"
+            options={settings.creators}
+            value={formData.creator}
+            onChange={val => setFormData({ ...formData, creator: val })}
+            placeholder="Search creator..."
+          />
 
-        <SearchableSelect
-          required
-          label="Webinar Specialist"
-          options={settings.specialists}
-          value={formData.specialist}
-          onChange={val => setFormData({ ...formData, specialist: val })}
-          placeholder="Search specialist..."
-        />
+          <div className="form-group">
+            <label>Mistake 1 <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <select
+              required
+              value={formData.mistake1}
+              onChange={e => setFormData({ ...formData, mistake1: e.target.value })}
+            >
+              <option value="">Select Error</option>
+              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
 
-        <SearchableSelect
-          required
-          label="Creator"
-          options={settings.creators}
-          value={formData.creator}
-          onChange={val => setFormData({ ...formData, creator: val })}
-          placeholder="Search creator..."
-        />
+          <div className="form-group">
+            <label>Mistake 2 (Optional)</label>
+            <select
+              value={formData.mistake2}
+              onChange={e => setFormData({ ...formData, mistake2: e.target.value })}
+            >
+              <option value="">None</option>
+              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
 
-        <div className="form-group">
-          <label>Mistake 1 <span style={{ color: '#ef4444' }}>*</span></label>
-          <select
-            required
-            value={formData.mistake1}
-            onChange={e => setFormData({ ...formData, mistake1: e.target.value })}
-          >
-            <option value="">Select Error</option>
-            {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-          </select>
-        </div>
+          <div className="form-group">
+            <label>Mistake 3 (Optional)</label>
+            <select
+              value={formData.mistake3}
+              onChange={e => setFormData({ ...formData, mistake3: e.target.value })}
+            >
+              <option value="">None</option>
+              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
 
-        <div className="form-group">
-          <label>Mistake 2 (Optional)</label>
-          <select
-            value={formData.mistake2}
-            onChange={e => setFormData({ ...formData, mistake2: e.target.value })}
-          >
-            <option value="">None</option>
-            {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-          </select>
-        </div>
-
-        <div className="form-group" style={{ marginBottom: '3rem' }}>
-          <label>Mistake 3 (Optional)</label>
-          <select
-            value={formData.mistake3}
-            onChange={e => setFormData({ ...formData, mistake3: e.target.value })}
-          >
-            <option value="">None</option>
-            {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-          </select>
-        </div>
-
-        <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
-          Submit
-        </button>
-      </form>
+          <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
+            <Save size={18} /> Submit Entry
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
 
+// ==================== ANALYSIS PAGE ====================
 function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: Settings }) {
   const [activeTab, setActiveTab] = useState<'charts' | 'detailed' | 'filtered' | 'raw'>('charts');
   const [filterPlanet, setFilterPlanet] = useState<string>('All');
@@ -926,12 +815,6 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
     const specMistakeMap: Record<string, Record<string, number>> = {};
     const creatorMistakeMap: Record<string, Record<string, number>> = {};
 
-    const filteredEntries = entries.filter(e => {
-      const planetMatch = filterPlanet === 'All' || e.planet === filterPlanet;
-      const monthMatch = filterMonth === 'All' || getMonthYear(e.date) === filterMonth;
-      return planetMatch && monthMatch;
-    });
-
     entries.forEach(e => {
       e.mistakes.forEach(m => {
         specialistMistakes[e.specialist] = (specialistMistakes[e.specialist] || 0) + 1;
@@ -947,9 +830,14 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       });
     });
 
+    const filteredEntries = entries.filter(e => {
+      const planetMatch = filterPlanet === 'All' || e.planet === filterPlanet;
+      const monthMatch = filterMonth === 'All' || getMonthYear(e.date) === filterMonth;
+      return planetMatch && monthMatch;
+    });
+
     const filteredSpecMistakeMap: Record<string, Record<string, number>> = {};
     const filteredCreatorMistakeMap: Record<string, Record<string, number>> = {};
-    const filteredMistakeCounts: Record<string, number> = {};
 
     filteredEntries.forEach(e => {
       e.mistakes.forEach(m => {
@@ -958,8 +846,6 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
 
         if (!filteredCreatorMistakeMap[e.creator]) filteredCreatorMistakeMap[e.creator] = {};
         filteredCreatorMistakeMap[e.creator][m] = (filteredCreatorMistakeMap[e.creator][m] || 0) + 1;
-
-        filteredMistakeCounts[m] = (filteredMistakeCounts[m] || 0) + 1;
       });
     });
 
@@ -972,7 +858,6 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       creatorMistakeMap,
       filteredSpecMistakeMap,
       filteredCreatorMistakeMap,
-      filteredMistakeCounts,
       filteredEntries
     };
   }, [entries, filterPlanet, filterMonth]);
@@ -1012,7 +897,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       datasets: [{
         label: 'Total Errors',
         data: top5Specialists.map(s => s[1]),
-        backgroundColor: isDarkMode ? '#f8fafc' : '#334155',
+        backgroundColor: isDarkMode ? '#60A5FA' : '#3B82F6',
         borderRadius: 8
       }]
     },
@@ -1021,7 +906,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       datasets: [{
         data: Object.values(stats.planetMistakes),
         backgroundColor: [
-          '#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1'
+          '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'
         ],
         borderWidth: 0
       }]
@@ -1031,19 +916,28 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       datasets: [{
         label: 'Total Errors',
         data: Object.values(stats.creatorMistakes),
-        backgroundColor: isDarkMode ? '#475569' : '#94a3b8',
+        backgroundColor: isDarkMode ? '#60A5FA' : '#3B82F6',
         borderRadius: 8
       }]
     }
   };
 
   return (
-    <div className="glass-panel card">
-      <h1>Data Analysis</h1>
+    <div>
+      <div className="page-header">
+        <h1>Data Analysis</h1>
+        <p>View and analyze webinar performance metrics</p>
+      </div>
 
-      <div className="stats-banner">
-        <div className="stats-badge">
-          Total Recorded Webinars: <span>{entries.length}</span>
+      <div className="stats-grid" style={{ marginBottom: '2rem' }}>
+        <div className="glass-panel stat-card">
+          <div className="stat-icon primary">
+            <FileText size={24} />
+          </div>
+          <div className="stat-info">
+            <h3>{entries.length}</h3>
+            <p>Total Recorded</p>
+          </div>
         </div>
       </div>
 
@@ -1052,30 +946,30 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
           className={`tab-btn ${activeTab === 'charts' ? 'active' : ''}`}
           onClick={() => setActiveTab('charts')}
         >
-          General Analysis
+          <BarChart3 size={18} /> Charts
         </button>
         <button
           className={`tab-btn ${activeTab === 'detailed' ? 'active' : ''}`}
           onClick={() => setActiveTab('detailed')}
         >
-          General Information
+          <FileText size={18} /> Details
         </button>
         <button
           className={`tab-btn ${activeTab === 'filtered' ? 'active' : ''}`}
           onClick={() => setActiveTab('filtered')}
         >
-          By Planet
+          <Search size={18} /> Filter
         </button>
         <button
           className={`tab-btn ${activeTab === 'raw' ? 'active' : ''}`}
           onClick={() => setActiveTab('raw')}
         >
-          Raw Data
+          <Database size={18} /> Raw Data
         </button>
       </div>
 
       {(activeTab === 'filtered' || activeTab === 'raw') && (
-        <div className="grid-2" style={{ marginBottom: '4rem' }}>
+        <div className="grid-2" style={{ marginBottom: '2rem' }}>
           <div className="form-group">
             <label>Planet</label>
             <select value={filterPlanet} onChange={e => setFilterPlanet(e.target.value)}>
@@ -1096,20 +990,20 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       {activeTab === 'charts' && (
         <div className="charts-container">
           <div className="glass-panel chart-card">
-            <h3>Top 5 Webinar Specialists</h3>
-            <div style={{ width: '100%', height: '350px', position: 'relative' }}>
+            <h3>Top 5 Specialists by Errors</h3>
+            <div style={{ width: '100%', height: '300px', position: 'relative' }}>
               <Bar data={chartData.topSpecialists} options={commonOptions} />
             </div>
           </div>
           <div className="glass-panel chart-card">
             <h3>Mistake Distribution by Planet</h3>
-            <div style={{ width: '100%', height: '350px', position: 'relative' }}>
+            <div style={{ width: '100%', height: '300px', position: 'relative' }}>
               <Pie data={chartData.planetPie} options={{ ...commonOptions, scales: undefined }} />
             </div>
           </div>
           <div className="glass-panel chart-card">
             <h3>Errors per Creator</h3>
-            <div style={{ width: '100%', height: '350px', position: 'relative' }}>
+            <div style={{ width: '100%', height: '300px', position: 'relative' }}>
               <Bar data={chartData.creatorBar} options={commonOptions} />
             </div>
           </div>
@@ -1117,8 +1011,8 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       )}
 
       {activeTab === 'detailed' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
-          <section>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div className="glass-panel card">
             <h3>Specialist Performance</h3>
             <div className="table-scroll-container">
               <table>
@@ -1142,9 +1036,9 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                 </tbody>
               </table>
             </div>
-          </section>
+          </div>
 
-          <section>
+          <div className="glass-panel card">
             <h3>Creator Breakdown</h3>
             <div className="table-scroll-container">
               <table>
@@ -1168,13 +1062,13 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                 </tbody>
               </table>
             </div>
-          </section>
+          </div>
         </div>
       )}
 
       {activeTab === 'filtered' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
-          <section>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div className="glass-panel card">
             <h3>Filtered Specialist Data</h3>
             <div className="table-scroll-container">
               <table>
@@ -1194,9 +1088,9 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                 </tbody>
               </table>
             </div>
-          </section>
+          </div>
 
-          <section>
+          <div className="glass-panel card">
             <h3>Filtered Creator Data</h3>
             <div className="table-scroll-container">
               <table>
@@ -1216,12 +1110,12 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                 </tbody>
               </table>
             </div>
-          </section>
+          </div>
         </div>
       )}
 
       {activeTab === 'raw' && (
-        <section>
+        <div className="glass-panel card">
           <h3>Full Database Export</h3>
           <div className="table-scroll-container">
             <table>
@@ -1231,7 +1125,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                   <th>Planet</th>
                   <th>Specialist</th>
                   <th>Creator</th>
-                  <th>Mistakes (Comma Separated)</th>
+                  <th>Mistakes</th>
                 </tr>
               </thead>
               <tbody>
@@ -1245,95 +1139,18 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                   </tr>
                 ))}
                 {stats.filteredEntries.length === 0 && (
-                  <tr><td colSpan={5} style={{ textAlign: 'center', opacity: 0.5 }}>No records found for this selection</td></tr>
+                  <tr><td colSpan={5} style={{ textAlign: 'center', opacity: 0.5 }}>No records found</td></tr>
                 )}
               </tbody>
             </table>
           </div>
-        </section>
+        </div>
       )}
     </div>
   );
 }
 
-const SettingsSection = ({ 
-  title, 
-  items, 
-  keyName, 
-  value, 
-  onChange, 
-  onAdd, 
-  onDelete,
-  onEdit
-}: { 
-  title: string, 
-  items: string[], 
-  keyName: keyof Settings, 
-  value: string, 
-  onChange: (val: string) => void, 
-  onAdd: () => void, 
-  onDelete: (val: string) => void,
-  onEdit: (oldVal: string) => void
-}) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  const filteredItems = items.filter(item => 
-    item.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  return (
-    <div className="glass-panel card" style={{ marginBottom: '1rem', padding: '2rem' }}>
-      <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>{title}</h3>
-      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
-        <input 
-          placeholder={`Add ${title.toLowerCase()}...`}
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          style={{ padding: '0.75rem', fontSize: '1rem' }}
-        />
-        <button onClick={onAdd} style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}><Plus size={20} /></button>
-      </div>
-      <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-        <Search 
-          size={16} 
-          style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} 
-        />
-        <input
-          type="text"
-          placeholder={`Search ${title.toLowerCase()}...`}
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', fontSize: '1rem', width: '100%' }}
-        />
-      </div>
-      <div className="scroll-list">
-        {filteredItems.map(item => (
-          <div key={item} className="list-item">
-            <span style={{ fontSize: '0.95rem' }}>{item}</span>
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              <Pencil 
-                size={16} 
-                style={{ cursor: 'pointer', opacity: 0.5, color: 'var(--text-muted)' }} 
-                onClick={() => onEdit(item)}
-              />
-              <Trash2 
-                size={18} 
-                style={{ cursor: 'pointer', opacity: 0.5, color: '#ef4444' }} 
-                onClick={() => onDelete(item)}
-              />
-            </div>
-          </div>
-        ))}
-        {filteredItems.length === 0 && (
-          <div style={{ padding: '1rem', opacity: 0.3, textAlign: 'center' }}>
-            {items.length === 0 ? 'No items added' : 'No results found'}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
+// ==================== SETTINGS PAGE ====================
 function SettingsPage({ 
   settings, 
   entries,
@@ -1343,7 +1160,8 @@ function SettingsPage({
   onDeleteEntry,
   onUpdatePasswords,
   onExport,
-  onImport
+  onImport,
+  showToast
 }: { 
   settings: Settings, 
   entries: Entry[],
@@ -1353,7 +1171,8 @@ function SettingsPage({
   onDeleteEntry: (id: string) => void,
   onUpdatePasswords: (target: 'analysis' | 'settings', newPass: string) => void,
   onExport: () => void,
-  onImport: (content: string) => void
+  onImport: (content: string) => void,
+  showToast: (message: string, type: ToastType) => void
 }) {
   const [activeTab, setActiveTab] = useState<'config' | 'database' | 'security'>('config');
   const [inputs, setInputs] = useState({
@@ -1378,11 +1197,12 @@ function SettingsPage({
   const addItem = (key: keyof Settings, field: keyof typeof inputs) => {
     if (!inputs[field]) return;
     if (settings[key].includes(inputs[field])) {
-        alert('Entry already exists in this registry.');
+        showToast('Entry already exists in this registry.', 'warning');
         return;
     }
     onUpdate(key, [...settings[key], inputs[field]]);
     setInputs({ ...inputs, [field]: '' });
+    showToast(`${key} added successfully!`, 'success');
   };
 
   const removeItem = () => {
@@ -1391,10 +1211,12 @@ function SettingsPage({
       const val = registryToDelete.val;
       setRegistryToDelete(null);
       onUpdate(key, settings[key].filter(v => v !== val));
+      showToast('Item deleted successfully!', 'success');
     } else if (confirmDelete?.type === 'entry') {
       const id = confirmDelete.id;
       setConfirmDelete(null);
       onDeleteEntry(id);
+      showToast('Entry deleted successfully!', 'success');
     }
   };
 
@@ -1416,6 +1238,7 @@ function SettingsPage({
       v === oldVal ? trimmedVal : v
     );
     await onUpdate(key, updated);
+    showToast('Item updated successfully!', 'success');
   };
 
   const handlePasswordChange = (e: React.FormEvent) => {
@@ -1423,18 +1246,18 @@ function SettingsPage({
     const currentPass = security.passwords[passwordForm.target];
     
     if (passwordForm.currentPass1 !== currentPass || passwordForm.currentPass2 !== currentPass) {
-      alert('Current password does not match. You must enter it correctly twice.');
+      showToast('Current password does not match.', 'error');
       return;
     }
 
     if (!passwordForm.newPass) {
-      alert('Please enter a new password.');
+      showToast('Please enter a new password.', 'warning');
       return;
     }
 
     onUpdatePasswords(passwordForm.target, passwordForm.newPass);
     setPasswordForm({ ...passwordForm, newPass: '', currentPass1: '', currentPass2: '' });
-    alert('Password updated successfully!');
+    showToast('Password updated successfully!', 'success');
   };
 
   const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1449,46 +1272,30 @@ function SettingsPage({
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+      <div className="page-header">
         <h1>Global Settings</h1>
-        <div style={{ display: 'flex', background: 'rgba(128,128,128,0.1)', padding: '0.4rem', borderRadius: '12px', gap: '0.4rem' }}>
-          <button 
-            className="secondary" 
-            style={{ 
-              borderRadius: '8px', padding: '0.6rem 1.5rem', fontSize: '0.85rem',
-              background: activeTab === 'config' ? 'var(--primary)' : 'transparent',
-              color: activeTab === 'config' ? 'var(--bg-color)' : 'var(--text-main)',
-              boxShadow: activeTab === 'config' ? '0 4px 10px rgba(0,0,0,0.1)' : 'none'
-            }}
-            onClick={() => setActiveTab('config')}
-          >
-            Configuration
-          </button>
-          <button 
-            className="secondary" 
-            style={{ 
-              borderRadius: '8px', padding: '0.6rem 1.5rem', fontSize: '0.85rem',
-              background: activeTab === 'database' ? 'var(--primary)' : 'transparent',
-              color: activeTab === 'database' ? 'var(--bg-color)' : 'var(--text-main)',
-              boxShadow: activeTab === 'database' ? '0 4px 10px rgba(0,0,0,0.1)' : 'none'
-            }}
-            onClick={() => setActiveTab('database')}
-          >
-            Database Editor
-          </button>
-          <button 
-            className="secondary" 
-            style={{ 
-              borderRadius: '8px', padding: '0.6rem 1.5rem', fontSize: '0.85rem',
-              background: activeTab === 'security' ? 'var(--primary)' : 'transparent',
-              color: activeTab === 'security' ? 'var(--bg-color)' : 'var(--text-main)',
-              boxShadow: activeTab === 'security' ? '0 4px 10px rgba(0,0,0,0.1)' : 'none'
-            }}
-            onClick={() => setActiveTab('security')}
-          >
-            Security
-          </button>
-        </div>
+        <p>Manage your webinar tracking configuration</p>
+      </div>
+
+      <div className="tabs">
+        <button
+          className={`tab-btn ${activeTab === 'config' ? 'active' : ''}`}
+          onClick={() => setActiveTab('config')}
+        >
+          <Settings size={18} /> Configuration
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'database' ? 'active' : ''}`}
+          onClick={() => setActiveTab('database')}
+        >
+          <Database size={18} /> Database
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'security' ? 'active' : ''}`}
+          onClick={() => setActiveTab('security')}
+        >
+          <Lock size={18} /> Security
+        </button>
       </div>
       
       {activeTab === 'config' && (
@@ -1536,12 +1343,12 @@ function SettingsPage({
             />
           </div>
 
-          <div style={{ marginTop: '4rem', padding: '2rem', display: 'flex', justifyContent: 'center', gap: '1.5rem', borderTop: '1px solid var(--glass-border)' }}>
-              <button className="secondary" onClick={onExport} style={{ fontSize: '0.85rem', padding: '0.6rem 1.2rem', borderRadius: '8px' }}>
-                  <Download size={16} style={{ marginRight: '6px' }} /> Export Settings
+          <div style={{ marginTop: '3rem', padding: '2rem', display: 'flex', justifyContent: 'center', gap: '1rem', borderTop: '1px solid var(--glass-border)' }}>
+              <button className="secondary" onClick={onExport} style={{ fontSize: '0.95rem' }}>
+                  <Download size={18} /> Export Settings
               </button>
-              <label className="secondary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', fontSize: '0.85rem', padding: '0.6rem 1.2rem', borderRadius: '8px' }}>
-                  <Upload size={16} style={{ marginRight: '6px' }} /> Import Settings
+              <label className="secondary" style={{ cursor: 'pointer', fontSize: '0.95rem' }}>
+                  <Upload size={18} /> Import Settings
                   <input type="file" hidden onChange={handleImportFile} accept=".json" />
               </label>
           </div>
@@ -1549,58 +1356,60 @@ function SettingsPage({
       )}
 
       {activeTab === 'database' && (
-        <div className="table-scroll-container">
-          <table style={{ borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: 'rgba(128,128,128,0.05)' }}>
-                <th>Date</th>
-                <th>Planet</th>
-                <th>Specialist</th>
-                <th>Creator</th>
-                <th>Errors</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entries.map(e => (
-                <tr key={e.id}>
-                  <td style={{ fontSize: '0.9rem' }}>{e.date}</td>
-                  <td style={{ fontSize: '0.9rem' }}>{e.planet}</td>
-                  <td style={{ fontSize: '0.9rem' }}>{e.specialist}</td>
-                  <td style={{ fontSize: '0.9rem' }}>{e.creator}</td>
-                  <td style={{ fontSize: '0.85rem' }}>{e.mistakes.join(', ')}</td>
-                  <td style={{ textAlign: 'right' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                      <button 
-                        className="secondary" 
-                        style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', borderRadius: '6px' }}
-                        onClick={() => setEditRecord(e)}
-                      >
-                        Edit
-                      </button>
-                      <button 
-                        className="secondary" 
-                        style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', borderRadius: '6px', color: '#ef4444' }}
-                        onClick={() => setConfirmDelete({ id: e.id, type: 'entry' })}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
+        <div className="glass-panel card">
+          <h3>Database Records</h3>
+          <div className="table-scroll-container">
+            <table style={{ borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ background: 'rgba(128,128,128,0.05)' }}>
+                  <th>Date</th>
+                  <th>Planet</th>
+                  <th>Specialist</th>
+                  <th>Creator</th>
+                  <th>Errors</th>
+                  <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
-              ))}
-              {entries.length === 0 && (
-                <tr><td colSpan={6} style={{ textAlign: 'center', padding: '4rem', opacity: 0.5 }}>No records in the database.</td></tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {entries.map(e => (
+                  <tr key={e.id}>
+                    <td style={{ fontSize: '0.9rem' }}>{e.date}</td>
+                    <td style={{ fontSize: '0.9rem' }}>{e.planet}</td>
+                    <td style={{ fontSize: '0.9rem' }}>{e.specialist}</td>
+                    <td style={{ fontSize: '0.9rem' }}>{e.creator}</td>
+                    <td style={{ fontSize: '0.85rem' }}>{e.mistakes.join(', ')}</td>
+                    <td style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                        <button 
+                          className="small secondary" 
+                          onClick={() => setEditRecord(e)}
+                        >
+                          <Pencil size={14} /> Edit
+                        </button>
+                        <button 
+                          className="small" 
+                          onClick={() => setConfirmDelete({ id: e.id, type: 'entry' })}
+                          style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}
+                        >
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {entries.length === 0 && (
+                  <tr><td colSpan={6} style={{ textAlign: 'center', padding: '4rem', opacity: 0.5 }}>No records in the database.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {activeTab === 'security' && (
-        <div className="security-grid">
+        <div className="grid-2">
           <div className="glass-panel card">
-            <h3 style={{ marginBottom: '2rem' }}>Change Password</h3>
+            <h3>Change Password</h3>
             <form onSubmit={handlePasswordChange}>
               <div className="form-group">
                 <label>Manage Section</label>
@@ -1608,8 +1417,8 @@ function SettingsPage({
                   value={passwordForm.target} 
                   onChange={e => setPasswordForm({...passwordForm, target: e.target.value as any})}
                 >
-                  <option value="analysis">Analysis Page (123)</option>
-                  <option value="settings">Settings Page (321)</option>
+                  <option value="analysis">Analysis Page</option>
+                  <option value="settings">Settings Page</option>
                 </select>
               </div>
               <div className="form-group">
@@ -1642,12 +1451,12 @@ function SettingsPage({
                   required
                 />
               </div>
-              <button type="submit" style={{ width: '100%' }}>Update Security</button>
+              <button type="submit" style={{ width: '100%' }}><Lock size={18} /> Update Security</button>
             </form>
           </div>
 
           <div className="glass-panel card">
-            <h3 style={{ marginBottom: '2rem' }}>Audit History</h3>
+            <h3>Audit History</h3>
             <div className="table-scroll-container">
               <table>
                 <thead>
@@ -1694,6 +1503,7 @@ function SettingsPage({
           onSave={(u) => {
             onUpdateEntry(u);
             setEditRecord(null);
+            showToast('Entry updated successfully!', 'success');
           }} 
           onCancel={() => setEditRecord(null)} 
         />
@@ -1702,7 +1512,7 @@ function SettingsPage({
       {editRegistryItem && (
         <div className="modal-overlay">
           <div className="modal-content" style={{ maxWidth: '440px' }}>
-            <div className="modal-icon" style={{ background: 'rgba(99,102,241,0.1)', color: '#6366f1' }}>
+            <div className="modal-icon">
               <Pencil size={28} />
             </div>
             <h2 style={{ marginBottom: '0.5rem' }}>Edit Item</h2>
@@ -1719,12 +1529,422 @@ function SettingsPage({
               />
             </div>
             <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
-              <button onClick={saveEditRegistryItem} style={{ flex: 1 }}>Save</button>
+              <button onClick={saveEditRegistryItem} style={{ flex: 1 }}><Save size={18} /> Save</button>
               <button className="secondary" onClick={() => setEditRegistryItem(null)} style={{ flex: 1 }}>Cancel</button>
             </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ==================== MAIN APP ====================
+export default function App() {
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'input' | 'analysis' | 'settings'>('dashboard');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('app_theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [settings, setSettings] = useState<Settings>(INITIAL_SETTINGS);
+  const [security, setSecurity] = useState<SecuritySettings>(INITIAL_SECURITY);
+
+  const [sessionUnlocked, setSessionUnlocked] = useState({
+    analysis: false,
+    settings: false
+  });
+
+  // Toast function
+  const showToast = (message: string, type: ToastType) => {
+    const id = nanoid();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4000);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
+
+  // Fetch data from Supabase
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const { data: entriesData } = await supabase
+          .from('webinar_entries')
+          .select('*')
+          .order('date', { ascending: false });
+        
+        if (entriesData) setEntries(entriesData);
+
+        const { data: settingsData } = await supabase
+          .from('webinar_settings')
+          .select('*')
+          .single();
+        
+        if (settingsData) {
+          setSettings({
+            planets: settingsData.planets,
+            specialists: settingsData.specialists,
+            creators: settingsData.creators,
+            mistakes: settingsData.mistakes
+          });
+        }
+
+        const { data: securityData } = await supabase
+          .from('webinar_security')
+          .select('*')
+          .single();
+        
+        if (securityData) {
+          setSecurity({
+            passwords: securityData.passwords,
+            history: securityData.history || []
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Realtime subscriptions
+  useEffect(() => {
+    const channel = supabase.channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'webinar_entries' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setEntries(prev => [payload.new as Entry, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            setEntries(prev => prev.map(e => e.id === payload.new.id ? (payload.new as Entry) : e));
+          } else if (payload.eventType === 'DELETE') {
+            setEntries(prev => prev.filter(e => e.id !== payload.old.id));
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'webinar_settings' },
+        (payload) => {
+          if (payload.new && Array.isArray(payload.new.planets) && Array.isArray(payload.new.specialists) && Array.isArray(payload.new.creators) && Array.isArray(payload.new.mistakes)) {
+            setSettings({
+              planets: payload.new.planets,
+              specialists: payload.new.specialists,
+              creators: payload.new.creators,
+              mistakes: payload.new.mistakes
+            });
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'webinar_security' },
+        (payload) => {
+          if (payload.new && payload.new.passwords) {
+            setSecurity({
+              passwords: payload.new.passwords,
+              history: payload.new.history || []
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Migration logic
+  useEffect(() => {
+    const migrateData = async () => {
+      const localEntries = localStorage.getItem('webinar_entries');
+      const hasMigrated = localStorage.getItem('supabase_migrated');
+
+      if (localEntries && !hasMigrated && entries.length === 0 && !isLoading) {
+        const parsed = JSON.parse(localEntries);
+        if (parsed.length > 0) {
+          const { error } = await supabase.from('webinar_entries').insert(
+            parsed.map((e: any) => ({
+              date: e.date,
+              planet: e.planet,
+              specialist: e.specialist,
+              creator: e.creator,
+              mistakes: e.mistakes
+            }))
+          );
+          if (!error) {
+            localStorage.setItem('supabase_migrated', 'true');
+            const { data } = await supabase.from('webinar_entries').select('*');
+            if (data) setEntries(data);
+          }
+        }
+      }
+    };
+    if (!isLoading) migrateData();
+  }, [isLoading, entries.length]);
+
+  // Theme
+  useEffect(() => {
+    document.body.className = theme;
+    localStorage.setItem('app_theme', theme);
+  }, [theme]);
+
+  // Data operations
+  const addEntry = async (entry: Omit<Entry, 'id'>) => {
+    const { error } = await supabase
+      .from('webinar_entries')
+      .insert([entry]);
+    
+    if (!error) {
+      setShowSuccessModal(true);
+    }
+  };
+
+  const updateEntry = async (updatedEntry: Entry) => {
+    const { error } = await supabase
+      .from('webinar_entries')
+      .update(updatedEntry)
+      .eq('id', updatedEntry.id);
+    
+    if (error) {
+      console.error('Update entry error:', error.message);
+      showToast('Error updating entry.', 'error');
+    }
+  };
+
+  const deleteEntry = async (id: string) => {
+    const { error } = await supabase
+      .from('webinar_entries')
+      .delete()
+      .eq('id', id);
+    
+    if (error) {
+      console.error('Delete entry error:', error.message);
+      showToast('Error deleting entry.', 'error');
+    }
+  };
+
+  const updateSettings = async (key: keyof Settings, value: string[]) => {
+    const { error } = await supabase
+      .from('webinar_settings')
+      .update({ [key]: value })
+      .eq('id', 1);
+    
+    if (error) {
+      console.error('Update settings error:', error.message);
+      showToast('Settings not saved!', 'error');
+    }
+  };
+
+  const updatePasswords = async (target: 'analysis' | 'settings', newPass: string) => {
+    const lastPass = security.passwords[target];
+    const newRecord: SecurityRecord = {
+      id: nanoid(),
+      date: new Date().toLocaleString(),
+      target,
+      lastPassword: lastPass,
+      newPassword: newPass
+    };
+    
+    const newPasswords = { ...security.passwords, [target]: newPass };
+    const newHistory = [newRecord, ...security.history];
+
+    const { error } = await supabase
+      .from('webinar_security')
+      .update({ 
+        passwords: newPasswords,
+        history: newHistory
+      })
+      .eq('id', 1);
+
+    if (!error) {
+      setSecurity({
+        passwords: newPasswords,
+        history: newHistory
+      });
+    }
+  };
+
+  const exportData = () => {
+    const data = JSON.stringify({ entries, settings }, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `webinar_data_backup_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    showToast('Data exported successfully!', 'success');
+  };
+
+  const importData = (content: string) => {
+    try {
+      const data = JSON.parse(content);
+      if (data.entries && data.settings) {
+        setEntries(data.entries);
+        setSettings(data.settings);
+        showToast('Data imported successfully!', 'success');
+      }
+    } catch (err) {
+      showToast('Error importing file.', 'error');
+    }
+  };
+
+  const handleNavigate = (page: string) => {
+    setCurrentPage(page as any);
+    setSidebarOpen(false);
+  };
+
+  return (
+    <div className="layout">
+      {/* Sidebar */}
+      <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="logo-container">
+            <div className="logo-icon">
+              <FileText size={24} />
+            </div>
+            <span>Webinar Tracker</span>
+          </div>
+        </div>
+
+        <nav className="sidebar-nav">
+          <div
+            className={`nav-item ${currentPage === 'dashboard' ? 'active' : ''}`}
+            onClick={() => handleNavigate('dashboard')}
+          >
+            <LayoutDashboard size={20} />
+            <span>Dashboard</span>
+          </div>
+          <div
+            className={`nav-item ${currentPage === 'input' ? 'active' : ''}`}
+            onClick={() => handleNavigate('input')}
+          >
+            <FileInput size={20} />
+            <span>New Entry</span>
+          </div>
+          <div
+            className={`nav-item ${currentPage === 'analysis' ? 'active' : ''}`}
+            onClick={() => handleNavigate('analysis')}
+          >
+            <BarChart3 size={20} />
+            <span>Analysis</span>
+          </div>
+          <div
+            className={`nav-item ${currentPage === 'settings' ? 'active' : ''}`}
+            onClick={() => handleNavigate('settings')}
+          >
+            <Settings size={20} />
+            <span>Settings</span>
+          </div>
+        </nav>
+
+        <div className="sidebar-footer">
+          <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+            {theme === 'light' ? <><Moon size={18} /> <span>Dark Mode</span></> : <><Sun size={18} /> <span>Light Mode</span></>}
+          </button>
+        </div>
+      </div>
+
+      {/* Overlay for mobile */}
+      {sidebarOpen && <div className="overlay" onClick={() => setSidebarOpen(false)}></div>}
+
+      {/* Mobile Header */}
+      <div className="mobile-header">
+        <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
+          <Menu size={24} />
+        </button>
+        <div className="logo-container" style={{ fontSize: '1rem' }}>
+          <span>Webinar Tracker</span>
+        </div>
+        <button className="mobile-menu-btn" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+          {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
+        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="main-content">
+        <div className="container">
+          {isLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', flexDirection: 'column', gap: '1rem' }}>
+              <div className="loading-spinner">
+                <div className="spinner"></div>
+              </div>
+              <p style={{ opacity: 0.5 }}>Connecting to database...</p>
+            </div>
+          ) : (
+            <>
+              {currentPage === 'dashboard' && <DashboardPage entries={entries} settings={settings} onNavigate={handleNavigate} />}
+              
+              {currentPage === 'input' && <DataInputPage settings={settings} onSave={addEntry} />}
+              
+              {currentPage === 'analysis' && (
+                !sessionUnlocked.analysis ? (
+                  <PasswordGateway 
+                    target="Analysis" 
+                    correctPassword={security.passwords.analysis} 
+                    onUnlock={() => setSessionUnlocked({ ...sessionUnlocked, analysis: true })}
+                  />
+                ) : (
+                  <DataAnalysisPage entries={entries} settings={settings} />
+                )
+              )}
+              
+              {currentPage === 'settings' && (
+                !sessionUnlocked.settings ? (
+                  <PasswordGateway 
+                    target="Settings" 
+                    correctPassword={security.passwords.settings} 
+                    onUnlock={() => setSessionUnlocked({ ...sessionUnlocked, settings: true })}
+                  />
+                ) : (
+                  <SettingsPage 
+                    settings={settings} 
+                    entries={entries}
+                    security={security}
+                    onUpdate={updateSettings} 
+                    onUpdateEntry={updateEntry}
+                    onDeleteEntry={deleteEntry}
+                    onUpdatePasswords={updatePasswords}
+                    onExport={exportData} 
+                    onImport={importData}
+                    showToast={showToast}
+                  />
+                )
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <SuccessModal
+          onAddAnother={() => setShowSuccessModal(false)}
+          onGoToAnalysis={() => {
+            setShowSuccessModal(false);
+            setCurrentPage('analysis');
+          }}
+        />
+      )}
+
+      {/* Toast Notifications */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }
