@@ -46,7 +46,6 @@ import {
 import { Bar, Pie } from 'react-chartjs-2';
 import type { Entry, Settings, SecuritySettings, SecurityRecord } from './types';
 import { createClient } from './utils/supabase/client';
-import Logo from './assets/logo.svg';
 import './styles.css';
 
 const supabase = createClient();
@@ -1841,7 +1840,9 @@ export default function App() {
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <div className="logo-container">
-            <img src={Logo} alt="Logo" style={{ width: '40px', height: '40px' }} />
+            <div className="logo-icon" style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, var(--primary), var(--info))', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+              <AlertOctagon size={24} />
+            </div>
             <span>Webinar Mistake Analysis</span>
           </div>
         </div>
@@ -1893,8 +1894,10 @@ export default function App() {
           <Menu size={24} />
         </button>
         <div className="logo-container" style={{ fontSize: '0.95rem' }}>
-          <img src={Logo} alt="Logo" style={{ width: '28px', height: '28px' }} />
-          <span style={{ marginLeft: '0.5rem' }}>Webinar Mistake Analysis</span>
+          <div style={{ width: '28px', height: '28px', background: 'linear-gradient(135deg, var(--primary), var(--info))', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
+            <AlertOctagon size={16} />
+          </div>
+          <span style={{ marginLeft: '0.5rem' }}>WMA</span>
         </div>
         <button className="mobile-menu-btn" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
           {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
