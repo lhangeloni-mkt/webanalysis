@@ -568,15 +568,12 @@ export default function App() {
   }, [theme]);
 
   const addEntry = async (entry: Omit<Entry, 'id'>) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('webinar_entries')
-      .insert([entry])
-      .select()
-      .single();
+      .insert([entry]);
     
-    if (!error && data) {
-      setEntries([data, ...entries]);
-      setShowSuccessModal(true);
+    if (!error) {
+      setShowSuccessModal(true); // Realtime listener will add the entry to state
     }
   };
 
@@ -589,9 +586,8 @@ export default function App() {
     if (error) {
       console.error('Update entry error:', error.message);
       alert('Error updating entry. Check permissions.');
-    } else {
-      setEntries(entries.map(e => e.id === updatedEntry.id ? updatedEntry : e));
     }
+    // Realtime listener handles state update
   };
 
   const deleteEntry = async (id: string) => {
@@ -603,9 +599,8 @@ export default function App() {
     if (error) {
       console.error('Delete entry error:', error.message);
       alert('Error deleting entry.');
-    } else {
-      setEntries(entries.filter(e => e.id !== id));
     }
+    // Realtime listener handles state update
   };
 
   const updateSettings = async (key: keyof Settings, value: string[]) => {
