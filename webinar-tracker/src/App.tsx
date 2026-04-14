@@ -13,7 +13,8 @@ import {
   Sun,
   Moon,
   AlertCircle,
-  Lock
+  Lock,
+  Pencil
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -1257,7 +1258,8 @@ const SettingsSection = ({
   value, 
   onChange, 
   onAdd, 
-  onDelete 
+  onDelete,
+  onEdit
 }: { 
   title: string, 
   items: string[], 
@@ -1265,7 +1267,8 @@ const SettingsSection = ({
   value: string, 
   onChange: (val: string) => void, 
   onAdd: () => void, 
-  onDelete: (val: string) => void 
+  onDelete: (val: string) => void,
+  onEdit: (oldVal: string) => void
 }) => (
   <div className="glass-panel card" style={{ marginBottom: '1rem', padding: '2rem' }}>
     <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>{title}</h3>
@@ -1282,11 +1285,18 @@ const SettingsSection = ({
       {items.map(item => (
         <div key={item} className="list-item">
           <span style={{ fontSize: '0.95rem' }}>{item}</span>
-          <Trash2 
-            size={18} 
-            style={{ cursor: 'pointer', opacity: 0.5, color: '#ef4444' }} 
-            onClick={() => onDelete(item)}
-          />
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <Pencil 
+              size={16} 
+              style={{ cursor: 'pointer', opacity: 0.5, color: 'var(--text-muted)' }} 
+              onClick={() => onEdit(item)}
+            />
+            <Trash2 
+              size={18} 
+              style={{ cursor: 'pointer', opacity: 0.5, color: '#ef4444' }} 
+              onClick={() => onDelete(item)}
+            />
+          </div>
         </div>
       ))}
       {items.length === 0 && <div style={{ padding: '1rem', opacity: 0.3, textAlign: 'center' }}>No items added</div>}
@@ -1333,6 +1343,7 @@ function SettingsPage({
   const [confirmDelete, setConfirmDelete] = useState<{ id: string, type: 'entry' | 'registry' } | null>(null);
   const [registryToDelete, setRegistryToDelete] = useState<{ key: keyof Settings, val: string } | null>(null);
   const [editRecord, setEditRecord] = useState<Entry | null>(null);
+  const [editRegistryItem, setEditRegistryItem] = useState<{ key: keyof Settings, oldVal: string, newVal: string } | null>(null);
 
   const addItem = (key: keyof Settings, field: keyof typeof inputs) => {
     if (!inputs[field]) return;
@@ -1352,6 +1363,15 @@ function SettingsPage({
       onDeleteEntry(confirmDelete.id);
       setConfirmDelete(null);
     }
+  };
+
+  const saveEditRegistryItem = () => {
+    if (!editRegistryItem || !editRegistryItem.newVal.trim()) return;
+    const updated = settings[editRegistryItem.key].map(v =>
+      v === editRegistryItem.oldVal ? editRegistryItem.newVal.trim() : v
+    );
+    onUpdate(editRegistryItem.key, updated);
+    setEditRegistryItem(null);
   };
 
   const handlePasswordChange = (e: React.FormEvent) => {
@@ -1438,6 +1458,7 @@ function SettingsPage({
                 onChange={val => setInputs({...inputs, specialist: val})}
                 onAdd={() => addItem('specialists', 'specialist')}
                 onDelete={val => setRegistryToDelete({ key: 'specialists', val })}
+                onEdit={val => setEditRegistryItem({ key: 'specialists', oldVal: val, newVal: val })}
             />
             <SettingsSection 
                 title="Creator" 
@@ -1447,6 +1468,7 @@ function SettingsPage({
                 onChange={val => setInputs({...inputs, creator: val})}
                 onAdd={() => addItem('creators', 'creator')}
                 onDelete={val => setRegistryToDelete({ key: 'creators', val })}
+                onEdit={val => setEditRegistryItem({ key: 'creators', oldVal: val, newVal: val })}
             />
             <SettingsSection 
                 title="Mistake Registry" 
@@ -1456,6 +1478,7 @@ function SettingsPage({
                 onChange={val => setInputs({...inputs, mistake: val})}
                 onAdd={() => addItem('mistakes', 'mistake')}
                 onDelete={val => setRegistryToDelete({ key: 'mistakes', val })}
+                onEdit={val => setEditRegistryItem({ key: 'mistakes', oldVal: val, newVal: val })}
             />
             <SettingsSection 
                 title="Planetary List" 
@@ -1465,6 +1488,7 @@ function SettingsPage({
                 onChange={val => setInputs({...inputs, planet: val})}
                 onAdd={() => addItem('planets', 'planet')}
                 onDelete={val => setRegistryToDelete({ key: 'planets', val })}
+                onEdit={val => setEditRegistryItem({ key: 'planets', oldVal: val, newVal: val })}
             />
           </div>
 
@@ -1629,6 +1653,33 @@ function SettingsPage({
           }} 
           onCancel={() => setEditRecord(null)} 
         />
+      )}
+
+      {editRegistryItem && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '440px' }}>
+            <div className="modal-icon" style={{ background: 'rgba(99,102,241,0.1)', color: '#6366f1' }}>
+              <Pencil size={28} />
+            </div>
+            <h2 style={{ marginBottom: '0.5rem' }}>Edit Item</h2>
+            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '0.9rem' }}>
+              Editing: <strong>{editRegistryItem.oldVal}</strong>
+            </p>
+            <div className="form-group" style={{ textAlign: 'left' }}>
+              <label>New Value</label>
+              <input
+                autoFocus
+                value={editRegistryItem.newVal}
+                onChange={e => setEditRegistryItem({ ...editRegistryItem, newVal: e.target.value })}
+                onKeyDown={e => e.key === 'Enter' && saveEditRegistryItem()}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+              <button onClick={saveEditRegistryItem} style={{ flex: 1 }}>Save</button>
+              <button className="secondary" onClick={() => setEditRegistryItem(null)} style={{ flex: 1 }}>Cancel</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
