@@ -311,6 +311,7 @@ function SearchableSelect({
             padding: '1rem',
             maxHeight: '300px',
             overflowY: 'auto',
+            background: 'var(--bg-color)',
             boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
           }}
         >
