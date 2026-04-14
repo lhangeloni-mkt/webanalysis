@@ -506,22 +506,32 @@ export default function App() {
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'webinar_settings' },
         (payload) => {
-          setSettings({
-            planets: payload.new.planets,
-            specialists: payload.new.specialists,
-            creators: payload.new.creators,
-            mistakes: payload.new.mistakes
-          });
+          if (
+            payload.new &&
+            Array.isArray(payload.new.planets) &&
+            Array.isArray(payload.new.specialists) &&
+            Array.isArray(payload.new.creators) &&
+            Array.isArray(payload.new.mistakes)
+          ) {
+            setSettings({
+              planets: payload.new.planets,
+              specialists: payload.new.specialists,
+              creators: payload.new.creators,
+              mistakes: payload.new.mistakes
+            });
+          }
         }
       )
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'webinar_security' },
         (payload) => {
-          setSecurity({
-            passwords: payload.new.passwords,
-            history: payload.new.history || []
-          });
+          if (payload.new && payload.new.passwords) {
+            setSecurity({
+              passwords: payload.new.passwords,
+              history: payload.new.history || []
+            });
+          }
         }
       )
       .subscribe();
@@ -1264,40 +1274,65 @@ const SettingsSection = ({
   onAdd: () => void, 
   onDelete: (val: string) => void,
   onEdit: (oldVal: string) => void
-}) => (
-  <div className="glass-panel card" style={{ marginBottom: '1rem', padding: '2rem' }}>
-    <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>{title}</h3>
-    <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem' }}>
-      <input 
-        placeholder={`Add ${title.toLowerCase()}...`}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        style={{ padding: '0.75rem', fontSize: '1rem' }}
-      />
-      <button onClick={onAdd} style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}><Plus size={20} /></button>
-    </div>
-    <div className="scroll-list">
-      {items.map(item => (
-        <div key={item} className="list-item">
-          <span style={{ fontSize: '0.95rem' }}>{item}</span>
-          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <Pencil 
-              size={16} 
-              style={{ cursor: 'pointer', opacity: 0.5, color: 'var(--text-muted)' }} 
-              onClick={() => onEdit(item)}
-            />
-            <Trash2 
-              size={18} 
-              style={{ cursor: 'pointer', opacity: 0.5, color: '#ef4444' }} 
-              onClick={() => onDelete(item)}
-            />
+}) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const filteredItems = items.filter(item => 
+    item.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  return (
+    <div className="glass-panel card" style={{ marginBottom: '1rem', padding: '2rem' }}>
+      <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>{title}</h3>
+      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+        <input 
+          placeholder={`Add ${title.toLowerCase()}...`}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          style={{ padding: '0.75rem', fontSize: '1rem' }}
+        />
+        <button onClick={onAdd} style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}><Plus size={20} /></button>
+      </div>
+      <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
+        <Search 
+          size={16} 
+          style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} 
+        />
+        <input
+          type="text"
+          placeholder={`Search ${title.toLowerCase()}...`}
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', fontSize: '1rem', width: '100%' }}
+        />
+      </div>
+      <div className="scroll-list">
+        {filteredItems.map(item => (
+          <div key={item} className="list-item">
+            <span style={{ fontSize: '0.95rem' }}>{item}</span>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <Pencil 
+                size={16} 
+                style={{ cursor: 'pointer', opacity: 0.5, color: 'var(--text-muted)' }} 
+                onClick={() => onEdit(item)}
+              />
+              <Trash2 
+                size={18} 
+                style={{ cursor: 'pointer', opacity: 0.5, color: '#ef4444' }} 
+                onClick={() => onDelete(item)}
+              />
+            </div>
           </div>
-        </div>
-      ))}
-      {items.length === 0 && <div style={{ padding: '1rem', opacity: 0.3, textAlign: 'center' }}>No items added</div>}
+        ))}
+        {filteredItems.length === 0 && (
+          <div style={{ padding: '1rem', opacity: 0.3, textAlign: 'center' }}>
+            {items.length === 0 ? 'No items added' : 'No results found'}
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 function SettingsPage({ 
   settings, 
@@ -1352,21 +1387,35 @@ function SettingsPage({
 
   const removeItem = () => {
     if (registryToDelete) {
-      onUpdate(registryToDelete.key, settings[registryToDelete.key].filter(v => v !== registryToDelete.val));
+      const key = registryToDelete.key;
+      const val = registryToDelete.val;
       setRegistryToDelete(null);
+      onUpdate(key, settings[key].filter(v => v !== val));
     } else if (confirmDelete?.type === 'entry') {
-      onDeleteEntry(confirmDelete.id);
+      const id = confirmDelete.id;
       setConfirmDelete(null);
+      onDeleteEntry(id);
     }
   };
 
-  const saveEditRegistryItem = () => {
-    if (!editRegistryItem || !editRegistryItem.newVal.trim()) return;
-    const updated = settings[editRegistryItem.key].map(v =>
-      v === editRegistryItem.oldVal ? editRegistryItem.newVal.trim() : v
-    );
-    onUpdate(editRegistryItem.key, updated);
+  const saveEditRegistryItem = async () => {
+    if (!editRegistryItem) return;
+    const trimmedVal = editRegistryItem.newVal.trim();
+    if (!trimmedVal) return;
+    
+    const oldVal = editRegistryItem.oldVal;
+    const key = editRegistryItem.key;
+    
     setEditRegistryItem(null);
+    
+    if (trimmedVal === oldVal) {
+      return;
+    }
+    
+    const updated = settings[key].map(v =>
+      v === oldVal ? trimmedVal : v
+    );
+    await onUpdate(key, updated);
   };
 
   const handlePasswordChange = (e: React.FormEvent) => {
