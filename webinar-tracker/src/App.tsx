@@ -555,11 +555,11 @@ function DashboardPage({ entries, settings, onNavigate }: { entries: Entry[], se
       });
     });
     
-    const topMistake = Object.entries(mistakeCounts).sort((a, b) => b[1] - a[1])[0];
+    const topMistakes = Object.entries(mistakeCounts).sort((a, b) => b[1] - a[1]).slice(0, 3);
     
     const recentEntries = entries.slice(0, 5);
     
-    return { totalWebinars, totalMistakes, uniqueCreators, uniquePlanets, topMistake, recentEntries };
+    return { totalWebinars, totalMistakes, uniqueCreators, uniquePlanets, topMistakes, recentEntries };
   }, [entries]);
 
   return (
@@ -653,12 +653,35 @@ function DashboardPage({ entries, settings, onNavigate }: { entries: Entry[], se
             </div>
           </div>
           
-          {stats.topMistake && (
+          {stats.topMistakes.length > 0 && (
             <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'var(--bg-secondary)', borderRadius: '12px' }}>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Most Common Mistake</p>
-              <p style={{ fontSize: '1.25rem', fontWeight: '700', color: 'var(--danger)' }}>
-                {stats.topMistake[0]} <span style={{ fontSize: '0.95rem', fontWeight: '500', color: 'var(--text-muted)' }}>({stats.topMistake[1]} times)</span>
-              </p>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Top 3 Most Common Mistakes</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {stats.topMistakes.map((mistake, index) => (
+                  <div key={mistake[0]} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', background: 'var(--card-bg)', borderRadius: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <span style={{ 
+                        width: '24px', 
+                        height: '24px', 
+                        borderRadius: '50%', 
+                        background: index === 0 ? 'var(--danger)' : index === 1 ? 'var(--warning)' : 'var(--primary)',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.75rem',
+                        fontWeight: '700'
+                      }}>
+                        {index + 1}
+                      </span>
+                      <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{mistake[0]}</span>
+                    </div>
+                    <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>
+                      {mistake[1]}x
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
