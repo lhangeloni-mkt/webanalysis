@@ -9,7 +9,6 @@ import {
   Search,
   ChevronDown,
   CheckCircle2,
-  FileText,
   Sun,
   Moon,
   AlertCircle,
@@ -28,6 +27,7 @@ import {
   Activity,
   Eye,
   Save,
+  AlertOctagon,
   Check
 } from 'lucide-react';
 import {
@@ -46,6 +46,7 @@ import {
 import { Bar, Pie } from 'react-chartjs-2';
 import type { Entry, Settings, SecuritySettings, SecurityRecord } from './types';
 import { createClient } from './utils/supabase/client';
+import Logo from './assets/logo.svg';
 import './styles.css';
 
 const supabase = createClient();
@@ -1013,7 +1014,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       {activeTab === 'detailed' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div className="glass-panel card">
-            <h3>Specialist Performance</h3>
+            <h3><AlertOctagon size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Specialist Performance</h3>
             <div className="table-scroll-container">
               <table>
                 <thead>
@@ -1021,25 +1022,37 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                     <th>Specialist Name</th>
                     <th>Committed Mistake</th>
                     <th>Frequency</th>
+                    <th>Total Errors</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(stats.specMistakeMap).map(([spec, mistakes], gIdx) => 
-                    Object.entries(mistakes).map(([mistake, count], idx) => (
+                  {Object.entries(stats.specMistakeMap).map(([spec, mistakes], gIdx) => {
+                    const totalErrors = Object.values(mistakes).reduce((a, b) => a + b, 0);
+                    return Object.entries(mistakes).map(([mistake, count], idx) => (
                       <tr key={`${spec}-${mistake}`} className={idx === 0 && gIdx !== 0 ? 'row-group-divider' : ''}>
-                        <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }}>{idx === 0 ? <strong>{spec}</strong> : ''}</td>
+                        <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }}>
+                          {idx === 0 ? (
+                            <div>
+                              <strong>{spec}</strong>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600', marginTop: '0.25rem' }}>
+                                {totalErrors} total errors
+                              </div>
+                            </div>
+                          ) : ''}
+                        </td>
                         <td>{mistake}</td>
                         <td><span className="badge">{count}</span></td>
+                        <td>{idx === 0 ? <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>{totalErrors}</span> : ''}</td>
                       </tr>
-                    ))
-                  )}
+                    ));
+                  })}
                 </tbody>
               </table>
             </div>
           </div>
 
           <div className="glass-panel card">
-            <h3>Creator Breakdown</h3>
+            <h3><Users size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Creator Breakdown</h3>
             <div className="table-scroll-container">
               <table>
                 <thead>
@@ -1047,18 +1060,30 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                     <th>Creator Name</th>
                     <th>Mistake Name</th>
                     <th>Frequency</th>
+                    <th>Total Errors</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(stats.creatorMistakeMap).map(([creator, mistakes], gIdx) => 
-                    Object.entries(mistakes).map(([mistake, count], idx) => (
+                  {Object.entries(stats.creatorMistakeMap).map(([creator, mistakes], gIdx) => {
+                    const totalErrors = Object.values(mistakes).reduce((a, b) => a + b, 0);
+                    return Object.entries(mistakes).map(([mistake, count], idx) => (
                       <tr key={`${creator}-${mistake}`} className={idx === 0 && gIdx !== 0 ? 'row-group-divider' : ''}>
-                        <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }}>{idx === 0 ? <strong>{creator}</strong> : ''}</td>
+                        <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }}>
+                          {idx === 0 ? (
+                            <div>
+                              <strong>{creator}</strong>
+                              <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600', marginTop: '0.25rem' }}>
+                                {totalErrors} total errors
+                              </div>
+                            </div>
+                          ) : ''}
+                        </td>
                         <td>{mistake}</td>
                         <td><span className="badge">{count}</span></td>
+                        <td>{idx === 0 ? <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>{totalErrors}</span> : ''}</td>
                       </tr>
-                    ))
-                  )}
+                    ));
+                  })}
                 </tbody>
               </table>
             </div>
@@ -1816,10 +1841,8 @@ export default function App() {
       <div className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <div className="logo-container">
-            <div className="logo-icon">
-              <FileText size={24} />
-            </div>
-            <span>Webinar Tracker</span>
+            <img src={Logo} alt="Logo" style={{ width: '40px', height: '40px' }} />
+            <span>Webinar Mistake Analysis</span>
           </div>
         </div>
 
@@ -1869,8 +1892,9 @@ export default function App() {
         <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)}>
           <Menu size={24} />
         </button>
-        <div className="logo-container" style={{ fontSize: '1rem' }}>
-          <span>Webinar Tracker</span>
+        <div className="logo-container" style={{ fontSize: '0.95rem' }}>
+          <img src={Logo} alt="Logo" style={{ width: '28px', height: '28px' }} />
+          <span style={{ marginLeft: '0.5rem' }}>Webinar Mistake Analysis</span>
         </div>
         <button className="mobile-menu-btn" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
           {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
