@@ -480,6 +480,51 @@ export default function App() {
     fetchData();
   }, []);
 
+  // --- Supabase Realtime Subscriptions ---
+  useEffect(() => {
+    const channel = supabase.channel('schema-db-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'webinar_entries' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setEntries(prev => [payload.new as Entry, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            setEntries(prev => prev.map(e => e.id === payload.new.id ? (payload.new as Entry) : e));
+          } else if (payload.eventType === 'DELETE') {
+            setEntries(prev => prev.filter(e => e.id !== payload.old.id));
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'webinar_settings' },
+        (payload) => {
+          setSettings({
+            planets: payload.new.planets,
+            specialists: payload.new.specialists,
+            creators: payload.new.creators,
+            mistakes: payload.new.mistakes
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'webinar_security' },
+        (payload) => {
+          setSecurity({
+            passwords: payload.new.passwords,
+            history: payload.new.history || []
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   // --- Migration Logic ---
   useEffect(() => {
     const migrateData = async () => {
@@ -535,7 +580,10 @@ export default function App() {
       .update(updatedEntry)
       .eq('id', updatedEntry.id);
     
-    if (!error) {
+    if (error) {
+      console.error('Update entry error:', error.message);
+      alert('Error updating entry. Check permissions.');
+    } else {
       setEntries(entries.map(e => e.id === updatedEntry.id ? updatedEntry : e));
     }
   };
@@ -546,7 +594,10 @@ export default function App() {
       .delete()
       .eq('id', id);
     
-    if (!error) {
+    if (error) {
+      console.error('Delete entry error:', error.message);
+      alert('Error deleting entry.');
+    } else {
       setEntries(entries.filter(e => e.id !== id));
     }
   };
@@ -558,7 +609,10 @@ export default function App() {
       .update({ [key]: value })
       .eq('id', 1);
     
-    if (!error) {
+    if (error) {
+      console.error('Update settings error:', error.message);
+      alert('Settings not saved! Ensure record with ID 1 exists and RLS is disabled or configured.');
+    } else {
       setSettings(newSettings);
     }
   };
