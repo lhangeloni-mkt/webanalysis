@@ -28,7 +28,8 @@ import {
   Eye,
   Save,
   AlertOctagon,
-  Check
+  Check,
+  FileText
 } from 'lucide-react';
 import {
   Chart as ChartJS,
