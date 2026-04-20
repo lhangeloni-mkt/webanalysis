@@ -1815,6 +1815,7 @@ export default function App() {
   };
 
   const deleteEntry = async (id: string) => {
+    setEntries(prev => prev.filter(e => e.id !== id));
     const { error } = await supabase
       .from('webinar_entries')
       .delete()
@@ -1827,6 +1828,7 @@ export default function App() {
   };
 
   const updateSettings = async (key: keyof Settings, value: string[]) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
     const { error } = await supabase
       .from('webinar_settings')
       .update({ [key]: value })
