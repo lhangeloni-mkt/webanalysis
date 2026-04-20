@@ -1298,13 +1298,11 @@ function SettingsPage({
       setRegistryToDelete(null);
       onUpdate(key, settings[key].filter(v => v !== val));
       showToast('Item deleted successfully!', 'success');
-      window.location.reload();
     } else if (confirmDelete?.type === 'entry') {
       const id = confirmDelete.id;
       setConfirmDelete(null);
       onDeleteEntry(id);
       showToast('Entry deleted successfully!', 'success');
-      window.location.reload();
     }
   };
 
