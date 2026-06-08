@@ -1727,13 +1727,13 @@ export default function App() {
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'webinar_settings' },
         (payload) => {
-          if (payload.new && Array.isArray(payload.new.planets) && Array.isArray(payload.new.specialists) && Array.isArray(payload.new.creators) && Array.isArray(payload.new.mistakes)) {
-            setSettings({
-              planets: payload.new.planets,
-              specialists: payload.new.specialists,
-              creators: payload.new.creators,
-              mistakes: payload.new.mistakes
-            });
+          if (payload.new) {
+            setSettings(prev => ({
+              planets: Array.isArray(payload.new.planets) ? payload.new.planets : prev.planets,
+              specialists: Array.isArray(payload.new.specialists) ? payload.new.specialists : prev.specialists,
+              creators: Array.isArray(payload.new.creators) ? payload.new.creators : prev.creators,
+              mistakes: Array.isArray(payload.new.mistakes) ? payload.new.mistakes : prev.mistakes
+            }));
           }
         }
       )
@@ -1828,15 +1828,20 @@ export default function App() {
   };
 
   const updateSettings = async (key: keyof Settings, value: string[]) => {
+    const previousSettings = settings;
     setSettings(prev => ({ ...prev, [key]: value }));
-    const { error } = await supabase
+    
+    const { data, error } = await supabase
       .from('webinar_settings')
       .update({ [key]: value })
-      .eq('id', 1);
+      .eq('id', 1)
+      .select();
     
-    if (error) {
-      console.error('Update settings error:', error.message);
-      showToast('Settings not saved!', 'error');
+    if (error || !data || data.length === 0) {
+      console.error('Update settings error:', error?.message || 'No rows updated. Check database RLS policies.');
+      showToast('Settings not saved! (DB Write Blocked)', 'error');
+      // Revert local state if DB update failed
+      setSettings(previousSettings);
     }
   };
 
@@ -1853,15 +1858,19 @@ export default function App() {
     const newPasswords = { ...security.passwords, [target]: newPass };
     const newHistory = [newRecord, ...security.history];
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('webinar_security')
       .update({ 
         passwords: newPasswords,
         history: newHistory
       })
-      .eq('id', 1);
+      .eq('id', 1)
+      .select();
 
-    if (!error) {
+    if (error || !data || data.length === 0) {
+      console.error('Update passwords error:', error?.message || 'No rows updated. Check database RLS policies.');
+      showToast('Security settings not saved! (DB Write Blocked)', 'error');
+    } else {
       setSecurity({
         passwords: newPasswords,
         history: newHistory
