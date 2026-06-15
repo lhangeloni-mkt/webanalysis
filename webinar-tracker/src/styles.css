@@ -380,6 +380,25 @@ input, select, .searchable-select-trigger {
   font-size: 1rem;
   transition: all 0.2s;
   outline: none;
+  color-scheme: light;
+}
+
+body.dark input[type="date"],
+body.dark input[type="datetime-local"],
+body.dark input[type="time"],
+body.dark input[type="month"],
+body.dark input[type="week"] {
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.light) input[type="date"],
+  body:not(.light) input[type="datetime-local"],
+  body:not(.light) input[type="time"],
+  body:not(.light) input[type="month"],
+  body:not(.light) input[type="week"] {
+    color-scheme: dark;
+  }
 }
 
 input:focus, select:focus, .searchable-select-trigger:focus {
