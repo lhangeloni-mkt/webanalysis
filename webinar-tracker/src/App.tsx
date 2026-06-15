@@ -15,7 +15,7 @@ import {
   Lock,
   Pencil,
   LayoutDashboard,
-  Settings,
+  Settings as SettingsIcon,
   BarChart3,
   Menu,
   X,
@@ -685,7 +685,7 @@ function DashboardPage({ entries, settings, onNavigate }: { entries: Entry[], se
               <span>View Analysis</span>
             </div>
             <div className="quick-action-btn" onClick={() => onNavigate('settings')}>
-              <Settings size={32} />
+              <SettingsIcon size={32} />
               <span>Settings</span>
             </div>
           </div>
@@ -1368,7 +1368,7 @@ function SettingsPage({
           className={`tab-btn ${activeTab === 'config' ? 'active' : ''}`}
           onClick={() => setActiveTab('config')}
         >
-          <Settings size={18} /> Configuration
+          <SettingsIcon size={18} /> Configuration
         </button>
         <button
           className={`tab-btn ${activeTab === 'database' ? 'active' : ''}`}
@@ -1629,7 +1629,39 @@ function SettingsPage({
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'input' | 'analysis' | 'settings'>('dashboard');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [entries, setEntries] = useState<Entry[]>(() => {
+    try {
+      const cached = localStorage.getItem('cached_webinar_entries');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [settings, setSettings] = useState<Settings>(() => {
+    try {
+      const cached = localStorage.getItem('cached_webinar_settings');
+      return cached ? JSON.parse(cached) : INITIAL_SETTINGS;
+    } catch {
+      return INITIAL_SETTINGS;
+    }
+  });
+  const [security, setSecurity] = useState<SecuritySettings>(() => {
+    try {
+      const cached = localStorage.getItem('cached_webinar_security');
+      return cached ? JSON.parse(cached) : INITIAL_SECURITY;
+    } catch {
+      return INITIAL_SECURITY;
+    }
+  });
+  const [isLoading, setIsLoading] = useState(() => {
+    try {
+      const hasEntries = localStorage.getItem('cached_webinar_entries');
+      const hasSettings = localStorage.getItem('cached_webinar_settings');
+      return !(hasEntries && hasSettings);
+    } catch {
+      return true;
+    }
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -1637,10 +1669,6 @@ export default function App() {
     if (saved === 'light' || saved === 'dark') return saved;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
-
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [settings, setSettings] = useState<Settings>(INITIAL_SETTINGS);
-  const [security, setSecurity] = useState<SecuritySettings>(INITIAL_SECURITY);
 
   const [sessionUnlocked, setSessionUnlocked] = useState({
     analysis: false,
@@ -1663,39 +1691,62 @@ export default function App() {
   // Fetch data from Supabase
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
+      const hasEntries = localStorage.getItem('cached_webinar_entries');
+      const hasSettings = localStorage.getItem('cached_webinar_settings');
+      if (!hasEntries || !hasSettings) {
+        setIsLoading(true);
+      }
       try {
-        const { data: entriesData } = await supabase
-          .from('webinar_entries')
-          .select('*')
-          .order('date', { ascending: false });
-        
-        if (entriesData) setEntries(entriesData);
+        const [entriesRes, settingsRes, securityRes] = await Promise.all([
+          supabase
+            .from('webinar_entries')
+            .select('*')
+            .order('date', { ascending: false }),
+          supabase
+            .from('webinar_settings')
+            .select('*')
+            .single(),
+          supabase
+            .from('webinar_security')
+            .select('*')
+            .single()
+        ]);
 
-        const { data: settingsData } = await supabase
-          .from('webinar_settings')
-          .select('*')
-          .single();
-        
-        if (settingsData) {
-          setSettings({
-            planets: settingsData.planets,
-            specialists: settingsData.specialists,
-            creators: settingsData.creators,
-            mistakes: settingsData.mistakes
-          });
+        if (entriesRes.data) {
+          setEntries(entriesRes.data);
+          try {
+            localStorage.setItem('cached_webinar_entries', JSON.stringify(entriesRes.data));
+          } catch (err) {
+            console.error('Failed to cache entries:', err);
+          }
         }
 
-        const { data: securityData } = await supabase
-          .from('webinar_security')
-          .select('*')
-          .single();
-        
-        if (securityData) {
-          setSecurity({
-            passwords: securityData.passwords,
-            history: securityData.history || []
-          });
+        if (settingsRes.data) {
+          const freshSettings = {
+            planets: settingsRes.data.planets,
+            specialists: settingsRes.data.specialists,
+            creators: settingsRes.data.creators,
+            mistakes: settingsRes.data.mistakes
+          };
+          setSettings(freshSettings);
+          try {
+            localStorage.setItem('cached_webinar_settings', JSON.stringify(freshSettings));
+          } catch (err) {
+            console.error('Failed to cache settings:', err);
+          }
+        }
+
+        if (securityRes.data) {
+          const freshSecurity = {
+            passwords: securityRes.data.passwords,
+            history: securityRes.data.history || []
+          };
+          setSecurity(freshSecurity);
+          try {
+            localStorage.setItem('cached_webinar_security', JSON.stringify(freshSecurity));
+          } catch (err) {
+            console.error('Failed to cache security:', err);
+          }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -1715,11 +1766,35 @@ export default function App() {
         { event: '*', schema: 'public', table: 'webinar_entries' },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setEntries(prev => [payload.new as Entry, ...prev]);
+            setEntries(prev => {
+              const updated = [payload.new as Entry, ...prev];
+              try {
+                localStorage.setItem('cached_webinar_entries', JSON.stringify(updated));
+              } catch (err) {
+                console.error('Failed to cache entries:', err);
+              }
+              return updated;
+            });
           } else if (payload.eventType === 'UPDATE') {
-            setEntries(prev => prev.map(e => e.id === payload.new.id ? (payload.new as Entry) : e));
+            setEntries(prev => {
+              const updated = prev.map(e => e.id === payload.new.id ? (payload.new as Entry) : e);
+              try {
+                localStorage.setItem('cached_webinar_entries', JSON.stringify(updated));
+              } catch (err) {
+                console.error('Failed to cache entries:', err);
+              }
+              return updated;
+            });
           } else if (payload.eventType === 'DELETE') {
-            setEntries(prev => prev.filter(e => e.id !== payload.old.id));
+            setEntries(prev => {
+              const updated = prev.filter(e => e.id !== payload.old.id);
+              try {
+                localStorage.setItem('cached_webinar_entries', JSON.stringify(updated));
+              } catch (err) {
+                console.error('Failed to cache entries:', err);
+              }
+              return updated;
+            });
           }
         }
       )
@@ -1728,12 +1803,20 @@ export default function App() {
         { event: 'UPDATE', schema: 'public', table: 'webinar_settings' },
         (payload) => {
           if (payload.new) {
-            setSettings(prev => ({
-              planets: Array.isArray(payload.new.planets) ? payload.new.planets : prev.planets,
-              specialists: Array.isArray(payload.new.specialists) ? payload.new.specialists : prev.specialists,
-              creators: Array.isArray(payload.new.creators) ? payload.new.creators : prev.creators,
-              mistakes: Array.isArray(payload.new.mistakes) ? payload.new.mistakes : prev.mistakes
-            }));
+            setSettings(prev => {
+              const updated = {
+                planets: Array.isArray(payload.new.planets) ? payload.new.planets : prev.planets,
+                specialists: Array.isArray(payload.new.specialists) ? payload.new.specialists : prev.specialists,
+                creators: Array.isArray(payload.new.creators) ? payload.new.creators : prev.creators,
+                mistakes: Array.isArray(payload.new.mistakes) ? payload.new.mistakes : prev.mistakes
+              };
+              try {
+                localStorage.setItem('cached_webinar_settings', JSON.stringify(updated));
+              } catch (err) {
+                console.error('Failed to cache settings:', err);
+              }
+              return updated;
+            });
           }
         }
       )
@@ -1742,9 +1825,17 @@ export default function App() {
         { event: 'UPDATE', schema: 'public', table: 'webinar_security' },
         (payload) => {
           if (payload.new && payload.new.passwords) {
-            setSecurity({
-              passwords: payload.new.passwords,
-              history: payload.new.history || []
+            setSecurity(prev => {
+              const updated = {
+                passwords: payload.new.passwords,
+                history: payload.new.history || []
+              };
+              try {
+                localStorage.setItem('cached_webinar_security', JSON.stringify(updated));
+              } catch (err) {
+                console.error('Failed to cache security:', err);
+              }
+              return updated;
             });
           }
         }
@@ -1944,7 +2035,7 @@ export default function App() {
             className={`nav-item ${currentPage === 'settings' ? 'active' : ''}`}
             onClick={() => handleNavigate('settings')}
           >
-            <Settings size={20} />
+            <SettingsIcon size={20} />
             <span>Settings</span>
           </div>
         </nav>
