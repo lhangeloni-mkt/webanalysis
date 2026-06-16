@@ -733,13 +733,21 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
     date: new Date().toISOString().split('T')[0],
     planet: '',
     specialist: '',
-    creator: '',
-    mistake1: '',
-    mistake2: '',
-    mistake3: ''
+    creator: ''
   });
+  const [mistakeCount, setMistakeCount] = useState(0);
+  const [mistakeFields, setMistakeFields] = useState<string[]>([]);
 
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && formData.mistake1;
+  useEffect(() => {
+    setMistakeFields(prev => {
+      if (prev.length < mistakeCount) {
+        return [...prev, ...Array(mistakeCount - prev.length).fill('')];
+      }
+      return prev.slice(0, mistakeCount);
+    });
+  }, [mistakeCount]);
+
+  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeCount > 0 && mistakeFields[0] !== '';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -749,17 +757,16 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
       planet: formData.planet,
       specialist: formData.specialist,
       creator: formData.creator,
-      mistakes: [formData.mistake1, formData.mistake2, formData.mistake3].filter(m => m !== '')
+      mistakes: mistakeFields.filter(m => m !== '')
     });
     setFormData({
       date: new Date().toISOString().split('T')[0],
       planet: '',
       specialist: '',
-      creator: '',
-      mistake1: '',
-      mistake2: '',
-      mistake3: ''
+      creator: ''
     });
+    setMistakeCount(0);
+    setMistakeFields([]);
   };
 
   return (
@@ -812,38 +819,35 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
           />
 
           <div className="form-group">
-            <label>Mistake 1 <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
             <select
-              required
-              value={formData.mistake1}
-              onChange={e => setFormData({ ...formData, mistake1: e.target.value })}
+              value={mistakeCount}
+              onChange={e => setMistakeCount(Number(e.target.value))}
             >
-              <option value="">Select Error</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              <option value={0}>Select the number of mistakes</option>
+              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
+                <option key={n} value={n}>{n}</option>
+              ))}
             </select>
           </div>
 
-          <div className="form-group">
-            <label>Mistake 2 (Optional)</label>
-            <select
-              value={formData.mistake2}
-              onChange={e => setFormData({ ...formData, mistake2: e.target.value })}
-            >
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Mistake 3 (Optional)</label>
-            <select
-              value={formData.mistake3}
-              onChange={e => setFormData({ ...formData, mistake3: e.target.value })}
-            >
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
+          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
+            <div className="form-group" key={i}>
+              <label>Mistake {i + 1} <span style={{ color: i === 0 ? 'var(--danger)' : 'var(--text-muted)' }}>*</span></label>
+              <select
+                required={i === 0}
+                value={mistakeFields[i] || ''}
+                onChange={e => {
+                  const updated = [...mistakeFields];
+                  updated[i] = e.target.value;
+                  setMistakeFields(updated);
+                }}
+              >
+                <option value="">Select Error</option>
+                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          ))}
 
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
             <Save size={18} /> Submit Entry
@@ -860,13 +864,21 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
     date: new Date().toISOString().split('T')[0],
     planet: '',
     specialist: '',
-    creator: '',
-    mistake1: '',
-    mistake2: '',
-    mistake3: ''
+    creator: ''
   });
+  const [mistakeCount, setMistakeCount] = useState(0);
+  const [mistakeFields, setMistakeFields] = useState<string[]>([]);
 
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && formData.mistake1;
+  useEffect(() => {
+    setMistakeFields(prev => {
+      if (prev.length < mistakeCount) {
+        return [...prev, ...Array(mistakeCount - prev.length).fill('')];
+      }
+      return prev.slice(0, mistakeCount);
+    });
+  }, [mistakeCount]);
+
+  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeCount > 0 && mistakeFields[0] !== '';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -876,17 +888,16 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
       planet: formData.planet,
       specialist: formData.specialist,
       creator: formData.creator,
-      mistakes: [formData.mistake1, formData.mistake2, formData.mistake3].filter(m => m !== '')
+      mistakes: mistakeFields.filter(m => m !== '')
     });
     setFormData({
       date: new Date().toISOString().split('T')[0],
       planet: '',
       specialist: '',
-      creator: '',
-      mistake1: '',
-      mistake2: '',
-      mistake3: ''
+      creator: ''
     });
+    setMistakeCount(0);
+    setMistakeFields([]);
   };
 
   return (
@@ -939,38 +950,35 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
           />
 
           <div className="form-group">
-            <label>Mistake 1 <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
             <select
-              required
-              value={formData.mistake1}
-              onChange={e => setFormData({ ...formData, mistake1: e.target.value })}
+              value={mistakeCount}
+              onChange={e => setMistakeCount(Number(e.target.value))}
             >
-              <option value="">Select Error</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              <option value={0}>Select the number of mistakes</option>
+              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
+                <option key={n} value={n}>{n}</option>
+              ))}
             </select>
           </div>
 
-          <div className="form-group">
-            <label>Mistake 2 (Optional)</label>
-            <select
-              value={formData.mistake2}
-              onChange={e => setFormData({ ...formData, mistake2: e.target.value })}
-            >
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Mistake 3 (Optional)</label>
-            <select
-              value={formData.mistake3}
-              onChange={e => setFormData({ ...formData, mistake3: e.target.value })}
-            >
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
+          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
+            <div className="form-group" key={i}>
+              <label>Mistake {i + 1} <span style={{ color: i === 0 ? 'var(--danger)' : 'var(--text-muted)' }}>*</span></label>
+              <select
+                required={i === 0}
+                value={mistakeFields[i] || ''}
+                onChange={e => {
+                  const updated = [...mistakeFields];
+                  updated[i] = e.target.value;
+                  setMistakeFields(updated);
+                }}
+              >
+                <option value="">Select Error</option>
+                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          ))}
 
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
             <Save size={18} /> Submit Pre Webinar Entry
@@ -1060,20 +1068,30 @@ function ModerationPostWebinarInputPage({ settings, onSave }: { settings: Settin
 
 function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '', mistake1: '', mistake2: '', mistake3: ''
+    date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: ''
   });
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && formData.mistake1;
+  const [mistakeCount, setMistakeCount] = useState(0);
+  const [mistakeFields, setMistakeFields] = useState<string[]>([]);
+
+  useEffect(() => {
+    setMistakeFields(prev => {
+      if (prev.length < mistakeCount) return [...prev, ...Array(mistakeCount - prev.length).fill('')];
+      return prev.slice(0, mistakeCount);
+    });
+  }, [mistakeCount]);
+
+  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeCount > 0 && mistakeFields[0] !== '';
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
     onSave({
       date: formData.date, planet: formData.planet, specialist: formData.specialist,
-      creator: formData.creator, mistakes: [formData.mistake1, formData.mistake2, formData.mistake3].filter(m => m !== '')
+      creator: formData.creator, mistakes: mistakeFields.filter(m => m !== '')
     });
-    setFormData({
-      date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '',
-      mistake1: '', mistake2: '', mistake3: ''
-    });
+    setFormData({ date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '' });
+    setMistakeCount(0);
+    setMistakeFields([]);
   };
   return (
     <div className="container-narrow">
@@ -1099,26 +1117,22 @@ function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave:
           <SearchableSelect required label="Creator" options={settings.creators} value={formData.creator}
             onChange={val => setFormData({ ...formData, creator: val })} placeholder="Search creator..." />
           <div className="form-group">
-            <label>Mistake 1 <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select required value={formData.mistake1} onChange={e => setFormData({ ...formData, mistake1: e.target.value })}>
-              <option value="">Select Error</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <select value={mistakeCount} onChange={e => setMistakeCount(Number(e.target.value))}>
+              <option value={0}>Select the number of mistakes</option>
+              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
-          <div className="form-group">
-            <label>Mistake 2 (Optional)</label>
-            <select value={formData.mistake2} onChange={e => setFormData({ ...formData, mistake2: e.target.value })}>
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Mistake 3 (Optional)</label>
-            <select value={formData.mistake3} onChange={e => setFormData({ ...formData, mistake3: e.target.value })}>
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
+          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
+            <div className="form-group" key={i}>
+              <label>Mistake {i + 1} <span style={{ color: i === 0 ? 'var(--danger)' : 'var(--text-muted)' }}>*</span></label>
+              <select required={i === 0} value={mistakeFields[i] || ''}
+                onChange={e => { const updated = [...mistakeFields]; updated[i] = e.target.value; setMistakeFields(updated); }}>
+                <option value="">Select Error</option>
+                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          ))}
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
             <Save size={18} /> Submit Entry
           </button>
@@ -1130,20 +1144,30 @@ function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave:
 
 function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '', mistake1: '', mistake2: '', mistake3: ''
+    date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: ''
   });
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && formData.mistake1;
+  const [mistakeCount, setMistakeCount] = useState(0);
+  const [mistakeFields, setMistakeFields] = useState<string[]>([]);
+
+  useEffect(() => {
+    setMistakeFields(prev => {
+      if (prev.length < mistakeCount) return [...prev, ...Array(mistakeCount - prev.length).fill('')];
+      return prev.slice(0, mistakeCount);
+    });
+  }, [mistakeCount]);
+
+  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeCount > 0 && mistakeFields[0] !== '';
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
     onSave({
       date: formData.date, planet: formData.planet, specialist: formData.specialist,
-      creator: formData.creator, mistakes: [formData.mistake1, formData.mistake2, formData.mistake3].filter(m => m !== '')
+      creator: formData.creator, mistakes: mistakeFields.filter(m => m !== '')
     });
-    setFormData({
-      date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '',
-      mistake1: '', mistake2: '', mistake3: ''
-    });
+    setFormData({ date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '' });
+    setMistakeCount(0);
+    setMistakeFields([]);
   };
   return (
     <div className="container-narrow">
@@ -1169,26 +1193,22 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
           <SearchableSelect required label="Creator" options={settings.creators} value={formData.creator}
             onChange={val => setFormData({ ...formData, creator: val })} placeholder="Search creator..." />
           <div className="form-group">
-            <label>Mistake 1 <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select required value={formData.mistake1} onChange={e => setFormData({ ...formData, mistake1: e.target.value })}>
-              <option value="">Select Error</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <select value={mistakeCount} onChange={e => setMistakeCount(Number(e.target.value))}>
+              <option value={0}>Select the number of mistakes</option>
+              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
-          <div className="form-group">
-            <label>Mistake 2 (Optional)</label>
-            <select value={formData.mistake2} onChange={e => setFormData({ ...formData, mistake2: e.target.value })}>
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Mistake 3 (Optional)</label>
-            <select value={formData.mistake3} onChange={e => setFormData({ ...formData, mistake3: e.target.value })}>
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
+          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
+            <div className="form-group" key={i}>
+              <label>Mistake {i + 1} <span style={{ color: i === 0 ? 'var(--danger)' : 'var(--text-muted)' }}>*</span></label>
+              <select required={i === 0} value={mistakeFields[i] || ''}
+                onChange={e => { const updated = [...mistakeFields]; updated[i] = e.target.value; setMistakeFields(updated); }}>
+                <option value="">Select Error</option>
+                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          ))}
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
             <Save size={18} /> Submit Entry
           </button>
