@@ -1,16 +1,21 @@
+export interface MistakeItem {
+  label: string;
+  type: 'post' | 'pre';
+}
+
 export interface Entry {
   id: string;
   date: string;
   planet: string;
   specialist: string;
   creator: string;
-  mistakes: string[]; // List of mistakes (Mistake 1, 2, 3)
+  mistakes: string[];
 }
 
 export interface Settings {
   specialists: string[];
   creators: string[];
-  mistakes: string[];
+  mistakes: MistakeItem[];
   planets: string[];
 }
 

@@ -45,7 +45,7 @@ import {
 } from 'chart.js';
 // @ts-ignore
 import { Bar, Pie } from 'react-chartjs-2';
-import type { Entry, Settings, SecuritySettings, SecurityRecord } from './types';
+import type { Entry, Settings, MistakeItem, SecuritySettings, SecurityRecord } from './types';
 import { createClient } from './utils/supabase/client';
 import Logo from './assets/logo.svg';
 import './styles.css';
@@ -92,42 +92,42 @@ const INITIAL_SETTINGS: Settings = {
     'whoisjillea', 'xhosalessons', 'yeoni_korean', 'zeidsalfitiart'
   ],
   mistakes: [
-    'Webinar POST delivered after deadline (If delivered after deadline , rating is automatically 3/5 or lower)',
-    'URLs (short/direct) & page external title and Page speed -> No marketing terms , avoid using capital letters',
-    'CTAs in both Emails and landing pages (copyright and function-> where does it redirect)',
-    'Countdowns , closing dates both Emails and Landing pages (ex. "Registrations close on Sunday 15th of March at 9PM EDT , this is incorrect)',
-    'Guarantee should be consistent and correct across both emails and pages',
-    'Checkout (correct offer linked, Card disclaimer text correct)',
-    'Prices (Pricing is following the requested amount from the Account Manager)',
-    'Mobile version (all content is coherent with Desktop version)',
-    'Spelling mistakes in the landing pages and Emails',
-    'Incorrect currency used in landing pages and emails',
-    'Incorrect timezones mentioned in Reminder emails, Offer emails and in the landing pages',
-    'Page or Email not finished, missing content or email fully missing',
-    'CTA links within email banner images that lead to incorrect pages',
-    'Emails with banner images that present a different course or a different topic would be incorrect',
-    'Emails scheduling timing (If timing greater than 2-3 hours)',
-    'Emails with banner images that have an incorrect page linked within the image',
-    'Webinar topic (Webinar topic is following the requested narrative from the Account Manager)',
-    'Segmentation mistakes (e.x Wrong Webinar form selected in emails)',
-    'Incorrect Upsells being sold instead of requested ones',
-    'Urgency/Scarcity narrative incorrectly used in pages and emails',
-    'WebinarJam Slides and WebinarJam Copywriting + Landing page link (ex. copywriting mentions an urgency discount when it does not apply)',
-    'Timing of the event incorrectly inputted into Webjam',
-    'Discounted amounts depicted incorrectly (100$ off instead of 50$)',
-    'Emails and landing pages should not presenting seasonal narrative',
-    'Design changes on Emails and Checkouts (ex. Thumbnail image is low quality image)',
-    'Amount of Video Lessons , Hours of Content and excercises (Course Content) , should be consistent across all emails , sales pages and offers',
-    'Using COLD offers and pages in an ORG webinar is incorrect | Or using COLD A in one offer and COLD B in another offer (Even if this is done multiple times , it counts as 1 yellow mistake)',
-    'Video settings (fully missing or partially missing)',
-    'Upsell content mistakes (ex. Course has been released but the upsell copy suggests the opposite, or the other way around)',
-    'Spelling mistakes on the FAQ Section of Sales pages',
-    'If webinar happens on the weekend , replay email should be automated',
-    'Footer (terms and conditions, privacy & policy, copyright, and no faq)',
-    'First Quadrant (Header: no spaces, correctly positioned and aligned)',
-    'CTA Size',
-    'Page Distribution',
-    'Timezones (Adding EST instead of EDT)'
+    { label: 'Webinar POST delivered after deadline (If delivered after deadline , rating is automatically 3/5 or lower)', type: 'post' },
+    { label: 'URLs (short/direct) & page external title and Page speed -> No marketing terms , avoid using capital letters', type: 'post' },
+    { label: 'CTAs in both Emails and landing pages (copyright and function-> where does it redirect)', type: 'post' },
+    { label: 'Countdowns , closing dates both Emails and Landing pages (ex. "Registrations close on Sunday 15th of March at 9PM EDT , this is incorrect)', type: 'post' },
+    { label: 'Guarantee should be consistent and correct across both emails and pages', type: 'post' },
+    { label: 'Checkout (correct offer linked, Card disclaimer text correct)', type: 'post' },
+    { label: 'Prices (Pricing is following the requested amount from the Account Manager)', type: 'post' },
+    { label: 'Mobile version (all content is coherent with Desktop version)', type: 'post' },
+    { label: 'Spelling mistakes in the landing pages and Emails', type: 'post' },
+    { label: 'Incorrect currency used in landing pages and emails', type: 'post' },
+    { label: 'Incorrect timezones mentioned in Reminder emails, Offer emails and in the landing pages', type: 'post' },
+    { label: 'Page or Email not finished, missing content or email fully missing', type: 'post' },
+    { label: 'CTA links within email banner images that lead to incorrect pages', type: 'post' },
+    { label: 'Emails with banner images that present a different course or a different topic would be incorrect', type: 'post' },
+    { label: 'Emails scheduling timing (If timing greater than 2-3 hours)', type: 'post' },
+    { label: 'Emails with banner images that have an incorrect page linked within the image', type: 'post' },
+    { label: 'Webinar topic (Webinar topic is following the requested narrative from the Account Manager)', type: 'post' },
+    { label: 'Segmentation mistakes (e.x Wrong Webinar form selected in emails)', type: 'post' },
+    { label: 'Incorrect Upsells being sold instead of requested ones', type: 'post' },
+    { label: 'Urgency/Scarcity narrative incorrectly used in pages and emails', type: 'post' },
+    { label: 'WebinarJam Slides and WebinarJam Copywriting + Landing page link (ex. copywriting mentions an urgency discount when it does not apply)', type: 'post' },
+    { label: 'Timing of the event incorrectly inputted into Webjam', type: 'post' },
+    { label: 'Discounted amounts depicted incorrectly (100$ off instead of 50$)', type: 'post' },
+    { label: 'Emails and landing pages should not presenting seasonal narrative', type: 'post' },
+    { label: 'Design changes on Emails and Checkouts (ex. Thumbnail image is low quality image)', type: 'post' },
+    { label: 'Amount of Video Lessons , Hours of Content and excercises (Course Content) , should be consistent across all emails , sales pages and offers', type: 'post' },
+    { label: 'Using COLD offers and pages in an ORG webinar is incorrect | Or using COLD A in one offer and COLD B in another offer (Even if this is done multiple times , it counts as 1 yellow mistake)', type: 'post' },
+    { label: 'Video settings (fully missing or partially missing)', type: 'post' },
+    { label: 'Upsell content mistakes (ex. Course has been released but the upsell copy suggests the opposite, or the other way around)', type: 'post' },
+    { label: 'Spelling mistakes on the FAQ Section of Sales pages', type: 'post' },
+    { label: 'If webinar happens on the weekend , replay email should be automated', type: 'post' },
+    { label: 'Footer (terms and conditions, privacy & policy, copyright, and no faq)', type: 'post' },
+    { label: 'First Quadrant (Header: no spaces, correctly positioned and aligned)', type: 'post' },
+    { label: 'CTA Size', type: 'post' },
+    { label: 'Page Distribution', type: 'post' },
+    { label: 'Timezones (Adding EST instead of EDT)', type: 'post' }
   ],
   planets: ['Jupiter', 'Saturn', 'Innovation/LP', 'Mars', 'Uranus']
 };
@@ -260,7 +260,7 @@ function EditRecordModal({
                 }}
               >
                 <option value="">Select Error</option>
-                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+                {settings.mistakes.map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
               </select>
             </div>
           ))}
@@ -852,7 +852,7 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
                 }}
               >
                 <option value="">Select Error</option>
-                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+                {settings.mistakes.filter(m => m.type === 'post').map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
               </select>
             </div>
           ))}
@@ -983,7 +983,7 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
                 }}
               >
                 <option value="">Select Error</option>
-                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+                {settings.mistakes.filter(m => m.type === 'pre').map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
               </select>
             </div>
           ))}
@@ -1048,21 +1048,21 @@ function ModerationPostWebinarInputPage({ settings, onSave }: { settings: Settin
             <label>Mistake 1 <span style={{ color: 'var(--danger)' }}>*</span></label>
             <select required value={formData.mistake1} onChange={e => setFormData({ ...formData, mistake1: e.target.value })}>
               <option value="">Select Error</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              {settings.mistakes.map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
             </select>
           </div>
           <div className="form-group">
             <label>Mistake 2 (Optional)</label>
             <select value={formData.mistake2} onChange={e => setFormData({ ...formData, mistake2: e.target.value })}>
               <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              {settings.mistakes.map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
             </select>
           </div>
           <div className="form-group">
             <label>Mistake 3 (Optional)</label>
             <select value={formData.mistake3} onChange={e => setFormData({ ...formData, mistake3: e.target.value })}>
               <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              {settings.mistakes.map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
             </select>
           </div>
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
@@ -1137,7 +1137,7 @@ function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave:
               <select required={i === 0} value={mistakeFields[i] || ''}
                 onChange={e => { const updated = [...mistakeFields]; updated[i] = e.target.value; setMistakeFields(updated); }}>
                 <option value="">Select Error</option>
-                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+                {settings.mistakes.map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
               </select>
             </div>
           ))}
@@ -1213,7 +1213,7 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
               <select required={i === 0} value={mistakeFields[i] || ''}
                 onChange={e => { const updated = [...mistakeFields]; updated[i] = e.target.value; setMistakeFields(updated); }}>
                 <option value="">Select Error</option>
-                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+                {settings.mistakes.map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
               </select>
             </div>
           ))}
@@ -1654,11 +1654,19 @@ function SettingsPage({
 
   const addItem = (key: keyof Settings, field: keyof typeof inputs) => {
     if (!inputs[field]) return;
-    if (settings[key].includes(inputs[field])) {
+    if (key === 'mistakes') {
+      if (settings.mistakes.some(m => m.label === inputs[field])) {
         showToast('Entry already exists in this registry.', 'warning');
         return;
+      }
+      onUpdate('mistakes', [...settings.mistakes, { label: inputs[field], type: 'post' }]);
+    } else {
+      if ((settings[key] as string[]).includes(inputs[field])) {
+        showToast('Entry already exists in this registry.', 'warning');
+        return;
+      }
+      onUpdate(key, [...(settings[key] as string[]), inputs[field]]);
     }
-    onUpdate(key, [...settings[key], inputs[field]]);
     setInputs({ ...inputs, [field]: '' });
     showToast(`${key} added successfully!`, 'success');
   };
@@ -1668,7 +1676,11 @@ function SettingsPage({
       const key = registryToDelete.key;
       const val = registryToDelete.val;
       setRegistryToDelete(null);
-      onUpdate(key, settings[key].filter(v => v !== val));
+      if (key === 'mistakes') {
+        onUpdate('mistakes', settings.mistakes.filter(m => m.label !== val));
+      } else {
+        onUpdate(key, (settings[key] as string[]).filter(v => v !== val));
+      }
       showToast('Item deleted successfully!', 'success');
     } else if (confirmDelete?.type === 'entry') {
       const id = confirmDelete.id;
@@ -1692,10 +1704,17 @@ function SettingsPage({
       return;
     }
     
-    const updated = settings[key].map(v =>
-      v === oldVal ? trimmedVal : v
-    );
-    await onUpdate(key, updated);
+    if (key === 'mistakes') {
+      const updated = settings.mistakes.map(m =>
+        m.label === oldVal ? { ...m, label: trimmedVal } : m
+      );
+      await onUpdate('mistakes', updated);
+    } else {
+      const updated = (settings[key] as string[]).map(v =>
+        v === oldVal ? trimmedVal : v
+      );
+      await onUpdate(key, updated);
+    }
     showToast('Item updated successfully!', 'success');
   };
 
@@ -1781,7 +1800,7 @@ function SettingsPage({
             />
             <SettingsSection 
                 title="Mistake Registry" 
-                items={settings.mistakes} 
+                items={settings.mistakes.map(m => m.label)} 
                 keyName="mistakes" 
                 value={inputs.mistake}
                 onChange={val => setInputs({...inputs, mistake: val})}
@@ -2291,7 +2310,7 @@ export default function App() {
     }
   };
 
-  const updateSettings = async (key: keyof Settings, value: string[]) => {
+  const updateSettings = async (key: keyof Settings, value: string[] | MistakeItem[]) => {
     const previousSettings = settings;
     setSettings(prev => ({ ...prev, [key]: value }));
     
