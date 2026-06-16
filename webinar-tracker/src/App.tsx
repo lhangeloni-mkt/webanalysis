@@ -178,15 +178,21 @@ function EditRecordModal({
   onCancel: () => void;
 }) {
   const [formData, setFormData] = useState({ ...entry });
-  const [mistake1, setMistake1] = useState(entry.mistakes[0] || '');
-  const [mistake2, setMistake2] = useState(entry.mistakes[1] || '');
-  const [mistake3, setMistake3] = useState(entry.mistakes[2] || '');
+  const [mistakeCount, setMistakeCount] = useState(entry.mistakes.length);
+  const [mistakeFields, setMistakeFields] = useState<string[]>([...entry.mistakes]);
+
+  useEffect(() => {
+    setMistakeFields(prev => {
+      if (prev.length < mistakeCount) return [...prev, ...Array(mistakeCount - prev.length).fill('')];
+      return prev.slice(0, mistakeCount);
+    });
+  }, [mistakeCount]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
       ...formData,
-      mistakes: [mistake1, mistake2, mistake3].filter(m => m !== '')
+      mistakes: mistakeFields.filter(m => m !== '')
     });
   };
 
@@ -233,32 +239,34 @@ function EditRecordModal({
             required
           />
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
-            <div className="form-group">
-              <label>Err 1</label>
-              <select value={mistake1} onChange={e => setMistake1(e.target.value)} required>
-                <option value="">Select</option>
-                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Err 2</label>
-              <select value={mistake2} onChange={e => setMistake2(e.target.value)}>
-                <option value="">None</option>
-                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Err 3</label>
-              <select value={mistake3} onChange={e => setMistake3(e.target.value)}>
-                <option value="">None</option>
-                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-              </select>
-            </div>
+          <div className="form-group">
+            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <select value={mistakeCount} onChange={e => setMistakeCount(Number(e.target.value))}>
+              <option value={0}>Select the number of mistakes</option>
+              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
           </div>
 
+          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
+            <div className="form-group" key={i}>
+              <label>Mistake {i + 1} <span style={{ color: i === 0 ? 'var(--danger)' : 'var(--text-muted)' }}>*</span></label>
+              <select
+                required={i === 0}
+                value={mistakeFields[i] || ''}
+                onChange={e => {
+                  const updated = [...mistakeFields];
+                  updated[i] = e.target.value;
+                  setMistakeFields(updated);
+                }}
+              >
+                <option value="">Select Error</option>
+                {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          ))}
+
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-            <button type="submit" style={{ flex: 1 }}><Save size={18} /> Save Changes</button>
+            <button type="submit" disabled={mistakeCount === 0 || !mistakeFields[0]} style={{ flex: 1 }}><Save size={18} /> Save Changes</button>
             <button type="button" className="secondary" onClick={onCancel} style={{ flex: 1 }}>Cancel</button>
           </div>
         </form>
