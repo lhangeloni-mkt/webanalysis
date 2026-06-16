@@ -765,8 +765,8 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
   return (
     <div className="container-narrow">
       <div className="page-header">
-        <h1>Entry Log</h1>
-        <p>Record a new webinar session</p>
+        <h1>Post Webinar Entry</h1>
+        <p>Add Post Webinar Check Information</p>
       </div>
       
       <div className="glass-panel card">
@@ -847,6 +847,133 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
 
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
             <Save size={18} /> Submit Entry
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ==================== PRE WEBINAR INPUT PAGE ====================
+function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
+  const [formData, setFormData] = useState({
+    date: new Date().toISOString().split('T')[0],
+    planet: '',
+    specialist: '',
+    creator: '',
+    mistake1: '',
+    mistake2: '',
+    mistake3: ''
+  });
+
+  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && formData.mistake1;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isFormValid) return;
+    onSave({
+      date: formData.date,
+      planet: formData.planet,
+      specialist: formData.specialist,
+      creator: formData.creator,
+      mistakes: [formData.mistake1, formData.mistake2, formData.mistake3].filter(m => m !== '')
+    });
+    setFormData({
+      date: new Date().toISOString().split('T')[0],
+      planet: '',
+      specialist: '',
+      creator: '',
+      mistake1: '',
+      mistake2: '',
+      mistake3: ''
+    });
+  };
+
+  return (
+    <div className="container-narrow">
+      <div className="page-header">
+        <h1>Pre Webinar Entry</h1>
+        <p>Add Pre Webinar Check Information</p>
+      </div>
+      
+      <div className="glass-panel card">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Date <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <input
+              type="date"
+              required
+              value={formData.date}
+              onChange={e => setFormData({ ...formData, date: e.target.value })}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Planet <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <select
+              required
+              value={formData.planet}
+              onChange={e => setFormData({ ...formData, planet: e.target.value })}
+            >
+              <option value="">Select Planet</option>
+              {settings.planets.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+
+          <SearchableSelect
+            required
+            label="Webinar Specialist"
+            options={settings.specialists}
+            value={formData.specialist}
+            onChange={val => setFormData({ ...formData, specialist: val })}
+            placeholder="Search specialist..."
+          />
+
+          <SearchableSelect
+            required
+            label="Creator"
+            options={settings.creators}
+            value={formData.creator}
+            onChange={val => setFormData({ ...formData, creator: val })}
+            placeholder="Search creator..."
+          />
+
+          <div className="form-group">
+            <label>Mistake 1 <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <select
+              required
+              value={formData.mistake1}
+              onChange={e => setFormData({ ...formData, mistake1: e.target.value })}
+            >
+              <option value="">Select Error</option>
+              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Mistake 2 (Optional)</label>
+            <select
+              value={formData.mistake2}
+              onChange={e => setFormData({ ...formData, mistake2: e.target.value })}
+            >
+              <option value="">None</option>
+              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Mistake 3 (Optional)</label>
+            <select
+              value={formData.mistake3}
+              onChange={e => setFormData({ ...formData, mistake3: e.target.value })}
+            >
+              <option value="">None</option>
+              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
+
+          <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
+            <Save size={18} /> Submit Pre Webinar Entry
           </button>
         </form>
       </div>
@@ -1627,7 +1754,8 @@ function SettingsPage({
 
 // ==================== MAIN APP ====================
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'input' | 'analysis' | 'settings'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'input' | 'analysis' | 'settings' | 'pre-webinar'>('dashboard');
+  const [prepEntryExpanded, setPrepEntryExpanded] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [entries, setEntries] = useState<Entry[]>(() => {
     try {
@@ -1993,9 +2121,20 @@ export default function App() {
     }
   };
 
+  // Auto-expand submenu when on entry pages
+  useEffect(() => {
+    if (['pre-webinar', 'input'].includes(currentPage)) {
+      setPrepEntryExpanded(true);
+    }
+  }, [currentPage]);
+
   const handleNavigate = (page: string) => {
     setCurrentPage(page as any);
     setSidebarOpen(false);
+    // Keep submenu open only for entry pages, close for unrelated sections
+    if (!['pre-webinar', 'input'].includes(page)) {
+      setPrepEntryExpanded(false);
+    }
   };
 
   return (
@@ -2017,12 +2156,35 @@ export default function App() {
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </div>
-          <div
-            className={`nav-item ${currentPage === 'input' ? 'active' : ''}`}
-            onClick={() => handleNavigate('input')}
-          >
-            <FileInput size={20} />
-            <span>New Entry</span>
+          <div className="nav-section">
+            <div
+              className={`nav-item ${['pre-webinar', 'input'].includes(currentPage) || prepEntryExpanded ? 'active' : ''}`}
+              onClick={() => setPrepEntryExpanded(!prepEntryExpanded)}
+              style={{ cursor: 'pointer' }}
+            >
+              <FileInput size={20} />
+              <span>Preparation New Entry</span>
+              <ChevronDown
+                size={16}
+                style={{ marginLeft: 'auto', transition: 'transform 0.2s', transform: prepEntryExpanded ? 'rotate(180deg)' : '' }}
+              />
+            </div>
+            {prepEntryExpanded && (
+              <div className="nav-submenu">
+                <div
+                  className={`nav-subitem ${currentPage === 'pre-webinar' ? 'active' : ''}`}
+                  onClick={() => handleNavigate('pre-webinar')}
+                >
+                  Pre Webinar
+                </div>
+                <div
+                  className={`nav-subitem ${currentPage === 'input' ? 'active' : ''}`}
+                  onClick={() => handleNavigate('input')}
+                >
+                  Post Webinar
+                </div>
+              </div>
+            )}
           </div>
           <div
             className={`nav-item ${currentPage === 'analysis' ? 'active' : ''}`}
@@ -2079,6 +2241,8 @@ export default function App() {
               {currentPage === 'dashboard' && <DashboardPage entries={entries} settings={settings} onNavigate={handleNavigate} />}
               
               {currentPage === 'input' && <DataInputPage settings={settings} onSave={addEntry} />}
+              
+              {currentPage === 'pre-webinar' && <PreWebinarInputPage settings={settings} onSave={addEntry} />}
               
               {currentPage === 'analysis' && (
                 !sessionUnlocked.analysis ? (
