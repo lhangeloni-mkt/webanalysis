@@ -127,7 +127,38 @@ const INITIAL_SETTINGS: Settings = {
     { label: 'First Quadrant (Header: no spaces, correctly positioned and aligned)', type: 'post' },
     { label: 'CTA Size', type: 'post' },
     { label: 'Page Distribution', type: 'post' },
-    { label: 'Timezones (Adding EST instead of EDT)', type: 'post' }
+    { label: 'Timezones (Adding EST instead of EDT)', type: 'post' },
+    { label: 'URLs (short/direct) & page external title and Page speed', type: 'pre' },
+    { label: 'CTAs in both Emails and landing pages (copywriting and function-> where does it redirect)', type: 'pre' },
+    { label: 'Countdowns , timezones (Mentioning EST instead of CET)', type: 'pre' },
+    { label: 'Date of webinar presented incorrectly (ex. Wednesday 12th 9PM , instead of Friday 9th 1PM)', type: 'pre' },
+    { label: 'Spelling mistakes in the landing pages and Emails', type: 'pre' },
+    { label: 'Poor syntax & difficulty in understanding some copy components [On pages and emails]', type: 'pre' },
+    { label: 'Incorrect timezones mentioned in Invitation emails , confirmation emails', type: 'pre' },
+    { label: 'Copywriting within the registration page or thank you page that mentions a different creator or course (ex. Irish language found in Watercolor workshops , or Irish with Mollie mentioned in a different creators webinar)', type: 'pre' },
+    { label: 'Page or email not finished or missing content', type: 'pre' },
+    { label: 'Mobile version (all content is coherent with Desktop version)', type: 'pre' },
+    { label: 'Emails with banner images that present a different course or a different topic would be incorrect', type: 'pre' },
+    { label: 'Emails scheduling timing (Invitation emails or Confirmation email)', type: 'pre' },
+    { label: 'Webinar topic (Webinar topic is following the requested narrative from the Account Manager)', type: 'pre' },
+    { label: 'Segmentation mistakes (e.x Wrong Webinar form selected in invitation emails)', type: 'pre' },
+    { label: 'Timing of the event incorrectly inputted into Webjam', type: 'pre' },
+    { label: 'Confirmation email incorrectly set up or there is incorrect copywriting', type: 'pre' },
+    { label: 'Forms being incorrectly added into registration pages', type: 'pre' },
+    { label: 'Invitation emails correctly set up and scheduled', type: 'pre' },
+    { label: 'Forms redirecting to incorrect thank you pages', type: 'pre' },
+    { label: 'Forms should always be a "Single opt-in"', type: 'pre' },
+    { label: 'No two step opt in forms being included in CTAs of Registration pages', type: 'pre' },
+    { label: 'Multiple impactful design changes needed in pages and emails (if overall visual appearance of reg page is not desirable)', type: 'pre' },
+    { label: 'Invitation emails left unscheduled', type: 'pre' },
+    { label: 'Webinar Jam incorrectly set up (Creator\'s images , backgrounds , topic)', type: 'pre' },
+    { label: 'Minor design changes in pages and emails (ex. Thumbnail image is low quality image and it has to be updated)', type: 'pre' },
+    { label: 'Inside of the Calendar, invitation links are missing (ex. Live event link or group chat link missing from Calendar even invitation)', type: 'pre' },
+    { label: 'Minor Webinar jam waiting room design changes (Background image low quality)', type: 'pre' },
+    { label: 'Footer (terms and conditions, privacy & policy, copyright, and no faq)', type: 'pre' },
+    { label: 'CTA Size', type: 'pre' },
+    { label: 'Page Distribution', type: 'pre' },
+    { label: 'Timezones (Adding EST instead of EDT)', type: 'pre' }
   ],
   planets: ['Jupiter', 'Saturn', 'Innovation/LP', 'Mars', 'Uranus']
 };
@@ -2029,10 +2060,32 @@ export default function App() {
       return [];
     }
   });
+  const migrateMistakes = (data: any): MistakeItem[] => {
+    if (!Array.isArray(data)) return INITIAL_SETTINGS.mistakes;
+    if (data.length > 0 && typeof data[0] === 'string') {
+      return data.map((m: string) => {
+        try {
+          const parsed = JSON.parse(m);
+          if (parsed && parsed.label && parsed.type) return parsed as MistakeItem;
+        } catch {}
+        return { label: m, type: 'post' };
+      });
+    }
+    return data as MistakeItem[];
+  };
+
   const [settings, setSettings] = useState<Settings>(() => {
     try {
       const cached = localStorage.getItem('cached_webinar_settings');
-      return cached ? JSON.parse(cached) : INITIAL_SETTINGS;
+      if (!cached) return INITIAL_SETTINGS;
+      const parsed = JSON.parse(cached);
+      if (parsed.mistakes && Array.isArray(parsed.mistakes) && parsed.mistakes.length > 0) {
+        if (typeof parsed.mistakes[0] === 'string') {
+          parsed.mistakes = migrateMistakes(parsed.mistakes);
+          try { localStorage.setItem('cached_webinar_settings', JSON.stringify(parsed)); } catch {}
+        }
+      }
+      return parsed;
     } catch {
       return INITIAL_SETTINGS;
     }
@@ -2118,7 +2171,7 @@ export default function App() {
             planets: settingsRes.data.planets,
             specialists: settingsRes.data.specialists,
             creators: settingsRes.data.creators,
-            mistakes: settingsRes.data.mistakes
+            mistakes: migrateMistakes(settingsRes.data.mistakes)
           };
           setSettings(freshSettings);
           try {
@@ -2200,7 +2253,7 @@ export default function App() {
                 planets: Array.isArray(payload.new.planets) ? payload.new.planets : prev.planets,
                 specialists: Array.isArray(payload.new.specialists) ? payload.new.specialists : prev.specialists,
                 creators: Array.isArray(payload.new.creators) ? payload.new.creators : prev.creators,
-                mistakes: Array.isArray(payload.new.mistakes) ? payload.new.mistakes : prev.mistakes
+                mistakes: Array.isArray(payload.new.mistakes) ? migrateMistakes(payload.new.mistakes) : prev.mistakes
               };
               try {
                 localStorage.setItem('cached_webinar_settings', JSON.stringify(updated));
