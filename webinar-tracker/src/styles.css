@@ -550,16 +550,23 @@ button.icon-only {
 
 /* Charts */
 .charts-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
+  justify-content: center;
 }
 
 .chart-card {
   padding: 1.5rem;
-  width: 100%;
+  flex: 1 1 350px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
+}
+
+.chart-card.chart-full-width {
+  flex-basis: 100%;
+  max-width: 100%;
 }
 
 .chart-card h3 {
@@ -957,8 +964,8 @@ th {
     grid-template-columns: 1fr;
   }
   
-  .charts-container {
-    grid-template-columns: 1fr;
+  .chart-card {
+    flex: 1 1 100%;
   }
 }
 
@@ -1173,10 +1180,6 @@ th {
   
   .theme-toggle span {
     display: none;
-  }
-  
-  .charts-container {
-    grid-template-columns: 1fr;
   }
   
   .chart-card {

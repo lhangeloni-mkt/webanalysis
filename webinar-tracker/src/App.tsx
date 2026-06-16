@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, Fragment } from 'react';
 import { nanoid } from 'nanoid';
 import {
   Plus,
@@ -21,7 +21,6 @@ import {
   X,
   FileInput,
   TrendingUp,
-  Calendar,
   Users,
   AlertTriangle,
   Activity,
@@ -43,8 +42,7 @@ import {
   PointElement,
   LineElement,
 } from 'chart.js';
-// @ts-ignore
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar, Pie, Line } from 'react-chartjs-2';
 import type { Entry, Settings, MistakeItem, SecuritySettings, SecurityRecord } from './types';
 import { createClient } from './utils/supabase/client';
 import Logo from './assets/logo.svg';
@@ -220,6 +218,7 @@ function EditRecordModal({
   const mistakeScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMistakeFields(prev => {
       if (prev.length < mistakeCount) return [...prev, ...Array(mistakeCount - prev.length).fill('')];
       return prev.slice(0, mistakeCount);
@@ -657,11 +656,32 @@ const formatDate = (dateStr: string) => {
   });
 };
 
+const getEntryType = (entry: Entry, settings: Settings): string => {
+  const types = new Set<string>();
+  for (const m of entry.mistakes) {
+    const found = settings.mistakes.find(sm => sm.label === m);
+    if (found) types.add(found.type);
+  }
+  if (types.size === 1) return types.values().next().value;
+  if (types.size > 1) return 'mixed';
+  return 'post';
+};
+
+const ENTRY_TYPE_LABELS: Record<string, string> = {
+  post: 'Post Webinar',
+  pre: 'Pre Webinar',
+  mod: 'Moderation',
+  whatsapp: 'Whatsapp',
+  mixed: 'Mixed Types',
+  unknown: 'Unknown'
+};
+
+const ENTRY_TYPE_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#94a3b8'];
+
 // ==================== SETTINGS SECTION COMPONENT ====================
 const SettingsSection = ({ 
   title, 
   items, 
-  keyName, 
   value, 
   onChange, 
   onAdd, 
@@ -670,7 +690,6 @@ const SettingsSection = ({
 }: { 
   title: string, 
   items: string[], 
-  keyName: keyof Settings, 
   value: string, 
   onChange: (val: string) => void, 
   onAdd: () => void, 
@@ -733,7 +752,7 @@ const SettingsSection = ({
 };
 
 // ==================== DASHBOARD COMPONENT ====================
-function DashboardPage({ entries, settings, onNavigate }: { entries: Entry[], settings: Settings, onNavigate: (page: string) => void }) {
+function DashboardPage({ entries }: { entries: Entry[] }) {
   const stats = useMemo(() => {
     const totalWebinars = entries.length;
     const totalMistakes = entries.reduce((acc, e) => acc + e.mistakes.length, 0);
@@ -747,7 +766,7 @@ function DashboardPage({ entries, settings, onNavigate }: { entries: Entry[], se
       });
     });
     
-    const topMistakes = Object.entries(mistakeCounts).sort((a, b) => b[1] - a[1]).slice(0, 3);
+    const topMistakes = Object.entries(mistakeCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
     
     const recentEntries = entries.slice(0, 5);
     
@@ -829,51 +848,39 @@ function DashboardPage({ entries, settings, onNavigate }: { entries: Entry[], se
         </div>
 
         <div className="glass-panel card">
-          <h3>Quick Actions</h3>
-          <div className="quick-actions">
-            <div className="quick-action-btn" onClick={() => onNavigate('input')}>
-              <FileInput size={32} />
-              <span>New Entry</span>
-            </div>
-            <div className="quick-action-btn" onClick={() => onNavigate('analysis')}>
-              <BarChart3 size={32} />
-              <span>View Analysis</span>
-            </div>
-            <div className="quick-action-btn" onClick={() => onNavigate('settings')}>
-              <SettingsIcon size={32} />
-              <span>Settings</span>
-            </div>
-          </div>
-          
-          {stats.topMistakes.length > 0 && (
-            <div style={{ marginTop: '2rem', padding: '1.5rem', background: 'var(--bg-secondary)', borderRadius: '12px' }}>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Top 3 Most Common Mistakes</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {stats.topMistakes.map((mistake, index) => (
-                  <div key={mistake[0]} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', background: 'var(--card-bg)', borderRadius: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <span style={{ 
-                        width: '24px', 
-                        height: '24px', 
-                        borderRadius: '50%', 
-                        background: index === 0 ? 'var(--danger)' : index === 1 ? 'var(--warning)' : 'var(--primary)',
-                        color: 'white',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '0.75rem',
-                        fontWeight: '700'
-                      }}>
-                        {index + 1}
-                      </span>
-                      <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{mistake[0]}</span>
-                    </div>
-                    <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>
-                      {mistake[1]}x
+          <h3 style={{ marginBottom: '1.5rem' }}>Top Most Common Mistakes</h3>
+          {stats.topMistakes.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {stats.topMistakes.map((mistake, index) => (
+                <div key={mistake[0]} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', background: 'var(--card-bg)', borderRadius: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0 }}>
+                    <span style={{ 
+                      width: '26px', 
+                      height: '26px', 
+                      borderRadius: '50%', 
+                      background: index === 0 ? 'var(--danger)' : index === 1 ? 'var(--warning)' : index === 2 ? 'var(--primary)' : 'var(--text-muted)',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: '700',
+                      flexShrink: 0
+                    }}>
+                      {index + 1}
                     </span>
+                    <span style={{ fontWeight: '500', color: 'var(--text-main)', fontSize: '0.9rem', wordBreak: 'break-word', lineHeight: '1.3' }}>{mistake[0]}</span>
                   </div>
-                ))}
-              </div>
+                  <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)', marginLeft: '0.5rem', flexShrink: 0 }}>
+                    {mistake[1]}x
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state" style={{ padding: '2rem 0' }}>
+              <BarChart3 size={40} />
+              <p>No mistakes recorded yet</p>
             </div>
           )}
         </div>
@@ -895,6 +902,7 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
   const mistakeScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMistakeFields(prev => {
       if (prev.length < mistakeCount) {
         return [...prev, ...Array(mistakeCount - prev.length).fill('')];
@@ -1026,6 +1034,7 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
   const mistakeScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMistakeFields(prev => {
       if (prev.length < mistakeCount) {
         return [...prev, ...Array(mistakeCount - prev.length).fill('')];
@@ -1145,67 +1154,6 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
 }
 
 // ==================== MODERATION & WHATSAPP PAGES ====================
-function ModerationPostWebinarInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
-  const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0],
-    planet: '',
-    specialist: '',
-    creator: '',
-    mistake1: '',
-    mistake2: '',
-    mistake3: ''
-  });
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && formData.mistake1;
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isFormValid) return;
-    onSave({
-      date: formData.date, planet: formData.planet, specialist: formData.specialist,
-      creator: formData.creator, mistakes: [formData.mistake1, formData.mistake2, formData.mistake3].filter(m => m !== '')
-    });
-    setFormData({
-      date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '',
-      mistake1: '', mistake2: '', mistake3: ''
-    });
-  };
-  return (
-    <div className="container-narrow">
-      <div className="page-header">
-        <h1>Moderation Post Webinar Entry</h1>
-        <p>Add Post Webinar Check Information</p>
-      </div>
-      <div className="glass-panel card">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Date <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <input type="date" required value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
-          </div>
-          <div className="form-group">
-            <label>Planet <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select required value={formData.planet} onChange={e => setFormData({ ...formData, planet: e.target.value })}>
-              <option value="">Select Planet</option>
-              {settings.planets.map(p => <option key={p} value={p}>{p}</option>)}
-            </select>
-          </div>
-          <SearchableSelect required label="Webinar Specialist" options={settings.specialists} value={formData.specialist}
-            onChange={val => setFormData({ ...formData, specialist: val })} placeholder="Search specialist..." />
-          <SearchableSelect required label="Creator" options={settings.creators} value={formData.creator}
-            onChange={val => setFormData({ ...formData, creator: val })} placeholder="Search creator..." />
-          <MistakeSelect required label="Mistake 1" options={settings.mistakes} value={formData.mistake1}
-            onChange={val => setFormData({ ...formData, mistake1: val })} />
-          <MistakeSelect label="Mistake 2 (Optional)" options={settings.mistakes} value={formData.mistake2}
-            onChange={val => setFormData({ ...formData, mistake2: val })} />
-          <MistakeSelect label="Mistake 3 (Optional)" options={settings.mistakes} value={formData.mistake3}
-            onChange={val => setFormData({ ...formData, mistake3: val })} />
-          <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
-            <Save size={18} /> Submit Entry
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
 function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: ''
@@ -1215,6 +1163,7 @@ function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave:
   const mistakeScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMistakeFields(prev => {
       if (prev.length < mistakeCount) return [...prev, ...Array(mistakeCount - prev.length).fill('')];
       return prev.slice(0, mistakeCount);
@@ -1295,6 +1244,7 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
   const mistakeScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMistakeFields(prev => {
       if (prev.length < mistakeCount) return [...prev, ...Array(mistakeCount - prev.length).fill('')];
       return prev.slice(0, mistakeCount);
@@ -1368,9 +1318,19 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
 
 // ==================== ANALYSIS PAGE ====================
 function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: Settings }) {
-  const [activeTab, setActiveTab] = useState<'charts' | 'detailed' | 'filtered' | 'raw'>('charts');
+  const [activeTab, setActiveTab] = useState<'charts' | 'filtered' | 'performance' | 'raw'>('charts');
   const [filterPlanet, setFilterPlanet] = useState<string>('All');
   const [filterMonth, setFilterMonth] = useState<string>('All');
+  const [filterType, setFilterType] = useState<string>('All');
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  const toggleRow = (key: string) => {
+    setExpandedRows(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  };
 
   const availableMonths = useMemo(() => {
     const months = new Set<string>();
@@ -1404,10 +1364,25 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       });
     });
 
+    const typeCounts: Record<string, number> = {};
+    entries.forEach(e => {
+      const t = getEntryType(e, settings);
+      typeCounts[t] = (typeCounts[t] || 0) + 1;
+    });
+
+    const monthlyTypeTrend: Record<string, Record<string, number>> = {};
+    entries.forEach(e => {
+      const month = getMonthYear(e.date);
+      if (!monthlyTypeTrend[month]) monthlyTypeTrend[month] = {};
+      const t = getEntryType(e, settings);
+      monthlyTypeTrend[month][t] = (monthlyTypeTrend[month][t] || 0) + 1;
+    });
+
     const filteredEntries = entries.filter(e => {
       const planetMatch = filterPlanet === 'All' || e.planet === filterPlanet;
       const monthMatch = filterMonth === 'All' || getMonthYear(e.date) === filterMonth;
-      return planetMatch && monthMatch;
+      const typeMatch = filterType === 'All' || getEntryType(e, settings) === filterType;
+      return planetMatch && monthMatch && typeMatch;
     });
 
     const filteredSpecMistakeMap: Record<string, Record<string, number>> = {};
@@ -1432,9 +1407,11 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       creatorMistakeMap,
       filteredSpecMistakeMap,
       filteredCreatorMistakeMap,
-      filteredEntries
+      filteredEntries,
+      typeCounts,
+      monthlyTypeTrend
     };
-  }, [entries, filterPlanet, filterMonth]);
+  }, [entries, filterPlanet, filterMonth, filterType, settings]);
 
   const top5Specialists = Object.entries(stats.specialistMistakes)
     .sort((a, b) => b[1] - a[1])
@@ -1465,6 +1442,13 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
     }
   };
 
+  const typeLabels = Object.keys(stats.typeCounts).filter(k => k !== 'unknown');
+  const typeColors = typeLabels.map(k => ENTRY_TYPE_COLORS[['post', 'pre', 'mod', 'whatsapp', 'mixed'].indexOf(k)] || '#94a3b8');
+
+  const sortedMonths = Object.keys(stats.monthlyTypeTrend).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  const trendTypes = [...new Set(sortedMonths.flatMap(m => Object.keys(stats.monthlyTypeTrend[m])))]
+    .filter(t => t !== 'unknown');
+
   const chartData = {
     topSpecialists: {
       labels: top5Specialists.map(s => s[0]),
@@ -1493,6 +1477,26 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
         backgroundColor: isDarkMode ? '#60A5FA' : '#3B82F6',
         borderRadius: 8
       }]
+    },
+    typePie: {
+      labels: typeLabels.map(k => ENTRY_TYPE_LABELS[k] || k),
+      datasets: [{
+        data: typeLabels.map(k => stats.typeCounts[k]),
+        backgroundColor: typeColors,
+        borderWidth: 0
+      }]
+    },
+    monthlyTrend: {
+      labels: sortedMonths,
+      datasets: trendTypes.map(t => ({
+        label: ENTRY_TYPE_LABELS[t] || t,
+        data: sortedMonths.map(m => stats.monthlyTypeTrend[m]?.[t] || 0),
+        borderColor: ENTRY_TYPE_COLORS[['post', 'pre', 'mod', 'whatsapp', 'mixed'].indexOf(t)] || '#94a3b8',
+        backgroundColor: (ENTRY_TYPE_COLORS[['post', 'pre', 'mod', 'whatsapp', 'mixed'].indexOf(t)] || '#94a3b8') + '33',
+        borderWidth: 2,
+        tension: 0.3,
+        fill: true
+      }))
     }
   };
 
@@ -1523,16 +1527,16 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
           <BarChart3 size={18} /> Charts
         </button>
         <button
-          className={`tab-btn ${activeTab === 'detailed' ? 'active' : ''}`}
-          onClick={() => setActiveTab('detailed')}
-        >
-          <FileText size={18} /> Details
-        </button>
-        <button
           className={`tab-btn ${activeTab === 'filtered' ? 'active' : ''}`}
           onClick={() => setActiveTab('filtered')}
         >
-          <Search size={18} /> Filter
+          <Search size={18} /> Filtered Data
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'performance' ? 'active' : ''}`}
+          onClick={() => setActiveTab('performance')}
+        >
+          <AlertOctagon size={18} /> Performance Overview
         </button>
         <button
           className={`tab-btn ${activeTab === 'raw' ? 'active' : ''}`}
@@ -1542,8 +1546,8 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
         </button>
       </div>
 
-      {(activeTab === 'filtered' || activeTab === 'raw') && (
-        <div className="grid-2" style={{ marginBottom: '2rem' }}>
+      {activeTab === 'filtered' && (
+        <div className="grid-3" style={{ marginBottom: '2rem' }}>
           <div className="form-group">
             <label>Planet</label>
             <select value={filterPlanet} onChange={e => setFilterPlanet(e.target.value)}>
@@ -1556,6 +1560,15 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
             <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)}>
               <option value="All">All Library</option>
               {availableMonths.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
+          <div className="form-group">
+            <label>Entry Type</label>
+            <select value={filterType} onChange={e => setFilterType(e.target.value)}>
+              <option value="All">All Types</option>
+              {Object.entries(ENTRY_TYPE_LABELS).filter(([key]) => stats.typeCounts[key] && key !== 'unknown').map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -1581,84 +1594,31 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
               <Bar data={chartData.creatorBar} options={commonOptions} />
             </div>
           </div>
-        </div>
-      )}
-
-      {activeTab === 'detailed' && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <div className="glass-panel card">
-            <h3><AlertOctagon size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Specialist Performance</h3>
-            <div className="table-scroll-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Specialist Name</th>
-                    <th>Committed Mistake</th>
-                    <th>Frequency</th>
-                    <th>Total Errors</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(stats.specMistakeMap).map(([spec, mistakes], gIdx) => {
-                    const totalErrors = Object.values(mistakes).reduce((a, b) => a + b, 0);
-                    return Object.entries(mistakes).map(([mistake, count], idx) => (
-                      <tr key={`${spec}-${mistake}`} className={idx === 0 && gIdx !== 0 ? 'row-group-divider' : ''}>
-                        <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }}>
-                          {idx === 0 ? (
-                            <div>
-                              <strong>{spec}</strong>
-                              <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600', marginTop: '0.25rem' }}>
-                                {totalErrors} total errors
-                              </div>
-                            </div>
-                          ) : ''}
-                        </td>
-                        <td>{mistake}</td>
-                        <td><span className="badge">{count}</span></td>
-                        <td>{idx === 0 ? <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>{totalErrors}</span> : ''}</td>
-                      </tr>
-                    ));
-                  })}
-                </tbody>
-              </table>
+          <div className="glass-panel chart-card">
+            <h3>Distribution by Entry Type</h3>
+            <div style={{ width: '100%', height: '300px', position: 'relative' }}>
+              {typeLabels.length > 0 ? (
+                <Pie data={chartData.typePie} options={{ ...commonOptions, scales: undefined, plugins: { ...commonOptions.plugins, legend: { ...commonOptions.plugins.legend, position: 'bottom' } } }} />
+              ) : (
+                <div className="empty-state"><BarChart3 size={40} /><p>No type data</p></div>
+              )}
             </div>
           </div>
-
-          <div className="glass-panel card">
-            <h3><Users size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Creator Breakdown</h3>
-            <div className="table-scroll-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Creator Name</th>
-                    <th>Mistake Name</th>
-                    <th>Frequency</th>
-                    <th>Total Errors</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(stats.creatorMistakeMap).map(([creator, mistakes], gIdx) => {
-                    const totalErrors = Object.values(mistakes).reduce((a, b) => a + b, 0);
-                    return Object.entries(mistakes).map(([mistake, count], idx) => (
-                      <tr key={`${creator}-${mistake}`} className={idx === 0 && gIdx !== 0 ? 'row-group-divider' : ''}>
-                        <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }}>
-                          {idx === 0 ? (
-                            <div>
-                              <strong>{creator}</strong>
-                              <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600', marginTop: '0.25rem' }}>
-                                {totalErrors} total errors
-                              </div>
-                            </div>
-                          ) : ''}
-                        </td>
-                        <td>{mistake}</td>
-                        <td><span className="badge">{count}</span></td>
-                        <td>{idx === 0 ? <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>{totalErrors}</span> : ''}</td>
-                      </tr>
-                    ));
-                  })}
-                </tbody>
-              </table>
+          <div className="glass-panel chart-card chart-full-width">
+            <h3>Monthly Trend by Entry Type</h3>
+            <div style={{ width: '100%', height: '300px', position: 'relative' }}>
+              {sortedMonths.length > 0 ? (
+                <Line data={chartData.monthlyTrend} options={{
+                  ...commonOptions,
+                  interaction: { mode: 'index', intersect: false },
+                  plugins: {
+                    ...commonOptions.plugins,
+                    legend: { ...commonOptions.plugins.legend, position: 'bottom' }
+                  }
+                }} />
+              ) : (
+                <div className="empty-state"><BarChart3 size={40} /><p>No trend data</p></div>
+              )}
             </div>
           </div>
         </div>
@@ -1667,15 +1627,52 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       {activeTab === 'filtered' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div className="glass-panel card">
-            <h3>Filtered Specialist Data</h3>
+            <h3><BarChart3 size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Entry Type Summary</h3>
+            <div className="table-scroll-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Entry Type</th>
+                    <th>Total Entries</th>
+                    <th>% of Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {typeLabels.map(t => (
+                    <tr key={t}>
+                      <td>
+                        <span style={{
+                          display: 'inline-block',
+                          width: '10px',
+                          height: '10px',
+                          borderRadius: '50%',
+                          background: ENTRY_TYPE_COLORS[['post', 'pre', 'mod', 'whatsapp', 'mixed'].indexOf(t)] || '#94a3b8',
+                          marginRight: '0.5rem',
+                          verticalAlign: 'middle'
+                        }} />
+                        {ENTRY_TYPE_LABELS[t] || t}
+                      </td>
+                      <td><span className="badge">{stats.typeCounts[t]}</span></td>
+                      <td>{Math.round((stats.typeCounts[t] / entries.length) * 100)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="glass-panel card">
+            <h3><Search size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Filtered Specialist Data</h3>
             <div className="table-scroll-container">
               <table>
                 <thead>
                   <tr><th>Specialist</th><th>Error</th><th>Count</th></tr>
                 </thead>
                 <tbody>
-                  {Object.entries(stats.filteredSpecMistakeMap).map(([spec, mists], gIdx) => 
-                    Object.entries(mists).map(([m, c], i) => (
+                  {Object.entries(stats.filteredSpecMistakeMap)
+                    .sort(([, a], [, b]) => Object.values(b).reduce((s, v) => s + v, 0) - Object.values(a).reduce((s, v) => s + v, 0))
+                    .map(([spec, mists], gIdx) =>
+                    Object.entries(mists).sort(([, a], [, b]) => b - a).map(([m, c], i) => (
                       <tr key={`${spec}-${m}`} className={i === 0 && gIdx !== 0 ? 'row-group-divider' : ''}>
                         <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }}>{i === 0 ? spec : ''}</td>
                         <td>{m}</td>
@@ -1689,15 +1686,17 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
           </div>
 
           <div className="glass-panel card">
-            <h3>Filtered Creator Data</h3>
+            <h3><Search size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Filtered Creator Data</h3>
             <div className="table-scroll-container">
               <table>
                 <thead>
                   <tr><th>Creator</th><th>Error</th><th>Count</th></tr>
                 </thead>
                 <tbody>
-                  {Object.entries(stats.filteredCreatorMistakeMap).map(([cre, mists], gIdx) => 
-                    Object.entries(mists).map(([m, c], i) => (
+                  {Object.entries(stats.filteredCreatorMistakeMap)
+                    .sort(([, a], [, b]) => Object.values(b).reduce((s, v) => s + v, 0) - Object.values(a).reduce((s, v) => s + v, 0))
+                    .map(([cre, mists], gIdx) =>
+                    Object.entries(mists).sort(([, a], [, b]) => b - a).map(([m, c], i) => (
                       <tr key={`${cre}-${m}`} className={i === 0 && gIdx !== 0 ? 'row-group-divider' : ''}>
                         <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }}>{i === 0 ? cre : ''}</td>
                         <td>{m}</td>
@@ -1707,6 +1706,178 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                   )}
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'performance' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div className="glass-panel card">
+            <h3><AlertOctagon size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Webinar Specialist Performance</h3>
+            <div className="table-scroll-container">
+              <table style={{ tableLayout: 'fixed' }}>
+                <colgroup>
+                  <col style={{ width: '33%' }} />
+                  <col style={{ width: '37%' }} />
+                  <col style={{ width: '17%' }} />
+                  <col style={{ width: '13%' }} />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Specialist Name</th>
+                    <th>Committed Mistakes</th>
+                    <th>Type</th>
+                    <th>Frequency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(stats.specMistakeMap)
+                    .sort(([aSpec], [bSpec]) => (stats.specialistMistakes[bSpec] || 0) - (stats.specialistMistakes[aSpec] || 0))
+                    .map(([spec, mistakes], gIdx) => {
+                    const totalErrors = Object.values(mistakes).reduce((a, b) => a + b, 0);
+                    const isExpanded = expandedRows.has(spec);
+                    const sortedMistakes = Object.entries(mistakes).sort(([, a], [, b]) => b - a);
+                    return (
+                      <Fragment key={spec}>
+                        <tr
+                          onClick={() => toggleRow(spec)}
+                          style={{ cursor: 'pointer', background: 'rgba(128,128,128,0.03)', userSelect: 'none' }}
+                          className={gIdx !== 0 ? 'row-group-divider' : ''}
+                        >
+                          <td style={{ borderRight: '1px solid var(--glass-border)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <span style={{ fontSize: '0.75rem', opacity: 0.5, transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'none' }}>▶</span>
+                              <div>
+                                <strong>{spec}</strong>
+                                {isExpanded ? (
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                    Total Errors <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>{totalErrors}</span>
+                                  </div>
+                                ) : (
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600', marginTop: '0.25rem' }}>
+                                    {totalErrors} total errors
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td style={{ textAlign: 'center', opacity: 0.5, fontStyle: 'italic', padding: '0.75rem 1rem' }}>{isExpanded ? 'Click to minimize' : 'Click to expand'}</td>
+                          <td style={{ textAlign: 'center', padding: '0.75rem 1rem' }}>-</td>
+                          <td style={{ textAlign: 'center', padding: '0.75rem 1rem' }}>-</td>
+                        </tr>
+                        {isExpanded && sortedMistakes.map(([mistake, count]) => {
+                          const mType = settings.mistakes.find(sm => sm.label === mistake);
+                          return (
+                            <tr key={`${spec}-${mistake}`}>
+                              <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }} />
+                              <td style={{ padding: '0.75rem 1rem' }}>{mistake}</td>
+                              <td style={{ textAlign: 'center', padding: '0.75rem 1rem' }}>{mType ? <span className="badge" style={{
+                                background: ENTRY_TYPE_COLORS[['post', 'pre', 'mod', 'whatsapp', 'mixed'].indexOf(mType.type)] + '33',
+                                color: ENTRY_TYPE_COLORS[['post', 'pre', 'mod', 'whatsapp', 'mixed'].indexOf(mType.type)]
+                              }}>{ENTRY_TYPE_LABELS[mType.type]}</span> : <span className="badge" style={{
+                                background: ENTRY_TYPE_COLORS[0] + '33',
+                                color: ENTRY_TYPE_COLORS[0]
+                              }}>{ENTRY_TYPE_LABELS['post']}</span>}</td>
+                              <td style={{ textAlign: 'center', padding: '0.75rem 1rem' }}><span className="badge">{count}</span></td>
+                            </tr>
+                          );
+                        })}
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', borderTop: '1px solid var(--glass-border)', fontWeight: 700 }}>
+              Grand Total
+              <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>
+                {Object.values(stats.specialistMistakes).reduce((a, b) => a + b, 0)}
+              </span>
+            </div>
+          </div>
+
+          <div className="glass-panel card">
+            <h3><Users size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Creator Performance</h3>
+            <div className="table-scroll-container">
+              <table style={{ tableLayout: 'fixed' }}>
+                <colgroup>
+                  <col style={{ width: '33%' }} />
+                  <col style={{ width: '37%' }} />
+                  <col style={{ width: '17%' }} />
+                  <col style={{ width: '13%' }} />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Creator Name</th>
+                    <th>Mistakes</th>
+                    <th>Type</th>
+                    <th>Frequency</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(stats.creatorMistakeMap)
+                    .sort(([aCre], [bCre]) => (stats.creatorMistakes[bCre] || 0) - (stats.creatorMistakes[aCre] || 0))
+                    .map(([creator, mistakes], gIdx) => {
+                    const totalErrors = Object.values(mistakes).reduce((a, b) => a + b, 0);
+                    const isExpanded = expandedRows.has(creator);
+                    const sortedMistakes = Object.entries(mistakes).sort(([, a], [, b]) => b - a);
+                    return (
+                      <Fragment key={creator}>
+                        <tr
+                          onClick={() => toggleRow(creator)}
+                          style={{ cursor: 'pointer', background: 'rgba(128,128,128,0.03)', userSelect: 'none' }}
+                          className={gIdx !== 0 ? 'row-group-divider' : ''}
+                        >
+                          <td style={{ borderRight: '1px solid var(--glass-border)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <span style={{ fontSize: '0.75rem', opacity: 0.5, transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'none' }}>▶</span>
+                              <div>
+                                <strong>{creator}</strong>
+                                {isExpanded ? (
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                    Total Errors <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>{totalErrors}</span>
+                                  </div>
+                                ) : (
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: '600', marginTop: '0.25rem' }}>
+                                    {totalErrors} total errors
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td style={{ textAlign: 'center', opacity: 0.5, fontStyle: 'italic', padding: '0.75rem 1rem' }}>{isExpanded ? 'Click to minimize' : 'Click to expand'}</td>
+                          <td style={{ textAlign: 'center', padding: '0.75rem 1rem' }}>-</td>
+                          <td style={{ textAlign: 'center', padding: '0.75rem 1rem' }}>-</td>
+                        </tr>
+                        {isExpanded && sortedMistakes.map(([mistake, count]) => {
+                          const mType = settings.mistakes.find(sm => sm.label === mistake);
+                          return (
+                            <tr key={`${creator}-${mistake}`}>
+                              <td style={{ borderRight: '1px solid var(--glass-border)', background: 'rgba(128,128,128,0.03)' }} />
+                              <td style={{ padding: '0.75rem 1rem' }}>{mistake}</td>
+                              <td style={{ textAlign: 'center', padding: '0.75rem 1rem' }}>{mType ? <span className="badge" style={{
+                                background: ENTRY_TYPE_COLORS[['post', 'pre', 'mod', 'whatsapp', 'mixed'].indexOf(mType.type)] + '33',
+                                color: ENTRY_TYPE_COLORS[['post', 'pre', 'mod', 'whatsapp', 'mixed'].indexOf(mType.type)]
+                              }}>{ENTRY_TYPE_LABELS[mType.type]}</span> : <span className="badge" style={{
+                                background: ENTRY_TYPE_COLORS[0] + '33',
+                                color: ENTRY_TYPE_COLORS[0]
+                              }}>{ENTRY_TYPE_LABELS['post']}</span>}</td>
+                              <td style={{ textAlign: 'center', padding: '0.75rem 1rem' }}><span className="badge">{count}</span></td>
+                            </tr>
+                          );
+                        })}
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', borderTop: '1px solid var(--glass-border)', fontWeight: 700 }}>
+              Grand Total
+              <span className="badge" style={{ background: 'var(--danger-light)', color: 'var(--danger)' }}>
+                {Object.values(stats.creatorMistakes).reduce((a, b) => a + b, 0)}
+              </span>
             </div>
           </div>
         </div>
@@ -1727,7 +1898,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                 </tr>
               </thead>
               <tbody>
-                {stats.filteredEntries.map(entry => (
+                {[...entries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(entry => (
                   <tr key={entry.id}>
                     <td>{entry.date}</td>
                     <td>{entry.planet}</td>
@@ -1736,7 +1907,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                     <td>{entry.mistakes.join(', ')}</td>
                   </tr>
                 ))}
-                {stats.filteredEntries.length === 0 && (
+                {entries.length === 0 && (
                   <tr><td colSpan={5} style={{ textAlign: 'center', opacity: 0.5 }}>No records found</td></tr>
                 )}
               </tbody>
@@ -2072,7 +2243,7 @@ function SettingsPage({
                 <label>Manage Section</label>
                 <select 
                   value={passwordForm.target} 
-                  onChange={e => setPasswordForm({...passwordForm, target: e.target.value as any})}
+                  onChange={e => setPasswordForm({...passwordForm, target: e.target.value as 'analysis' | 'settings'})}
                 >
                   <option value="analysis">Analysis Page</option>
                   <option value="settings">Settings Page</option>
@@ -2209,14 +2380,14 @@ export default function App() {
       return [];
     }
   });
-  const migrateMistakes = (data: any): MistakeItem[] => {
+  const migrateMistakes = (data: unknown): MistakeItem[] => {
     if (!Array.isArray(data)) return INITIAL_SETTINGS.mistakes;
     if (data.length > 0 && typeof data[0] === 'string') {
       return data.map((m: string) => {
         try {
           const parsed = JSON.parse(m);
           if (parsed && parsed.label && parsed.type) return parsed as MistakeItem;
-        } catch {}
+        } catch { /* ignore parse errors */ }
         return { label: m, type: 'post' };
       });
     }
@@ -2231,7 +2402,7 @@ export default function App() {
       if (parsed.mistakes && Array.isArray(parsed.mistakes) && parsed.mistakes.length > 0) {
         if (typeof parsed.mistakes[0] === 'string') {
           parsed.mistakes = migrateMistakes(parsed.mistakes);
-          try { localStorage.setItem('cached_webinar_settings', JSON.stringify(parsed)); } catch {}
+          try { localStorage.setItem('cached_webinar_settings', JSON.stringify(parsed)); } catch { /* storage full */ }
         }
       }
       return parsed;
@@ -2419,7 +2590,7 @@ export default function App() {
         { event: 'UPDATE', schema: 'public', table: 'webinar_security' },
         (payload) => {
           if (payload.new && payload.new.passwords) {
-            setSecurity(prev => {
+            setSecurity(() => {
               const updated = {
                 passwords: payload.new.passwords,
                 history: payload.new.history || []
@@ -2451,7 +2622,7 @@ export default function App() {
         const parsed = JSON.parse(localEntries);
         if (parsed.length > 0) {
           const { error } = await supabase.from('webinar_entries').insert(
-            parsed.map((e: any) => ({
+            parsed.map((e: Record<string, unknown>) => ({
               date: e.date,
               planet: e.planet,
               specialist: e.specialist,
@@ -2582,7 +2753,7 @@ export default function App() {
         setSettings(data.settings);
         showToast('Data imported successfully!', 'success');
       }
-    } catch (err) {
+    } catch {
       showToast('Error importing file.', 'error');
     }
   };
@@ -2595,7 +2766,7 @@ export default function App() {
   }, [currentPage]);
 
   const handleNavigate = (page: string) => {
-    setCurrentPage(page as any);
+    setCurrentPage(page as 'dashboard' | 'input' | 'analysis' | 'settings' | 'pre-webinar' | 'moderation' | 'whatsapp');
     setSidebarOpen(false);
     if (!['pre-webinar', 'input'].includes(page)) {
       setExpandedSection(null);
@@ -2707,7 +2878,7 @@ export default function App() {
             </div>
           ) : (
             <>
-              {currentPage === 'dashboard' && <DashboardPage entries={entries} settings={settings} onNavigate={handleNavigate} />}
+              {currentPage === 'dashboard' && <DashboardPage entries={entries} />}
               
               {currentPage === 'input' && <DataInputPage settings={settings} onSave={addEntry} />}
               
