@@ -1,6 +1,6 @@
 export interface MistakeItem {
   label: string;
-  type: 'post' | 'pre';
+  type: 'post' | 'pre' | 'mod' | 'whatsapp';
 }
 
 export interface Entry {

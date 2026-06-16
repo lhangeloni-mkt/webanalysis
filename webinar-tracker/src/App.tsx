@@ -158,7 +158,13 @@ const INITIAL_SETTINGS: Settings = {
     { label: 'Footer (terms and conditions, privacy & policy, copyright, and no faq)', type: 'pre' },
     { label: 'CTA Size', type: 'pre' },
     { label: 'Page Distribution', type: 'pre' },
-    { label: 'Timezones (Adding EST instead of EDT)', type: 'pre' }
+    { label: 'Timezones (Adding EST instead of EDT)', type: 'pre' },
+    { label: 'No Show - Track and log no-show events', type: 'mod' },
+    { label: 'Communicate Errors - AM', type: 'mod' },
+    { label: 'Communicate Errors - WS', type: 'mod' },
+    { label: 'Not sharing the offer during moderation', type: 'mod' },
+    { label: 'Sharing wrong links', type: 'whatsapp' },
+    { label: 'Miscommunication within group chat', type: 'whatsapp' }
   ],
   planets: ['Jupiter', 'Saturn', 'Innovation/LP', 'Mars', 'Uranus']
 };
@@ -1168,7 +1174,7 @@ function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave:
               <select required={i === 0} value={mistakeFields[i] || ''}
                 onChange={e => { const updated = [...mistakeFields]; updated[i] = e.target.value; setMistakeFields(updated); }}>
                 <option value="">Select Error</option>
-                {settings.mistakes.map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
+                {settings.mistakes.filter(m => m.type === 'mod').map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
               </select>
             </div>
           ))}
@@ -1244,7 +1250,7 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
               <select required={i === 0} value={mistakeFields[i] || ''}
                 onChange={e => { const updated = [...mistakeFields]; updated[i] = e.target.value; setMistakeFields(updated); }}>
                 <option value="">Select Error</option>
-                {settings.mistakes.map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
+                {settings.mistakes.filter(m => m.type === 'whatsapp').map(m => <option key={m.label} value={m.label}>{m.label}</option>)}
               </select>
             </div>
           ))}
@@ -1655,7 +1661,7 @@ function SettingsPage({
   settings: Settings, 
   entries: Entry[],
   security: SecuritySettings,
-  onUpdate: (key: keyof Settings, val: string[]) => void,
+  onUpdate: (key: keyof Settings, val: string[] | MistakeItem[]) => void,
   onUpdateEntry: (entry: Entry) => void,
   onDeleteEntry: (id: string) => void,
   onUpdatePasswords: (target: 'analysis' | 'settings', newPass: string) => void,
@@ -1670,6 +1676,8 @@ function SettingsPage({
     mistake: '',
     planet: ''
   });
+  const [mistakeTypeFilter, setMistakeTypeFilter] = useState<'post' | 'pre' | 'mod' | 'whatsapp'>('post');
+  const [mistakeSearchTerm, setMistakeSearchTerm] = useState('');
 
   const [passwordForm, setPasswordForm] = useState({
     target: 'analysis' as 'analysis' | 'settings',
@@ -1690,7 +1698,7 @@ function SettingsPage({
         showToast('Entry already exists in this registry.', 'warning');
         return;
       }
-      onUpdate('mistakes', [...settings.mistakes, { label: inputs[field], type: 'post' }]);
+      onUpdate('mistakes', [...settings.mistakes, { label: inputs[field], type: mistakeTypeFilter }]);
     } else {
       if ((settings[key] as string[]).includes(inputs[field])) {
         showToast('Entry already exists in this registry.', 'warning');
@@ -1829,16 +1837,54 @@ function SettingsPage({
                 onDelete={val => setRegistryToDelete({ key: 'creators', val })}
                 onEdit={val => setEditRegistryItem({ key: 'creators', oldVal: val, newVal: val })}
             />
-            <SettingsSection 
-                title="Mistake Registry" 
-                items={settings.mistakes.map(m => m.label)} 
-                keyName="mistakes" 
-                value={inputs.mistake}
-                onChange={val => setInputs({...inputs, mistake: val})}
-                onAdd={() => addItem('mistakes', 'mistake')}
-                onDelete={val => setRegistryToDelete({ key: 'mistakes', val })}
-                onEdit={val => setEditRegistryItem({ key: 'mistakes', oldVal: val, newVal: val })}
-            />
+            <div className="glass-panel card" style={{ marginBottom: '1rem' }}>
+              <h3 style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>Mistake Registry</h3>
+              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+                <select
+                  value={mistakeTypeFilter}
+                  onChange={e => setMistakeTypeFilter(e.target.value as 'post' | 'pre' | 'mod' | 'whatsapp')}
+                  style={{ padding: '0.75rem', fontSize: '1rem', flex: '0 0 auto', width: 'auto' }}>
+                  <option value="post">POST</option>
+                  <option value="pre">PRE</option>
+                  <option value="mod">MODERATION</option>
+                  <option value="whatsapp">WHATSAPP</option>
+                </select>
+                <input 
+                  placeholder="Add mistake..."
+                  value={inputs.mistake}
+                  onChange={e => setInputs({...inputs, mistake: e.target.value})}
+                  style={{ padding: '0.75rem', fontSize: '1rem', flex: 1 }}
+                />
+                <button onClick={() => addItem('mistakes', 'mistake')} style={{ padding: '0.75rem 1rem' }}><Plus size={18} /></button>
+              </div>
+              <div style={{ position: 'relative', marginBottom: '1rem' }}>
+                <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#999' }} />
+                <input 
+                  placeholder={`Search ${mistakeTypeFilter.toUpperCase()} mistakes...`}
+                  value={mistakeSearchTerm}
+                  onChange={e => setMistakeSearchTerm(e.target.value)}
+                  style={{ padding: '0.75rem 0.75rem 0.75rem 2.2rem', fontSize: '1rem', width: '100%' }}
+                />
+              </div>
+              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {settings.mistakes
+                  .filter(m => m.type === mistakeTypeFilter)
+                  .filter(m => m.label.toLowerCase().includes(mistakeSearchTerm.toLowerCase()))
+                  .map(m => (
+                  <div key={m.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: '0.9rem' }}>{m.label}</span>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button onClick={() => setEditRegistryItem({ key: 'mistakes', oldVal: m.label, newVal: m.label })} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)' }}>
+                        <Pencil size={14} />
+                      </button>
+                      <button onClick={() => setRegistryToDelete({ key: 'mistakes', val: m.label })} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#e74c3c' }}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
             <SettingsSection 
                 title="Planetary List" 
                 items={settings.planets} 

@@ -1,0 +1,2822 @@
+{
+  "entries": [
+    {
+      "id": "1f8a1d70-e758-4fbb-96af-d66cf5483e2e",
+      "created_at": "2026-05-25T21:15:16.534856+00:00",
+      "date": "2026-05-26",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "olga.koelsch",
+      "mistakes": [
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)",
+        "WebinarJam Slides & Copywriting + Landing page link (ex. inapplicable urgency discounts)"
+      ]
+    },
+    {
+      "id": "1b5740d7-63e6-4797-a8e1-e7e6bcdf9ed1",
+      "created_at": "2026-05-25T21:20:18.359003+00:00",
+      "date": "2026-05-26",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "Excel with Carita",
+      "mistakes": [
+        "Checkout (correct offer linked, Card disclaimer text correct)",
+        "Incorrect timezones mentioned in Reminder emails, Offer emails and landing pages",
+        "Discounted amounts depicted incorrectly (ex. $100 off instead of $50)"
+      ]
+    },
+    {
+      "id": "e6026c40-0156-4961-9061-6e6b3859578f",
+      "created_at": "2026-05-25T21:19:02.875701+00:00",
+      "date": "2026-05-26",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "Excel with Carita",
+      "mistakes": [
+        "Page or Email not finished, missing content, or email fully missing",
+        "Page or Email not finished, missing content, or email fully missing",
+        "Page or Email not finished, missing content, or email fully missing"
+      ]
+    },
+    {
+      "id": "aeeaf201-d3ad-42a5-8f16-f2ffd435fff1",
+      "created_at": "2026-05-25T21:14:26.43797+00:00",
+      "date": "2026-05-26",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "olga.koelsch",
+      "mistakes": [
+        "Webinar POST delivered after deadline (If delivered after deadline , rating is automatically 3/5 or lower)",
+        "Emails scheduling timing",
+        "Emails scheduling timing"
+      ]
+    },
+    {
+      "id": "1c7e89a1-052e-407e-b5db-a237533486c5",
+      "created_at": "2026-05-22T18:42:10.189116+00:00",
+      "date": "2026-05-21",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "inmybackyardnz",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "Checkout (correct offer linked, Card disclaimer text correct)",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "cb961121-53d6-47f0-ba08-8e47e4607a70",
+      "created_at": "2026-05-22T18:40:44.404428+00:00",
+      "date": "2026-05-20",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "Incorrect Upsells being sold instead of requested ones",
+        "WebinarJam Slides & Copywriting + Landing page link (ex. inapplicable urgency discounts)"
+      ]
+    },
+    {
+      "id": "c8ad5458-9d0e-40b2-8b88-f34060468505",
+      "created_at": "2026-05-22T18:38:01.976476+00:00",
+      "date": "2026-05-19",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "colouring_the_rainbow",
+      "mistakes": [
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)",
+        "Prices (follows the requested amount from the Account Manager)",
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "b1dfe3b0-0635-4df7-bd60-bc26b7d2c03c",
+      "created_at": "2026-05-16T00:27:47.250093+00:00",
+      "date": "2026-05-18",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "carliannecreates",
+      "mistakes": [
+        "URLs (short/direct), page external title & Page speed -> No marketing terms, avoid capital letters",
+        "Guarantee must be consistent and correct across emails and pages"
+      ]
+    },
+    {
+      "id": "eceb2a54-79a9-4cdd-b205-616c5a38a998",
+      "created_at": "2026-05-14T19:16:09.262677+00:00",
+      "date": "2026-05-17",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "larapickle",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Emails scheduling timing",
+        "Emails scheduling timing"
+      ]
+    },
+    {
+      "id": "08a0bf8f-ede6-4a6b-af87-43d87667fa0d",
+      "created_at": "2026-05-14T19:16:41.942118+00:00",
+      "date": "2026-05-17",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "larapickle",
+      "mistakes": [
+        "WebinarJam Slides & Copywriting + Landing page link (ex. inapplicable urgency discounts)"
+      ]
+    },
+    {
+      "id": "bdb6333c-5fd2-4275-8a43-ecf981b7cd0e",
+      "created_at": "2026-05-12T19:12:49.358259+00:00",
+      "date": "2026-05-13",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "olga.koelsch",
+      "mistakes": [
+        "Webinar POST delivered after deadline (If delivered after deadline , rating is automatically 3/5 or lower)"
+      ]
+    },
+    {
+      "id": "a50c7006-3b34-4d8a-afba-7c1d22a85f94",
+      "created_at": "2026-05-12T14:59:42.528768+00:00",
+      "date": "2026-05-13",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "colouring_the_rainbow",
+      "mistakes": [
+        "Page or Email not finished, missing content, or email fully missing",
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)"
+      ]
+    },
+    {
+      "id": "f845146a-3729-4979-b1a3-7b256d77621f",
+      "created_at": "2026-05-12T15:02:29.327213+00:00",
+      "date": "2026-05-12",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "alemanicia",
+      "mistakes": [
+        "Prices (follows the requested amount from the Account Manager)",
+        "Prices (follows the requested amount from the Account Manager)"
+      ]
+    },
+    {
+      "id": "2bd78a11-1778-42c4-bb83-62c86d01b272",
+      "created_at": "2026-04-29T13:56:28.664296+00:00",
+      "date": "2026-04-30",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "c.austinart",
+      "mistakes": [
+        "Poor syntax & difficulty understanding copy components [On pages and emails]",
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)"
+      ]
+    },
+    {
+      "id": "cc083a3d-a1b9-42a2-8058-a634ef7b48b9",
+      "created_at": "2026-04-28T21:49:10.668419+00:00",
+      "date": "2026-04-28",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "rpancoast_art",
+      "mistakes": [
+        "Page Distribution"
+      ]
+    },
+    {
+      "id": "cde4b6cd-3162-4a79-bab3-95893192ebe8",
+      "created_at": "2026-04-29T10:44:00.037059+00:00",
+      "date": "2026-04-27",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "tammykayeart",
+      "mistakes": [
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)"
+      ]
+    },
+    {
+      "id": "8221c3fc-fa98-45fd-be84-8b8665855e8c",
+      "created_at": "2026-04-28T17:19:51.733225+00:00",
+      "date": "2026-04-26",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "speakviking",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "ff028150-d32a-4925-b5d5-829bcb2d0b56",
+      "created_at": "2026-04-29T10:43:31.407114+00:00",
+      "date": "2026-04-25",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "whoisjillea",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "69ee75e6-c79f-46df-b0d6-164c5b46afa5",
+      "created_at": "2026-04-28T21:48:30.747693+00:00",
+      "date": "2026-04-23",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "kandaem",
+      "mistakes": [
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "87b3ca9d-2f40-4078-9fba-8872e4dcaed8",
+      "created_at": "2026-04-29T13:55:41.476694+00:00",
+      "date": "2026-04-23",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "c.austinart",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)",
+        "Poor syntax & difficulty understanding copy components [On pages and emails]"
+      ]
+    },
+    {
+      "id": "b8baf860-73fd-4f7f-9be8-a60c4f97d9bc",
+      "created_at": "2026-04-28T17:19:16.315287+00:00",
+      "date": "2026-04-23",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Mobile version (all content must be coherent with Desktop version)"
+      ]
+    },
+    {
+      "id": "a4090d0f-795e-46e5-81da-07e417310401",
+      "created_at": "2026-04-29T13:37:04.833714+00:00",
+      "date": "2026-04-23",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "thespicydonut",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)",
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "017006a9-fc2e-4c7d-b15f-d780fc134b2a",
+      "created_at": "2026-04-29T13:35:42.052847+00:00",
+      "date": "2026-04-22",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "Pergliamicibarto",
+      "mistakes": [
+        "Page Distribution",
+        "Prices (follows the requested amount from the Account Manager)",
+        "WebinarJam Slides & Copywriting + Landing page link (ex. inapplicable urgency discounts)"
+      ]
+    },
+    {
+      "id": "0bea6493-8228-4ae8-b361-878f57e3390c",
+      "created_at": "2026-04-21T12:30:44.662147+00:00",
+      "date": "2026-04-22",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "angiebryantart",
+      "mistakes": [
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)",
+        "Emails scheduling timing"
+      ]
+    },
+    {
+      "id": "28dbfbc2-468c-42b3-af92-d7e4f414e9fb",
+      "created_at": "2026-04-29T13:54:53.615446+00:00",
+      "date": "2026-04-21",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "Lithuanian with Marta",
+      "mistakes": [
+        "CTA links within email banner images leading to incorrect pages"
+      ]
+    },
+    {
+      "id": "38697303-9d8f-4b5a-bb77-b8cb76ef596c",
+      "created_at": "2026-04-29T10:43:00.744181+00:00",
+      "date": "2026-04-21",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "Orensje",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "Page or Email not finished, missing content, or email fully missing"
+      ]
+    },
+    {
+      "id": "1a3feed2-11fa-4dc3-95fd-32234ee058d2",
+      "created_at": "2026-04-29T13:33:41.337229+00:00",
+      "date": "2026-04-18",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "sicilian_with_ilaria",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "db819cc3-a755-4138-b296-246e19f76a38",
+      "created_at": "2026-04-29T13:32:55.820759+00:00",
+      "date": "2026-04-15",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "italienisch_mit_clara",
+      "mistakes": [
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)"
+      ]
+    },
+    {
+      "id": "fe4725a5-9fdb-41cc-8d60-03845e6045e0",
+      "created_at": "2026-04-28T17:18:41.553202+00:00",
+      "date": "2026-04-14",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "rodgontheartist",
+      "mistakes": [
+        "CTA links within email banner images leading to incorrect pages"
+      ]
+    },
+    {
+      "id": "5283ceb6-190b-40f7-b5e5-8ceb69bec38d",
+      "created_at": "2026-04-21T12:29:13.009427+00:00",
+      "date": "2026-04-14",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "rpancoast_art",
+      "mistakes": [
+        "Emails scheduling timing"
+      ]
+    },
+    {
+      "id": "cdf54255-c88d-4fd5-9758-9ab3918bfa78",
+      "created_at": "2026-04-29T10:42:12.376259+00:00",
+      "date": "2026-04-13",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "tammykayeart",
+      "mistakes": [
+        "Poor syntax & difficulty understanding copy components [On pages and emails]"
+      ]
+    },
+    {
+      "id": "63f58ed6-c434-424c-8c51-71e2f061cde3",
+      "created_at": "2026-04-29T13:32:33.874672+00:00",
+      "date": "2026-04-11",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "mielzy.png",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "a6e4b5bc-187b-4fdd-85dd-4097baa0e42a",
+      "created_at": "2026-04-28T21:47:39.968505+00:00",
+      "date": "2026-04-09",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "WebinarJam Slides & Copywriting + Landing page link (ex. inapplicable urgency discounts)"
+      ]
+    },
+    {
+      "id": "5fb5262d-5eb7-41e0-b69e-54123f6298c2",
+      "created_at": "2026-04-28T17:18:14.756175+00:00",
+      "date": "2026-04-09",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "kandaem",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "2302ffe3-3429-4f64-a9ab-479c5d34f645",
+      "created_at": "2026-04-21T12:28:15.266385+00:00",
+      "date": "2026-04-09",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "spanskmedfrancisca",
+      "mistakes": [
+        "Timezones (Adding EST instead of EDT)"
+      ]
+    },
+    {
+      "id": "8c5904f0-0be7-4ade-87fc-0bb46ef90291",
+      "created_at": "2026-04-28T21:46:04.626873+00:00",
+      "date": "2026-04-09",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)",
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "bc41e8af-b3d7-4c28-a2f1-fc9360904abe",
+      "created_at": "2026-04-28T21:45:01.273929+00:00",
+      "date": "2026-04-08",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "mrmattzan",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "3b3dd1dd-b992-4f3b-bda4-0420eada2c66",
+      "created_at": "2026-04-21T12:27:39.672489+00:00",
+      "date": "2026-04-08",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "olga.koelsch",
+      "mistakes": [
+        "Emails scheduling timing"
+      ]
+    },
+    {
+      "id": "7c3fe4f9-3553-468c-82ff-90af4eed3497",
+      "created_at": "2026-04-29T13:31:28.510796+00:00",
+      "date": "2026-04-08",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "erick.centeno",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "001b2ce8-6677-423f-bf92-2f9c9ef4f59c",
+      "created_at": "2026-04-21T12:26:59.593728+00:00",
+      "date": "2026-04-07",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "benxartist",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "51347397-58e4-4ebc-8c0c-683879596019",
+      "created_at": "2026-04-21T12:26:13.705036+00:00",
+      "date": "2026-04-07",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "rpancoast_art",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "84a37d11-9542-4bd9-9cb7-507e7ca9c81a",
+      "created_at": "2026-04-28T17:17:29.506937+00:00",
+      "date": "2026-04-07",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "Excel met Jochem",
+      "mistakes": [
+        "Checkout (correct offer linked, Card disclaimer text correct)"
+      ]
+    },
+    {
+      "id": "ee09a5ba-9a43-4ba1-9393-a5749bf7a7d9",
+      "created_at": "2026-04-29T13:30:45.998382+00:00",
+      "date": "2026-04-02",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "estonianwithgrete",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails",
+        "Prices (follows the requested amount from the Account Manager)",
+        "Mobile version (all content must be coherent with Desktop version)"
+      ]
+    },
+    {
+      "id": "28f3dc4f-2968-4b09-a695-e51937256358",
+      "created_at": "2026-04-29T13:53:36.232687+00:00",
+      "date": "2026-04-01",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "erick.centeno",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)",
+        "Urgency/Scarcity narrative incorrectly used in pages and emails"
+      ]
+    },
+    {
+      "id": "e6e770c6-9c7d-46e6-9e4c-cbb66b30e50d",
+      "created_at": "2026-04-29T13:52:33.797494+00:00",
+      "date": "2026-03-31",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "magyarize_com",
+      "mistakes": [
+        "Poor syntax & difficulty understanding copy components [On pages and emails]",
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "6f77cb3f-42a1-4a55-bf92-19e5ba6fb60c",
+      "created_at": "2026-04-29T10:41:34.380388+00:00",
+      "date": "2026-03-31",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "anniwoodeco",
+      "mistakes": [
+        "Mobile version (all content must be coherent with Desktop version)",
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "9ad7fff2-28d1-40db-ac6a-14f8e41d5488",
+      "created_at": "2026-04-29T13:28:36.87958+00:00",
+      "date": "2026-03-30",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "japanischmitceline",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "6c280fdb-1bed-4e9a-bf8e-01339dd22181",
+      "created_at": "2026-04-28T17:16:50.373706+00:00",
+      "date": "2026-03-28",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "foodillustration.studio",
+      "mistakes": [
+        "Emails scheduling timing"
+      ]
+    },
+    {
+      "id": "84529ddc-c66b-494b-a27b-f4948ed3f69c",
+      "created_at": "2026-04-29T13:50:50.909491+00:00",
+      "date": "2026-03-27",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "sylviecorreia_prof",
+      "mistakes": [
+        "Video settings (fully missing or partially missing)",
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "baf15658-47d7-40de-8fe8-159db69723ae",
+      "created_at": "2026-04-21T12:24:28.848283+00:00",
+      "date": "2026-03-27",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "pangurban_",
+      "mistakes": [
+        "Timing of the event incorrectly inputted into Webjam"
+      ]
+    },
+    {
+      "id": "aaf4e299-6983-45a2-858a-598b34f1cd4a",
+      "created_at": "2026-04-29T13:50:00.702801+00:00",
+      "date": "2026-03-27",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "sicilian_with_ilaria",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "8d79f4ae-71a2-45ec-8785-44ad35aa0fdc",
+      "created_at": "2026-04-28T17:16:03.782471+00:00",
+      "date": "2026-03-27",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "pencyleando",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "0bc5d38f-1fb0-4ac9-88e7-14e570123f43",
+      "created_at": "2026-04-21T12:23:06.982061+00:00",
+      "date": "2026-03-26",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "alemanicia",
+      "mistakes": [
+        "Using COLD offers/pages in an ORG webinar | Or mixing COLD A and B (counts as 1 yellow mistake)",
+        "CTA links within email banner images leading to incorrect pages"
+      ]
+    },
+    {
+      "id": "8ec33a43-bb5b-4073-9707-35f5a2ee6f7f",
+      "created_at": "2026-04-21T12:22:00.599502+00:00",
+      "date": "2026-03-26",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "alemanicia",
+      "mistakes": [
+        "Page or Email not finished, missing content, or email fully missing",
+        "Mobile version (all content must be coherent with Desktop version)",
+        "Incorrect Upsells being sold instead of requested ones"
+      ]
+    },
+    {
+      "id": "050ccb96-7ae7-4826-9c5d-1c5a8612a8ab",
+      "created_at": "2026-04-21T12:20:42.558767+00:00",
+      "date": "2026-03-26",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "akangshaspalette",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Page or Email not finished, missing content, or email fully missing",
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)"
+      ]
+    },
+    {
+      "id": "cf266fa7-7596-4770-80bb-21b52f1d2e2c",
+      "created_at": "2026-04-28T17:09:09.436373+00:00",
+      "date": "2026-03-26",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "speakviking",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "Emails and landing pages should not present seasonal narrative"
+      ]
+    },
+    {
+      "id": "3837c95d-9cd3-44ed-8798-b33efdd6925b",
+      "created_at": "2026-04-28T17:07:22.012708+00:00",
+      "date": "2026-03-25",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "angiebryantart",
+      "mistakes": [
+        "Emails scheduling timing"
+      ]
+    },
+    {
+      "id": "896e5246-2eb8-406b-aa7b-f3e082b25742",
+      "created_at": "2026-04-29T10:39:59.456462+00:00",
+      "date": "2026-03-25",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "katfishdraws",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "b91e5a8d-57fd-451e-b70a-d9ea39bd380c",
+      "created_at": "2026-04-29T13:44:58.302575+00:00",
+      "date": "2026-03-24",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "adamrichesart",
+      "mistakes": [
+        "Incorrect currency used in landing pages and emails"
+      ]
+    },
+    {
+      "id": "d3ac8fc4-91a3-4958-9ff0-4a8f996d7c68",
+      "created_at": "2026-04-29T13:27:20.969894+00:00",
+      "date": "2026-03-24",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "elvira.engleskijezik",
+      "mistakes": [
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)",
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "388fa4d2-2406-4a89-be4c-cecaecd3fb7d",
+      "created_at": "2026-04-29T13:28:10.304053+00:00",
+      "date": "2026-03-24",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "themightierpencil",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "20dbf380-14bb-4dc7-a3be-00372c4b279a",
+      "created_at": "2026-04-21T12:18:54.841026+00:00",
+      "date": "2026-03-24",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "benxartist",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "f0870fd1-b529-4e46-aee2-0c442b1606fd",
+      "created_at": "2026-04-28T17:06:51.497718+00:00",
+      "date": "2026-03-24",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "rpancoast_art",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "aaf042f3-1776-45e3-b4f7-bcfa95bbb7ec",
+      "created_at": "2026-04-29T10:39:13.52575+00:00",
+      "date": "2026-03-24",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "norvegia_nel_cuore",
+      "mistakes": [
+        "Page or Email not finished, missing content, or email fully missing"
+      ]
+    },
+    {
+      "id": "cfd02e26-b5e1-4ca6-bc24-d55a543026ff",
+      "created_at": "2026-04-28T21:44:16.207267+00:00",
+      "date": "2026-03-23",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "carliannecreates",
+      "mistakes": [
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "39612bd9-1803-44cc-b6ae-281f7ebd8765",
+      "created_at": "2026-04-29T13:44:08.42708+00:00",
+      "date": "2026-03-20",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "englishwithmartina",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "125dd2a4-4bbd-4fcf-b739-7c882729bc58",
+      "created_at": "2026-04-28T21:43:35.639696+00:00",
+      "date": "2026-03-20",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "pencyleando",
+      "mistakes": [
+        "Discounted amounts depicted incorrectly (ex. $100 off instead of $50)"
+      ]
+    },
+    {
+      "id": "0a06eca6-582c-4a02-96b5-1e08c26bd4e8",
+      "created_at": "2026-04-21T12:14:44.388796+00:00",
+      "date": "2026-03-19",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "zeidsalfitiart",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)",
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "b0a7ed91-79db-4cdc-a355-d4511ccf60a9",
+      "created_at": "2026-04-29T10:24:34.522515+00:00",
+      "date": "2026-03-19",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "spanskmedfrancisca",
+      "mistakes": [
+        "Page or Email not finished, missing content, or email fully missing"
+      ]
+    },
+    {
+      "id": "ca2fd388-a303-4999-bc56-494e7306af67",
+      "created_at": "2026-04-29T13:42:47.361711+00:00",
+      "date": "2026-03-19",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "arabo_semplicemente",
+      "mistakes": [
+        "Urgency/Scarcity narrative incorrectly used in pages and emails",
+        "Mobile version (all content must be coherent with Desktop version)",
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "3ae380ca-fbb1-4108-942e-2fb46bc98836",
+      "created_at": "2026-04-29T10:38:15.701364+00:00",
+      "date": "2026-03-19",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "whoisjillea",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Emails and landing pages should not present seasonal narrative"
+      ]
+    },
+    {
+      "id": "a33de8c1-218a-41fc-90b0-a7eb29c29718",
+      "created_at": "2026-04-29T13:41:32.673103+00:00",
+      "date": "2026-03-19",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "limba.turca.cu.iulia",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "54984c22-a67b-42d4-9527-46141e49eb1e",
+      "created_at": "2026-04-29T13:43:30.244937+00:00",
+      "date": "2026-03-19",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "arabo_semplicemente",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)"
+      ]
+    },
+    {
+      "id": "54cc6e14-bb79-4577-bd3c-2da72fdfae4a",
+      "created_at": "2026-04-21T12:16:49.101828+00:00",
+      "date": "2026-03-19",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "alemanicia",
+      "mistakes": [
+        "CTA links within email banner images leading to incorrect pages",
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)"
+      ]
+    },
+    {
+      "id": "ddc5725d-af1a-4ba0-8e59-5e290d4aeace",
+      "created_at": "2026-04-21T12:07:15.286816+00:00",
+      "date": "2026-03-18",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "agatadelbarco",
+      "mistakes": [
+        "Page or Email not finished, missing content, or email fully missing"
+      ]
+    },
+    {
+      "id": "3addc9c1-8eef-4ee3-b5aa-7b66166e462e",
+      "created_at": "2026-04-21T12:08:49.967763+00:00",
+      "date": "2026-03-18",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "paulcombs_artist",
+      "mistakes": [
+        "Page Distribution"
+      ]
+    },
+    {
+      "id": "1b893dc1-eb56-4e31-b36f-4cf3628cd603",
+      "created_at": "2026-04-21T12:12:48.771078+00:00",
+      "date": "2026-03-18",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "angiebryantart",
+      "mistakes": [
+        "WebinarJam Slides & Copywriting + Landing page link (ex. inapplicable urgency discounts)",
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)"
+      ]
+    },
+    {
+      "id": "d2b9bb73-e2c6-479b-bfd2-fdf25b9376ed",
+      "created_at": "2026-04-28T17:03:21.574861+00:00",
+      "date": "2026-03-18",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "rodgontheartist",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "9912f038-6eb1-4bab-bb44-c3b3525c7e0c",
+      "created_at": "2026-04-28T17:04:43.671279+00:00",
+      "date": "2026-03-18",
+      "planet": "Saturn",
+      "specialist": "Luiz",
+      "creator": "trytryagain_",
+      "mistakes": [
+        "First Quadrant (Header: no spaces, correctly positioned and aligned)",
+        "Emails and landing pages should not present seasonal narrative"
+      ]
+    },
+    {
+      "id": "ef9c6fbe-79b9-4a93-917b-034609ce6023",
+      "created_at": "2026-04-28T21:42:43.428763+00:00",
+      "date": "2026-03-18",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "Rabbit_rivulet",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Poor syntax & difficulty understanding copy components [On pages and emails]"
+      ]
+    },
+    {
+      "id": "c668ac55-335d-4c91-ac04-440666cca7ae",
+      "created_at": "2026-04-29T10:37:25.079258+00:00",
+      "date": "2026-03-18",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "jennummi",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "02f2b3d5-a25e-4fc2-bbea-fb976f3cf3ea",
+      "created_at": "2026-04-29T10:24:01.806447+00:00",
+      "date": "2026-03-17",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "benxartist",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "URLs (short/direct), page external title & Page speed -> No marketing terms, avoid capital letters"
+      ]
+    },
+    {
+      "id": "c9b9fc16-fd0d-4b48-b1b4-aa8fbaf29930",
+      "created_at": "2026-04-29T10:31:04.515916+00:00",
+      "date": "2026-03-17",
+      "planet": "Saturn",
+      "specialist": "Danielle Q",
+      "creator": "rpancoast_art",
+      "mistakes": [
+        "Emails scheduling timing"
+      ]
+    },
+    {
+      "id": "97463442-aad0-4754-be08-e05789c4beb8",
+      "created_at": "2026-04-29T13:40:58.058659+00:00",
+      "date": "2026-03-17",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "iristinunin",
+      "mistakes": [
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)"
+      ]
+    },
+    {
+      "id": "5faddb19-f8ff-41bc-b716-7a1b37cb5347",
+      "created_at": "2026-04-28T17:55:22.163569+00:00",
+      "date": "2026-03-17",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "mrmattzan",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "8e6d101c-6d13-4c3a-819e-3154f0d0d213",
+      "created_at": "2026-04-29T10:57:40.184595+00:00",
+      "date": "2026-03-16",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "arabo_semplicemente",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)"
+      ]
+    },
+    {
+      "id": "18482e35-a307-48a6-ad5d-8bb995d6b96e",
+      "created_at": "2026-04-29T10:30:43.416888+00:00",
+      "date": "2026-03-15",
+      "planet": "Saturn",
+      "specialist": "Danielle Q",
+      "creator": "foodillustration.studio",
+      "mistakes": [
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "e5021012-a5a8-4768-8447-6c4367d24ebf",
+      "created_at": "2026-04-29T10:55:56.21359+00:00",
+      "date": "2026-03-13",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "englishwithmartina",
+      "mistakes": [
+        "Mobile version (all content must be coherent with Desktop version)",
+        "Poor syntax & difficulty understanding copy components [On pages and emails]",
+        "Incorrect currency used in landing pages and emails"
+      ]
+    },
+    {
+      "id": "ab83d5bd-f9e7-4ff2-a550-6f00a85618c8",
+      "created_at": "2026-04-29T10:57:11.309286+00:00",
+      "date": "2026-03-13",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "englishwithmartina",
+      "mistakes": [
+        "Poor syntax & difficulty understanding copy components [On pages and emails]"
+      ]
+    },
+    {
+      "id": "0fde25f6-22cd-4871-99c1-f6bd9c50b905",
+      "created_at": "2026-04-29T13:26:28.03047+00:00",
+      "date": "2026-03-12",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "ukrainianwithmykola",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails",
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "cd0e310d-7ff3-4c7f-aeeb-170e41fe91c0",
+      "created_at": "2026-04-21T12:06:21.85018+00:00",
+      "date": "2026-03-12",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "17464579-e6ad-4866-aa84-4b24fc1ddd50",
+      "created_at": "2026-04-29T10:23:29.797901+00:00",
+      "date": "2026-03-12",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "spanskmedfrancisca",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "eb2afcf3-f3c3-4274-bdc7-bdb4ebe3d1e1",
+      "created_at": "2026-04-21T12:04:52.4277+00:00",
+      "date": "2026-03-12",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)"
+      ]
+    },
+    {
+      "id": "5facec94-73b1-461b-9705-3b2675cb94b9",
+      "created_at": "2026-04-21T12:03:52.941829+00:00",
+      "date": "2026-03-12",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Discounted amounts depicted incorrectly (ex. $100 off instead of $50)",
+        "Page Distribution",
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "9f2a3278-08c1-425a-af82-0e003aa5077d",
+      "created_at": "2026-04-29T13:40:37.797294+00:00",
+      "date": "2026-03-12",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "sylviecorreia_prof",
+      "mistakes": [
+        "Checkout (correct offer linked, Card disclaimer text correct)"
+      ]
+    },
+    {
+      "id": "bf979332-65e8-4570-a485-b4db529a4f5b",
+      "created_at": "2026-04-29T10:23:06.521193+00:00",
+      "date": "2026-03-11",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "agatadelbarco",
+      "mistakes": [
+        "Checkout (correct offer linked, Card disclaimer text correct)"
+      ]
+    },
+    {
+      "id": "24c353cf-d526-4d19-bf7d-4404c1be9036",
+      "created_at": "2026-04-29T10:22:43.177685+00:00",
+      "date": "2026-03-11",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "rodgontheartist",
+      "mistakes": [
+        "Checkout (correct offer linked, Card disclaimer text correct)"
+      ]
+    },
+    {
+      "id": "414b8fa6-8e5c-40d7-aa31-2c5c0a64c84f",
+      "created_at": "2026-04-21T12:03:11.396742+00:00",
+      "date": "2026-03-11",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "Rabbit_rivulet",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Timezones (Adding EST instead of EDT)",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "22760ec4-e50c-4ec1-a046-50e19d8566c7",
+      "created_at": "2026-04-21T12:02:01.770631+00:00",
+      "date": "2026-03-11",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "paulcombs_artist",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Timezones (Adding EST instead of EDT)"
+      ]
+    },
+    {
+      "id": "a8c2cec5-c9d6-4b06-b931-dcf42569dbcd",
+      "created_at": "2026-04-29T10:29:43.874761+00:00",
+      "date": "2026-03-10",
+      "planet": "Saturn",
+      "specialist": "Danielle Q",
+      "creator": "rpancoast_art",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "55faf5c8-f6b8-4f8b-b8de-4a78fbc9b0c7",
+      "created_at": "2026-04-29T10:30:17.582446+00:00",
+      "date": "2026-03-10",
+      "planet": "Saturn",
+      "specialist": "Danielle Q",
+      "creator": "Excel met Jochem",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)",
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "b18f32e3-1c2e-4c1e-b22e-5cbf7931e9b5",
+      "created_at": "2026-04-29T10:22:04.770854+00:00",
+      "date": "2026-03-10",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "benxartist",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "4c1a5c59-54ea-45d1-ab6d-aedb7c123457",
+      "created_at": "2026-04-29T11:05:41.299579+00:00",
+      "date": "2026-03-10",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "elvira.engleskijezik",
+      "mistakes": [
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)"
+      ]
+    },
+    {
+      "id": "719a989b-9501-4e13-a220-d7a29f814fd1",
+      "created_at": "2026-04-28T17:54:36.588324+00:00",
+      "date": "2026-03-10",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "mrmattzan",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)"
+      ]
+    },
+    {
+      "id": "a03b60c2-368f-4dcc-9eec-b4024cdb8512",
+      "created_at": "2026-04-28T17:53:29.303988+00:00",
+      "date": "2026-03-09",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "Excel met Jochem",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails",
+        "Checkout (correct offer linked, Card disclaimer text correct)",
+        "CTA links within email banner images leading to incorrect pages"
+      ]
+    },
+    {
+      "id": "1eb8f32e-df31-4996-923f-585c5dbe6de1",
+      "created_at": "2026-04-29T13:25:26.192833+00:00",
+      "date": "2026-03-07",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "mielzy.png",
+      "mistakes": [
+        "Mobile version (all content must be coherent with Desktop version)"
+      ]
+    },
+    {
+      "id": "52078c45-4094-415a-8f65-2832f809a23e",
+      "created_at": "2026-04-29T11:05:01.986791+00:00",
+      "date": "2026-03-06",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "9monkeys",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "bc8baebc-1ce6-4a42-b9de-0f60386fea95",
+      "created_at": "2026-04-28T17:51:35.851004+00:00",
+      "date": "2026-03-05",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "buboosenchan",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Timezones (Adding EST instead of EDT)",
+        "Emails and landing pages should not present seasonal narrative"
+      ]
+    },
+    {
+      "id": "a1328f4a-63c6-42a2-962a-a4db548bc788",
+      "created_at": "2026-04-29T11:03:29.102473+00:00",
+      "date": "2026-03-05",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "italianoconsimone",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "5b73e578-1b22-41a8-8e88-37ab714bf2d1",
+      "created_at": "2026-04-29T11:04:30.414132+00:00",
+      "date": "2026-03-05",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "josetrujilloart",
+      "mistakes": [
+        "Discounted amounts depicted incorrectly (ex. $100 off instead of $50)",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "b225cbf3-d98d-4bea-98c2-b33fbba15b64",
+      "created_at": "2026-04-29T13:39:44.348332+00:00",
+      "date": "2026-03-05",
+      "planet": "Uranus",
+      "specialist": "Candela",
+      "creator": "limba.turca.cu.iulia",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "cd16be47-6f62-4b58-b732-0f904fd6be2e",
+      "created_at": "2026-04-29T10:21:40.635218+00:00",
+      "date": "2026-03-05",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "kandaem",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "e333ea64-2fc7-4b6b-8bf4-d24455e36d96",
+      "created_at": "2026-04-21T12:00:59.676173+00:00",
+      "date": "2026-03-04",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "rodgontheartist",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Checkout (correct offer linked, Card disclaimer text correct)"
+      ]
+    },
+    {
+      "id": "8090c091-3ea9-4fe4-9c53-92f604392176",
+      "created_at": "2026-04-29T10:21:00.063402+00:00",
+      "date": "2026-03-04",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "mrmattzan",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "cf61425b-dadb-4dff-b813-fcc3160189af",
+      "created_at": "2026-04-28T17:49:47.061537+00:00",
+      "date": "2026-03-04",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "agatadelbarco",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "77b8fdd6-03eb-4d26-abfc-ff1319f99a7e",
+      "created_at": "2026-04-29T13:24:28.708836+00:00",
+      "date": "2026-03-04",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "italienisch_mit_clara",
+      "mistakes": [
+        "Urgency/Scarcity narrative incorrectly used in pages and emails"
+      ]
+    },
+    {
+      "id": "bbb782a0-622b-4985-84ec-8a8ab72e4ac3",
+      "created_at": "2026-04-28T17:48:52.01074+00:00",
+      "date": "2026-03-03",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "rpancoast_art",
+      "mistakes": [
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+        "Prices (follows the requested amount from the Account Manager)"
+      ]
+    },
+    {
+      "id": "6db66a1a-2731-4d02-b53b-ce7ef3ce1ddc",
+      "created_at": "2026-04-29T10:29:03.833154+00:00",
+      "date": "2026-03-01",
+      "planet": "Saturn",
+      "specialist": "Danielle Q",
+      "creator": "speakviking",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "4c901ace-62d8-4e78-8bf6-304762da35dd",
+      "created_at": "2026-04-29T10:35:54.203377+00:00",
+      "date": "2026-02-27",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "9monkeys",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "02971636-130d-484b-9c8c-b1631b2be5d5",
+      "created_at": "2026-04-29T10:20:29.060204+00:00",
+      "date": "2026-02-26",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "spanskmedfrancisca",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "Using COLD offers/pages in an ORG webinar | Or mixing COLD A and B (counts as 1 yellow mistake)"
+      ]
+    },
+    {
+      "id": "af014a83-9dc9-4b1f-8860-62b15a39dc8c",
+      "created_at": "2026-04-29T11:03:01.06108+00:00",
+      "date": "2026-02-26",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "Norwegisch mit Ådne",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "6cfd1b2c-ef51-4987-b568-2474ec64404b",
+      "created_at": "2026-04-29T10:28:44.715994+00:00",
+      "date": "2026-02-26",
+      "planet": "Saturn",
+      "specialist": "Danielle Q",
+      "creator": "inmybackyardnz",
+      "mistakes": [
+        "Urgency/Scarcity narrative incorrectly used in pages and emails",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "1bb3bb6a-1615-4fd7-aae5-b8cb524372f9",
+      "created_at": "2026-04-29T10:18:24.73298+00:00",
+      "date": "2026-02-26",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Mobile version (all content must be coherent with Desktop version)",
+        "First Quadrant (Header: no spaces, correctly positioned and aligned)",
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)"
+      ]
+    },
+    {
+      "id": "1bc149de-eaa5-4969-b5f5-078b7b856483",
+      "created_at": "2026-04-29T10:19:50.186834+00:00",
+      "date": "2026-02-26",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "spanskmedfrancisca",
+      "mistakes": [
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "Mobile version (all content must be coherent with Desktop version)"
+      ]
+    },
+    {
+      "id": "0324f0a0-6276-478f-9314-3ae23dff4172",
+      "created_at": "2026-04-28T17:46:09.593382+00:00",
+      "date": "2026-02-25",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "paulcombs_artist",
+      "mistakes": [
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "Mobile version (all content must be coherent with Desktop version)",
+        "CTA links within email banner images leading to incorrect pages"
+      ]
+    },
+    {
+      "id": "b7205474-cb50-4330-af31-23739c0b3625",
+      "created_at": "2026-04-29T13:23:57.738772+00:00",
+      "date": "2026-02-25",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "manicmoth",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "366b01ce-953b-4603-a943-dfec8465b8e1",
+      "created_at": "2026-04-29T13:23:09.998678+00:00",
+      "date": "2026-02-25",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "manicmoth",
+      "mistakes": [
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+        "Incorrect currency used in landing pages and emails",
+        "Video settings (fully missing or partially missing)"
+      ]
+    },
+    {
+      "id": "c7d8371f-7973-4a91-a1c8-c50a8a2b7b5c",
+      "created_at": "2026-04-28T17:47:02.330765+00:00",
+      "date": "2026-02-25",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "paulcombs_artist",
+      "mistakes": [
+        "Checkout (correct offer linked, Card disclaimer text correct)",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "41fb6845-2997-496a-9e9a-3eececabbf26",
+      "created_at": "2026-04-29T10:35:24.494454+00:00",
+      "date": "2026-02-23",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "tammykayeart",
+      "mistakes": [
+        "Emails and landing pages should not present seasonal narrative"
+      ]
+    },
+    {
+      "id": "0bfc67a3-532e-4773-b580-ed5cb6cda46b",
+      "created_at": "2026-04-29T10:54:28.709793+00:00",
+      "date": "2026-02-19",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "josetrujilloart",
+      "mistakes": [
+        "Discounted amounts depicted incorrectly (ex. $100 off instead of $50)",
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)"
+      ]
+    },
+    {
+      "id": "2fa0d934-1960-40ef-a67e-701a6a3e341d",
+      "created_at": "2026-04-29T10:54:51.112035+00:00",
+      "date": "2026-02-19",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "josetrujilloart",
+      "mistakes": [
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "6c82d922-1dda-426a-bcf6-57f08a52490e",
+      "created_at": "2026-04-29T10:59:48.701001+00:00",
+      "date": "2026-02-19",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "c.austinart",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "b7b7cd39-b2b8-497b-9676-7798b2994487",
+      "created_at": "2026-04-29T11:02:10.85026+00:00",
+      "date": "2026-02-19",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "c.austinart",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "16ed3be5-5d55-4615-af47-f9972a663d45",
+      "created_at": "2026-04-28T17:43:40.605671+00:00",
+      "date": "2026-02-17",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "benxartist",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Mobile version (all content must be coherent with Desktop version)",
+        "Page or Email not finished, missing content, or email fully missing"
+      ]
+    },
+    {
+      "id": "181be717-85b2-41ab-956c-28e280380fa9",
+      "created_at": "2026-04-21T11:59:47.310504+00:00",
+      "date": "2026-02-17",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "colouring_the_rainbow",
+      "mistakes": [
+        "Checkout (correct offer linked, Card disclaimer text correct)",
+        "Page or Email not finished, missing content, or email fully missing",
+        "Prices (follows the requested amount from the Account Manager)"
+      ]
+    },
+    {
+      "id": "eda364ec-9ca0-491d-8eb8-ab169d90851f",
+      "created_at": "2026-04-21T11:58:32.399867+00:00",
+      "date": "2026-02-17",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "colouring_the_rainbow",
+      "mistakes": [
+        "Emails with banner images presenting a different course or topic",
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)"
+      ]
+    },
+    {
+      "id": "3b329401-1e7c-41be-b873-7674e8b85f65",
+      "created_at": "2026-04-29T10:53:08.315529+00:00",
+      "date": "2026-02-16",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "japanischmitceline",
+      "mistakes": [
+        "Page or Email not finished, missing content, or email fully missing",
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)"
+      ]
+    },
+    {
+      "id": "63b0c29d-64a6-4b1f-a856-985f0f7ac10d",
+      "created_at": "2026-04-21T11:53:02.908008+00:00",
+      "date": "2026-02-12",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "paulcombs_artist",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)"
+      ]
+    },
+    {
+      "id": "2e02835f-4342-49c6-9462-058471618efd",
+      "created_at": "2026-04-29T10:51:58.902877+00:00",
+      "date": "2026-02-12",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "c.austinart",
+      "mistakes": [
+        "Poor syntax & difficulty understanding copy components [On pages and emails]",
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+        "Page or Email not finished, missing content, or email fully missing"
+      ]
+    },
+    {
+      "id": "7485e80a-4010-4389-98de-5ea33aa28bd2",
+      "created_at": "2026-04-28T17:41:00.728682+00:00",
+      "date": "2026-02-11",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "spanskmedfrancisca",
+      "mistakes": [
+        "Countdowns & closing dates in Emails and Landing pages (must be accurate)",
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+        "Mobile version (all content must be coherent with Desktop version)"
+      ]
+    },
+    {
+      "id": "b5a63511-3551-4abc-8763-96e5d3f4b93d",
+      "created_at": "2026-04-29T10:27:18.788731+00:00",
+      "date": "2026-02-11",
+      "planet": "Saturn",
+      "specialist": "Danielle Q",
+      "creator": "spanskmedfrancisca",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "f65bf053-955c-40c5-af25-2cac6c0a1a73",
+      "created_at": "2026-04-29T10:26:28.817061+00:00",
+      "date": "2026-02-11",
+      "planet": "Saturn",
+      "specialist": "Danielle Q",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)",
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "7bc66e00-b64f-4554-9362-ec3354020316",
+      "created_at": "2026-04-28T17:41:29.725152+00:00",
+      "date": "2026-02-11",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "spanskmedfrancisca",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)"
+      ]
+    },
+    {
+      "id": "0bbaf380-ba0e-4def-a7a4-2d004647dcac",
+      "created_at": "2026-04-29T10:49:49.095067+00:00",
+      "date": "2026-02-09",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "japanischmitceline",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "e2ea2237-03dc-404a-a928-4b8bd8f5e92e",
+      "created_at": "2026-04-29T10:34:33.855503+00:00",
+      "date": "2026-02-09",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "tammykayeart",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)",
+        "Emails with banner images presenting a different course or topic"
+      ]
+    },
+    {
+      "id": "e5ef762d-0758-4205-90cc-15b65ad81c8e",
+      "created_at": "2026-04-29T13:22:02.608421+00:00",
+      "date": "2026-02-05",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "italianoconsimone",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "a9b68591-4aa7-4a00-b665-3c310cafad56",
+      "created_at": "2026-04-29T13:21:15.753515+00:00",
+      "date": "2026-02-05",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "italianoconsimone",
+      "mistakes": [
+        "First Quadrant (Header: no spaces, correctly positioned and aligned)",
+        "Incorrect currency used in landing pages and emails",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "4863ac99-e201-4231-b98c-70716be16bba",
+      "created_at": "2026-04-29T13:19:17.80515+00:00",
+      "date": "2026-02-05",
+      "planet": "Uranus",
+      "specialist": "KC",
+      "creator": "italienisch_mit_clara",
+      "mistakes": [
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)"
+      ]
+    },
+    {
+      "id": "3754c80a-341a-426e-86db-b46f7cfa6962",
+      "created_at": "2026-04-29T10:33:45.095968+00:00",
+      "date": "2026-02-05",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "tammykayeart",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers"
+      ]
+    },
+    {
+      "id": "b3f9d45a-c39e-4c2e-9748-2a6d349a1e62",
+      "created_at": "2026-04-29T10:47:43.423055+00:00",
+      "date": "2026-02-05",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "Norwegisch mit Ådne",
+      "mistakes": [
+        "Emails scheduling timing"
+      ]
+    },
+    {
+      "id": "caa4060d-978c-4c47-ace7-5e32696588bc",
+      "created_at": "2026-04-29T10:48:59.365764+00:00",
+      "date": "2026-02-05",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "josetrujilloart",
+      "mistakes": [
+        "Discounted amounts depicted incorrectly (ex. $100 off instead of $50)",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "fc0a232d-8b19-4cb6-8a97-2a87b72b9eeb",
+      "created_at": "2026-04-29T11:01:32.902409+00:00",
+      "date": "2026-02-05",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "italianoconlaura",
+      "mistakes": [
+        "Poor syntax & difficulty understanding copy components [On pages and emails]",
+        "Video settings (fully missing or partially missing)"
+      ]
+    },
+    {
+      "id": "4605d07b-2e19-4560-bf6d-f8e31bca7754",
+      "created_at": "2026-04-28T17:39:10.83629+00:00",
+      "date": "2026-02-03",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "colouring_the_rainbow",
+      "mistakes": [
+        "Emails with banner images presenting a different course or topic",
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "2fca5a88-9593-4eed-9f51-055971d0cf4e",
+      "created_at": "2026-04-29T11:00:45.004511+00:00",
+      "date": "2026-01-30",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "9monkeys",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages"
+      ]
+    },
+    {
+      "id": "ca7ca826-2fcf-46ab-9944-ed8f3ec9bec9",
+      "created_at": "2026-04-29T10:46:58.322941+00:00",
+      "date": "2026-01-29",
+      "planet": "Uranus",
+      "specialist": "Mafe",
+      "creator": "josetrujilloart",
+      "mistakes": [
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "04c1c9cd-e778-48ad-b60c-06ed8bfb3aaf",
+      "created_at": "2026-04-29T10:59:17.731655+00:00",
+      "date": "2026-01-29",
+      "planet": "Uranus",
+      "specialist": "Andres P",
+      "creator": "Norwegisch mit Ådne",
+      "mistakes": [
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "cd6ee77b-b98f-4af5-96fe-adc64bea65af",
+      "created_at": "2026-04-29T10:33:00.531444+00:00",
+      "date": "2026-01-29",
+      "planet": "Uranus",
+      "specialist": "Danielle Q",
+      "creator": "italienisch_mit_clara",
+      "mistakes": [
+        "Spelling mistakes in the landing pages and Emails"
+      ]
+    },
+    {
+      "id": "b8e4d7fb-9351-4054-86ca-c34622eff612",
+      "created_at": "2026-04-29T10:17:44.574714+00:00",
+      "date": "2026-01-29",
+      "planet": "Saturn",
+      "specialist": "KC",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)"
+      ]
+    },
+    {
+      "id": "3ff33ce8-e357-4b83-914f-112a563b1ca1",
+      "created_at": "2026-04-28T17:30:09.283463+00:00",
+      "date": "2026-01-08",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Mobile version (all content must be coherent with Desktop version)",
+        "Checkout (correct offer linked, Card disclaimer text correct)"
+      ]
+    },
+    {
+      "id": "37328bb8-e5a2-4ea3-bcf2-9aea547d234e",
+      "created_at": "2026-04-28T17:33:39.482773+00:00",
+      "date": "2025-12-29",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Poor syntax & difficulty understanding copy components [On pages and emails]",
+        "First Quadrant (Header: no spaces, correctly positioned and aligned)",
+        "Mobile version (all content must be coherent with Desktop version)"
+      ]
+    },
+    {
+      "id": "26104f7b-2888-48b4-a3a8-ebfafe0045ef",
+      "created_at": "2026-04-28T17:37:36.172598+00:00",
+      "date": "2025-12-29",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)",
+        "Mobile version (all content must be coherent with Desktop version)",
+        "Footer (terms and conditions, privacy & policy, copyright, and no faq)"
+      ]
+    },
+    {
+      "id": "52c7a850-97dc-4eba-b36f-87c7652e3223",
+      "created_at": "2026-04-28T17:36:15.706115+00:00",
+      "date": "2025-12-29",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Checkout (correct offer linked, Card disclaimer text correct)",
+        "Urgency/Scarcity narrative incorrectly used in pages and emails",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "97dadc5e-6ac0-404e-aac8-dd6540862ac3",
+      "created_at": "2026-04-28T17:31:28.440066+00:00",
+      "date": "2025-12-18",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "monetincelle",
+      "mistakes": [
+        "Prices (follows the requested amount from the Account Manager)",
+        "Incorrect currency used in landing pages and emails"
+      ]
+    },
+    {
+      "id": "399e94ef-639d-4a23-98da-90673536267b",
+      "created_at": "2026-04-21T11:51:49.611962+00:00",
+      "date": "2025-12-16",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "colouring_the_rainbow",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+        "Checkout (correct offer linked, Card disclaimer text correct)"
+      ]
+    },
+    {
+      "id": "b0ce417d-4f7f-4a9a-85fe-cdfbb6347728",
+      "created_at": "2026-04-21T11:49:56.813587+00:00",
+      "date": "2025-12-12",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "krauserdhm",
+      "mistakes": [
+        "Emails with banner images presenting a different course or topic",
+        "Using COLD offers/pages in an ORG webinar | Or mixing COLD A and B (counts as 1 yellow mistake)",
+        "First Quadrant (Header: no spaces, correctly positioned and aligned)"
+      ]
+    },
+    {
+      "id": "5b6faf64-b95e-4693-a51a-a9b63e1588f8",
+      "created_at": "2026-04-21T11:48:11.254677+00:00",
+      "date": "2025-12-11",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "foodillustration.studio",
+      "mistakes": [
+        "Timezones (Adding EST instead of EDT)",
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)"
+      ]
+    },
+    {
+      "id": "817239a0-46a8-4663-a522-b939af34248a",
+      "created_at": "2026-04-28T17:29:02.627699+00:00",
+      "date": "2025-12-04",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "mahoney_artworks",
+      "mistakes": [
+        "Discounted amounts depicted incorrectly (ex. $100 off instead of $50)"
+      ]
+    },
+    {
+      "id": "b65a57d4-56f1-4c4f-9e3e-1fc7ee7c459a",
+      "created_at": "2026-04-28T17:27:39.06308+00:00",
+      "date": "2025-11-25",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "caleb_arredondo_",
+      "mistakes": [
+        "Spelling mistakes on the FAQ Section of Sales pages",
+        "Incorrect currency used in landing pages and emails",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    },
+    {
+      "id": "d1523be1-6ec0-4a10-9cbf-01dbdb8f9e7f",
+      "created_at": "2026-04-21T11:46:51.776144+00:00",
+      "date": "2025-11-18",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "deuza_art",
+      "mistakes": [
+        "Page or Email not finished, missing content, or email fully missing",
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+        "WebinarJam Slides & Copywriting + Landing page link (ex. inapplicable urgency discounts)"
+      ]
+    },
+    {
+      "id": "74fbfa25-6270-4715-8434-1736b08e217e",
+      "created_at": "2026-04-21T11:44:44.847603+00:00",
+      "date": "2025-11-17",
+      "planet": "Saturn",
+      "specialist": "Mafe",
+      "creator": "colouring_the_rainbow",
+      "mistakes": [
+        "CTAs in Emails and landing pages (copyright, function, and redirect destination)",
+        "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+        "WebinarJam Slides & Copywriting + Landing page link (ex. inapplicable urgency discounts)"
+      ]
+    },
+    {
+      "id": "434646f3-5a41-4f23-8019-38c268be6a92",
+      "created_at": "2026-04-28T17:24:55.494101+00:00",
+      "date": "2025-11-17",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Checkout (correct offer linked, Card disclaimer text correct)",
+        "Incorrect currency used in landing pages and emails",
+        "Urgency/Scarcity narrative incorrectly used in pages and emails"
+      ]
+    },
+    {
+      "id": "39dd8308-76c8-4d16-bf0d-8486708090c9",
+      "created_at": "2026-04-28T17:25:56.512364+00:00",
+      "date": "2025-11-17",
+      "planet": "Saturn",
+      "specialist": "Andres P",
+      "creator": "basque.in.english",
+      "mistakes": [
+        "Emails scheduling timing",
+        "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+        "Upsell content mistakes (ex. Upsell copy contradicts course release status)"
+      ]
+    }
+  ],
+  "settings": {
+    "planets": [
+      "Jupiter",
+      "Saturn",
+      "Innovation/LP",
+      "Mars",
+      "Uranus"
+    ],
+    "specialists": [
+      "Luiz",
+      "Mafe",
+      "Andres P",
+      "Danielle Q",
+      "KC",
+      "Candela",
+      "Saberina",
+      "Kim",
+      "Mohamed",
+      "Valeria",
+      "Lorena",
+      "Thais",
+      "Aya",
+      "Katherine",
+      "Joshua",
+      "Georgina"
+    ],
+"creators": [
+
+  "9monkeys",
+
+  "_pangurban_",
+
+  "_sinclairart98_",
+
+  "_zok_art",
+
+  "a.zhuravel_on_hands",
+
+  "adamrichesart",
+
+  "aelfleda",
+
+  "aenniyam",
+
+  "agatadelbarco",
+
+  "ajtouch",
+
+  "akademiapoprostu",
+
+  "akangshaspalette",
+
+  "alaiganuza",
+
+  "alemanicia",
+
+  "alexandria.monik.art",
+
+  "alexisrakun",
+
+  "alinaazac",
+
+  "alleyc.eng.speaking.life",
+
+  "anglaisavecsophie",
+
+  "angiebryantart",
+
+  "anglupriekavos",
+
+  "angoluljess-szel",
+
+  "anniwoodeco",
+
+  "ania_osipiuk",
+
+  "anam.draws",
+
+  "arabo_semplicemente",
+
+  "armenian_with_sose",
+
+  "armenianwithlida",
+
+  "artistelsi",
+
+  "artistjsong",
+
+  "Artistjodysteel",
+
+  "Artbytosin",
+
+  "artbymmitt",
+
+  "artcemg",
+
+  "artofalan",
+
+  "artoffrostandflame",
+
+  "azerbaijaniwithvusal",
+
+  "azi_makes_art",
+
+  "badportraits",
+
+  "bakaarts",
+
+  "basque.in.english",
+
+  "beao.art",
+
+  "beetlejulia",
+
+  "bel.oui.art",
+
+  "benmyhre",
+
+  "benxartist",
+
+  "bkartchitect01",
+
+  "blue._.illustration",
+
+  "bluelavaart",
+
+  "bnana.art",
+
+  "bookillumination",
+
+  "breakingthepage",
+
+  "bre.lexis",
+
+  "brisseaux",
+
+  "buboosenchan",
+
+  "c.austinart",
+
+  "calacaceramicart",
+
+  "caleb_arredondo_",
+
+  "candivee_art",
+
+  "canexplores",
+
+  "carliannecreates",
+
+  "Carolynj",
+
+  "carov_art",
+
+  "Chaoslife_lbc",
+
+  "chayadesilvaart",
+
+  "cheit.jpg",
+
+  "chelzd_art",
+
+  "chloedashines",
+
+  "christinekimpaperart",
+
+  "cindylaneart",
+
+  "codyabanks",
+
+  "colinprahl",
+
+  "colouring_the_rainbow",
+
+  "coreanoconfloriana",
+
+  "crom.ink",
+
+  "crystaltanart",
+
+  "czechitoutwithdani",
+
+  "czechwithlucie",
+
+  "Daily Catalan",
+
+  "danieltaylorart",
+
+  "danischmitjohn",
+
+  "daniellalewicz",
+
+  "danmumforddraws",
+
+  "darja.draws",
+
+  "dariuszkieliszek",
+
+  "Davide Patron",
+
+  "daveruinsart",
+
+  "dawit_min.kim",
+
+  "Derek Domnic D'Souza",
+
+  "deuza_art",
+
+  "Diluc",
+
+  "doctor_cymraeg",
+
+  "dunski_z_cynamonem",
+
+  "eddie.tb",
+
+  "elenamahoneys",
+
+  "elvira.engleskijezik",
+
+  "emma_weekes_art",
+
+  "emmakubert",
+
+  "emmazing_english",
+
+  "englishfighters",
+
+  "englischmitemily",
+
+  "englishwithmartina",
+
+  "englishwithnick",
+
+  "englishwithemma",
+
+  "enameka_",
+
+  "ericarobinart",
+
+  "erick.centeno",
+
+  "estonianwithgrete",
+
+  "ethemos_art",
+
+  "eva_profedecheco",
+
+  "Excel con Mike",
+
+  "Excel met Jochem",
+
+  "Excel with Alvaro",
+
+  "Excel with Carita",
+
+  "Excel with Martin",
+
+  "Excel with Olina",
+
+  "excaliblader",
+
+  "facialiste78",
+
+  "femkedeborah_art",
+
+  "femvisionary",
+
+  "filipinowithnelli",
+
+  "Finnish with Heidi",
+
+  "florian_mas_art",
+
+  "fluentwithfern",
+
+  "foodillustration.studio",
+
+  "Francese con Laura",
+
+  "francais_atescotes",
+
+  "francais.familier",
+
+  "francouzstina_lafeel",
+
+  "Französisch mit Mélanie",
+
+  "French with Alexia",
+
+  "french_ships",
+
+  "frenskisdimitŭr",
+
+  "Frans met Malcolm",
+
+  "German with Niklas",
+
+  "ginnijoie",
+
+  "godtaughtartist",
+
+  "Greek Language Academy",
+
+  "greekmama.says",
+
+  "guywhodoesart",
+
+  "haitiancreolewithjean",
+
+  "helen_dardik",
+
+  "Henrikaau",
+
+  "holenderski z Beą",
+
+  "hungarianwithgellert",
+
+  "inesketches",
+
+  "Indonesian with Lauren",
+
+  "inglescomanita",
+
+  "Irish with Mollie",
+
+  "iristinunin",
+
+  "Italeutsch",
+
+  "italianissimaaa",
+
+  "italianoconlaura",
+
+  "italianoconsimone",
+
+  "italien_latelierdellitaliano",
+
+  "italienisch_mit_clara",
+
+  "italstinasnikol",
+
+  "jaktosiemowi",
+
+  "japanischmitceline",
+
+  "Japanese with Hikari",
+
+  "japonia_daisuki",
+
+  "javanesewitheva",
+
+  "jennummi",
+
+  "jesscurrierstudio",
+
+  "jmac_mua",
+
+  "johngagneart",
+
+  "josetrujilloart",
+
+  "joshcleland",
+
+  "Julie Akasha",
+
+  "Julia_uczy_niemieckiego",
+
+  "juliocesarpetrini_art",
+
+  "kandaem",
+
+  "karinayordanova_art",
+
+  "karmosia_speakup",
+
+  "katfishdraws",
+
+  "kazotarimae_025",
+
+  "kierunek.hiszpania",
+
+  "kitsukkit",
+
+  "kliuwong",
+
+  "konbiniart",
+
+  "korean_hamin",
+
+  "koreanwithgoeun",
+
+  "krauserdhm",
+
+  "kristythepainter",
+
+  "krusedulll",
+
+  "kyri45",
+
+  "Labbrasiliana",
+
+  "larapickle",
+
+  "laura_dumitriu",
+
+  "learn.shqip",
+
+  "learnchinesewithdolores",
+
+  "learnthaiwithmai",
+
+  "leilas_english_lab",
+
+  "limba.turca.cu.iulia",
+
+  "linolordpress",
+
+  "linguadanica",
+
+  "lisa_lebofsky",
+
+  "Lithuanian with Marta",
+
+  "liliyth",
+
+  "loukoumh",
+
+  "lucas.lopes.art",
+
+  "magyarize_com",
+
+  "makugwapu",
+
+  "malaywithainur.am",
+
+  "mami_montessori_",
+
+  "Madamecocoedu",
+
+  "maalavidaa",
+
+  "manicmoth",
+
+  "marcela_b_art",
+
+  "marilu.draws",
+
+  "marissa_oosterlee",
+
+  "markcrilleyreal",
+
+  "Maria Bochenek",
+
+  "mayadallosart",
+
+  "michaelmattesi",
+
+  "Michele Sanna",
+
+  "michal_sawtyruk",
+
+  "mikkateachestagalog",
+
+  "mi_amiga_italiana",
+
+  "mielzy.png",
+
+  "miketoneydesign",
+
+  "miss_atoyan",
+
+  "misscreamycreamy",
+
+  "Mitsubatchi",
+
+  "mmiacchi_",
+
+  "mochii.mocha",
+
+  "monetincelle",
+
+  "monikafilipina",
+
+  "mrmattzan",
+
+  "ms_fineart",
+
+  "myasymi",
+
+  "Nate_fakes",
+
+  "navlneanglictiny",
+
+  "nbs_artnwood",
+
+  "nemcina.skaterinou",
+
+  "nemcinasjirkom",
+
+  "nemcinasmisou",
+
+  "nicholasholmanart",
+
+  "nick_superhero",
+
+  "nicow56",
+
+  "Niemiecki z Mikołajem",
+
+  "nokunnskap",
+
+  "normachung.art",
+
+  "norvegia_nel_cuore",
+
+  "Norwegian with Tor",
+
+  "Norwegisch mit Ådne",
+
+  "norweski_z_iskra",
+
+  "nussay_art",
+
+  "Ogygia Art",
+
+  "okayloki",
+
+  "olga.koelsch",
+
+  "Orensje",
+
+  "outcastsfromthe853",
+
+  "pangurban_",
+
+  "paulcombs_artist",
+
+  "pencyleando",
+
+  "Pergliamicibarto",
+
+  "persianwithelaheh",
+
+  "philtomato",
+
+  "pietmaen",
+
+  "playattentionnow",
+
+  "podolyanka_art",
+
+  "Polish with Elena",
+
+  "polskaja_z_albertam",
+
+  "Portuguese with Anita",
+
+  "printyourbird",
+
+  "prohebrew",
+
+  "punjabiwithnavrup",
+
+  "queenmamastyle",
+
+  "queenjagart",
+
+  "rabbit_rivulet",
+
+  "rachazzopaints",
+
+  "racketballs",
+
+  "rainlandstudios",
+
+  "raphaellacosteart",
+
+  "Raphaelamua",
+
+  "rei.lilith",
+
+  "risochan",
+
+  "rjmason84",
+
+  "rocheboisdaniel",
+
+  "rodgontheartist",
+
+  "Romania by Casiana",
+
+  "rpancoast_art",
+
+  "runscay",
+
+  "salamanding",
+
+  "samalia.swan",
+
+  "sarucatepes",
+
+  "schwedisch.mit.himani",
+
+  "shan.carmin.art",
+
+  "shannonameyart",
+
+  "shrimpyyt",
+
+  "sicilian_with_ilaria",
+
+  "sleepyredbean",
+
+  "Slovenian.with.Laura",
+
+  "smultron_szwedzki",
+
+  "Solazo",
+
+  "sonialazo",
+
+  "sophiebaverstock",
+
+  "Spanish with Vicky",
+
+  "spanelstina_sin_problema",
+
+  "spanskmedfrancisca",
+
+  "speakviking",
+
+  "ssipe_",
+
+  "Strength Community",
+
+  "studyinbgschool",
+
+  "summers_ceramicarts",
+
+  "sunlit.sketches",
+
+  "svenska.for.dig",
+
+  "svenska_med_svetlana",
+
+  "svvshi",
+
+  "Swiss German with Sevi",
+
+  "sydneynicoleaddams",
+
+  "sylviecorreia_prof",
+
+  "taliancinaonline",
+
+  "tammykayeart",
+
+  "Tani Pinta",
+
+  "teraz_hiszpanski",
+
+  "the_jashi_project",
+
+  "The Wigs and Makeup Manager",
+
+  "themightierpencil",
+
+  "thesneakyartist",
+
+  "thespicydonut",
+
+  "thistuscanlife",
+
+  "thetyleredlin",
+
+  "tibetanwithnorbu",
+
+  "tips_excel_fr",
+
+  "toddfrancisart",
+
+  "Topdicanva",
+
+  "trytryagain_",
+
+  "turkishteachersema",
+
+  "tyskmedennha",
+
+  "UNA.NIPPOROMANA",
+
+  "ukrainianwithmykola",
+
+  "valentinserber",
+
+  "valeriesyposz",
+
+  "van.soull",
+
+  "vanessalemen",
+
+  "vianka_guinaz",
+
+  "victoria.cociu",
+
+  "victoriaosorioillustration",
+
+  "Vilius Grazinys",
+
+  "Viliusinexcel",
+
+  "whateverjesss",
+
+  "whoisjillea",
+
+  "whosbeth_",
+
+  "wloski_polska_wloszka",
+
+  "wloski_z_ania",
+
+  "xhosalessons",
+
+  "xhosawithawethu",
+
+  "yanabeardoodles",
+
+  "yeoni_korean",
+
+  "yourbestfrench",
+
+  "yumione_art",
+
+  "zabanzaar",
+
+  "zeidsalfitiart",
+
+  "zoecainart"
+
+],
+    "mistakes": [
+      "URLs (short/direct), page external title & Page speed -> No marketing terms, avoid capital letters",
+      "CTAs in Emails and landing pages (copyright, function, and redirect destination)",
+      "Countdowns & closing dates in Emails and Landing pages (must be accurate)",
+      "Guarantee must be consistent and correct across emails and pages",
+      "Checkout (correct offer linked, Card disclaimer text correct)",
+      "Prices (follows the requested amount from the Account Manager)",
+      "Mobile version (all content must be coherent with Desktop version)",
+      "Spelling mistakes in the landing pages and Emails",
+      "Incorrect currency used in landing pages and emails",
+      "Poor syntax & difficulty understanding copy components [On pages and emails]",
+      "Incorrect timezones mentioned in Reminder emails, Offer emails and landing pages",
+      "Page or Email not finished, missing content, or email fully missing",
+      "CTA links within email banner images leading to incorrect pages",
+      "Emails with banner images presenting a different course or topic",
+      "Emails scheduling timing",
+      "Webinar topic (follows the requested narrative from the Account Manager)",
+      "Segmentation mistakes (ex. Wrong Webinar form selected in emails)",
+      "Incorrect Upsells being sold instead of requested ones",
+      "Urgency/Scarcity narrative incorrectly used in pages and emails",
+      "WebinarJam Slides & Copywriting + Landing page link (ex. inapplicable urgency discounts)",
+      "Timing of the event incorrectly inputted into Webjam",
+      "Discounted amounts depicted incorrectly (ex. $100 off instead of $50)",
+      "Emails and landing pages should not present seasonal narrative",
+      "Design changes on Emails and Checkouts (ex. Thumbnail image is low quality)",
+      "Course Content amount (Video Lessons, Hours, exercises) consistent across emails, pages, and offers",
+      "Using COLD offers/pages in an ORG webinar | Or mixing COLD A and B (counts as 1 yellow mistake)",
+      "Video settings (fully missing or partially missing)",
+      "Upsell content mistakes (ex. Upsell copy contradicts course release status)",
+      "Spelling mistakes on the FAQ Section of Sales pages",
+      "If webinar happens on the weekend, replay email should be automated",
+      "Footer (terms and conditions, privacy & policy, copyright, and no faq)",
+      "First Quadrant (Header: no spaces, correctly positioned and aligned)",
+      "CTA Size",
+      "Page Distribution",
+      "Timezones (Adding EST instead of EDT)",
+      "Webinar POST delivered after deadline (If delivered after deadline , rating is automatically 3/5 or lower)"
+    ]
+  }
+}
