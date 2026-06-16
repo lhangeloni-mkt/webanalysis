@@ -2150,7 +2150,7 @@ export default function App() {
 
         <nav className="sidebar-nav">
           <div
-            className={`nav-item ${currentPage === 'dashboard' ? 'active' : ''}`}
+            className={`nav-item ${currentPage === 'dashboard' && !prepEntryExpanded ? 'active' : ''}`}
             onClick={() => handleNavigate('dashboard')}
           >
             <LayoutDashboard size={20} />
@@ -2187,14 +2187,14 @@ export default function App() {
             )}
           </div>
           <div
-            className={`nav-item ${currentPage === 'analysis' ? 'active' : ''}`}
+            className={`nav-item ${currentPage === 'analysis' && !prepEntryExpanded ? 'active' : ''}`}
             onClick={() => handleNavigate('analysis')}
           >
             <BarChart3 size={20} />
             <span>Analysis</span>
           </div>
           <div
-            className={`nav-item ${currentPage === 'settings' ? 'active' : ''}`}
+            className={`nav-item ${currentPage === 'settings' && !prepEntryExpanded ? 'active' : ''}`}
             onClick={() => handleNavigate('settings')}
           >
             <SettingsIcon size={20} />
