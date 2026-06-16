@@ -1058,7 +1058,7 @@ function ModerationPostWebinarInputPage({ settings, onSave }: { settings: Settin
   );
 }
 
-function ModerationPreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
+function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '', mistake1: '', mistake2: '', mistake3: ''
   });
@@ -1078,8 +1078,8 @@ function ModerationPreWebinarInputPage({ settings, onSave }: { settings: Setting
   return (
     <div className="container-narrow">
       <div className="page-header">
-        <h1>Moderation Pre Webinar Entry</h1>
-        <p>Add Pre Webinar Check Information</p>
+        <h1>Moderation Entry</h1>
+        <p>Add Moderation Check Information</p>
       </div>
       <div className="glass-panel card">
         <form onSubmit={handleSubmit}>
@@ -1128,7 +1128,7 @@ function ModerationPreWebinarInputPage({ settings, onSave }: { settings: Setting
   );
 }
 
-function WhatsappPostWebinarInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
+function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '', mistake1: '', mistake2: '', mistake3: ''
   });
@@ -1148,78 +1148,8 @@ function WhatsappPostWebinarInputPage({ settings, onSave }: { settings: Settings
   return (
     <div className="container-narrow">
       <div className="page-header">
-        <h1>Whatsapp Post Webinar Entry</h1>
-        <p>Add Post Webinar Check Information</p>
-      </div>
-      <div className="glass-panel card">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Date <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <input type="date" required value={formData.date} onChange={e => setFormData({ ...formData, date: e.target.value })} />
-          </div>
-          <div className="form-group">
-            <label>Planet <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select required value={formData.planet} onChange={e => setFormData({ ...formData, planet: e.target.value })}>
-              <option value="">Select Planet</option>
-              {settings.planets.map(p => <option key={p} value={p}>{p}</option>)}
-            </select>
-          </div>
-          <SearchableSelect required label="Webinar Specialist" options={settings.specialists} value={formData.specialist}
-            onChange={val => setFormData({ ...formData, specialist: val })} placeholder="Search specialist..." />
-          <SearchableSelect required label="Creator" options={settings.creators} value={formData.creator}
-            onChange={val => setFormData({ ...formData, creator: val })} placeholder="Search creator..." />
-          <div className="form-group">
-            <label>Mistake 1 <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select required value={formData.mistake1} onChange={e => setFormData({ ...formData, mistake1: e.target.value })}>
-              <option value="">Select Error</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Mistake 2 (Optional)</label>
-            <select value={formData.mistake2} onChange={e => setFormData({ ...formData, mistake2: e.target.value })}>
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Mistake 3 (Optional)</label>
-            <select value={formData.mistake3} onChange={e => setFormData({ ...formData, mistake3: e.target.value })}>
-              <option value="">None</option>
-              {settings.mistakes.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-          </div>
-          <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
-            <Save size={18} /> Submit Entry
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function WhatsappPreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave: (entry: Omit<Entry, 'id'>) => void }) {
-  const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '', mistake1: '', mistake2: '', mistake3: ''
-  });
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && formData.mistake1;
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isFormValid) return;
-    onSave({
-      date: formData.date, planet: formData.planet, specialist: formData.specialist,
-      creator: formData.creator, mistakes: [formData.mistake1, formData.mistake2, formData.mistake3].filter(m => m !== '')
-    });
-    setFormData({
-      date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '',
-      mistake1: '', mistake2: '', mistake3: ''
-    });
-  };
-  return (
-    <div className="container-narrow">
-      <div className="page-header">
-        <h1>Whatsapp Pre Webinar Entry</h1>
-        <p>Add Pre Webinar Check Information</p>
+        <h1>Whatsapp Errors Entry</h1>
+        <p>Add Whatsapp Check Information</p>
       </div>
       <div className="glass-panel card">
         <form onSubmit={handleSubmit}>
@@ -2041,7 +1971,7 @@ function SettingsPage({
 
 // ==================== MAIN APP ====================
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'input' | 'analysis' | 'settings' | 'pre-webinar' | 'moderation-post' | 'moderation-pre' | 'whatsapp-post' | 'whatsapp-pre'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'input' | 'analysis' | 'settings' | 'pre-webinar' | 'moderation' | 'whatsapp'>('dashboard');
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [entries, setEntries] = useState<Entry[]>(() => {
@@ -2408,22 +2338,17 @@ export default function App() {
     }
   };
 
-  // Auto-expand correct section based on current page
+  // Auto-expand prep section when on entry pages
   useEffect(() => {
     if (['pre-webinar', 'input'].includes(currentPage)) {
       setExpandedSection('prep');
-    } else if (['moderation-pre', 'moderation-post'].includes(currentPage)) {
-      setExpandedSection('moderation');
-    } else if (['whatsapp-pre', 'whatsapp-post'].includes(currentPage)) {
-      setExpandedSection('whatsapp');
     }
   }, [currentPage]);
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page as any);
     setSidebarOpen(false);
-    const entryPages = ['pre-webinar', 'input', 'moderation-pre', 'moderation-post', 'whatsapp-pre', 'whatsapp-post'];
-    if (!entryPages.includes(page)) {
+    if (!['pre-webinar', 'input'].includes(page)) {
       setExpandedSection(null);
     }
   };
@@ -2467,45 +2392,19 @@ export default function App() {
               </div>
             )}
           </div>
-          <div className="nav-section">
-            <div
-              className={`nav-item ${['moderation-pre', 'moderation-post'].includes(currentPage) || expandedSection === 'moderation' ? 'active' : ''}`}
-              onClick={() => setExpandedSection(expandedSection === 'moderation' ? null : 'moderation')}
-              style={{ cursor: 'pointer' }}
-            >
-              <Activity size={20} />
-              <span>Moderation New Entry</span>
-              <ChevronDown
-                size={16}
-                style={{ marginLeft: 'auto', transition: 'transform 0.2s', transform: expandedSection === 'moderation' ? 'rotate(180deg)' : '' }}
-              />
-            </div>
-            {expandedSection === 'moderation' && (
-              <div className="nav-submenu">
-                <div className={`nav-subitem ${currentPage === 'moderation-pre' ? 'active' : ''}`} onClick={() => handleNavigate('moderation-pre')}>Pre Webinar</div>
-                <div className={`nav-subitem ${currentPage === 'moderation-post' ? 'active' : ''}`} onClick={() => handleNavigate('moderation-post')}>Post Webinar</div>
-              </div>
-            )}
+          <div
+            className={`nav-item ${currentPage === 'moderation' && !expandedSection ? 'active' : ''}`}
+            onClick={() => handleNavigate('moderation')}
+          >
+            <Activity size={20} />
+            <span>Moderation New Entry</span>
           </div>
-          <div className="nav-section">
-            <div
-              className={`nav-item ${['whatsapp-pre', 'whatsapp-post'].includes(currentPage) || expandedSection === 'whatsapp' ? 'active' : ''}`}
-              onClick={() => setExpandedSection(expandedSection === 'whatsapp' ? null : 'whatsapp')}
-              style={{ cursor: 'pointer' }}
-            >
-              <AlertTriangle size={20} />
-              <span>Whatsapp Errors New Entry</span>
-              <ChevronDown
-                size={16}
-                style={{ marginLeft: 'auto', transition: 'transform 0.2s', transform: expandedSection === 'whatsapp' ? 'rotate(180deg)' : '' }}
-              />
-            </div>
-            {expandedSection === 'whatsapp' && (
-              <div className="nav-submenu">
-                <div className={`nav-subitem ${currentPage === 'whatsapp-pre' ? 'active' : ''}`} onClick={() => handleNavigate('whatsapp-pre')}>Pre Webinar</div>
-                <div className={`nav-subitem ${currentPage === 'whatsapp-post' ? 'active' : ''}`} onClick={() => handleNavigate('whatsapp-post')}>Post Webinar</div>
-              </div>
-            )}
+          <div
+            className={`nav-item ${currentPage === 'whatsapp' && !expandedSection ? 'active' : ''}`}
+            onClick={() => handleNavigate('whatsapp')}
+          >
+            <AlertTriangle size={20} />
+            <span>Whatsapp Errors New Entry</span>
           </div>
           <div
             className={`nav-item ${currentPage === 'analysis' && !expandedSection ? 'active' : ''}`}
@@ -2565,13 +2464,9 @@ export default function App() {
               
               {currentPage === 'pre-webinar' && <PreWebinarInputPage settings={settings} onSave={addEntry} />}
               
-              {currentPage === 'moderation-post' && <ModerationPostWebinarInputPage settings={settings} onSave={addEntry} />}
+              {currentPage === 'moderation' && <ModerationInputPage settings={settings} onSave={addEntry} />}
               
-              {currentPage === 'moderation-pre' && <ModerationPreWebinarInputPage settings={settings} onSave={addEntry} />}
-              
-              {currentPage === 'whatsapp-post' && <WhatsappPostWebinarInputPage settings={settings} onSave={addEntry} />}
-              
-              {currentPage === 'whatsapp-pre' && <WhatsappPreWebinarInputPage settings={settings} onSave={addEntry} />}
+              {currentPage === 'whatsapp' && <WhatsappInputPage settings={settings} onSave={addEntry} />}
               
               {currentPage === 'analysis' && (
                 !sessionUnlocked.analysis ? (
