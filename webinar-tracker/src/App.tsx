@@ -2796,6 +2796,12 @@ export default function App() {
   };
 
   const updatePasswords = async (target: 'analysis' | 'settings', newPass: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      showToast('You must be logged in to change security settings.', 'error');
+      return;
+    }
+
     const lastPass = security.passwords[target];
     const newRecord: SecurityRecord = {
       id: nanoid(),
@@ -2817,14 +2823,18 @@ export default function App() {
       .eq('id', 1)
       .select();
 
-    if (error || !data || data.length === 0) {
-      console.error('Update passwords error:', error?.message || 'No rows updated. Check database RLS policies.');
+    if (error) {
+      console.error('Update passwords error:', error.message);
+      showToast(`Security settings not saved! ${error.message}`, 'error');
+    } else if (!data || data.length === 0) {
+      console.error('No rows updated. Check database RLS policies.');
       showToast('Security settings not saved! (DB Write Blocked)', 'error');
     } else {
       setSecurity({
         passwords: newPasswords,
         history: newHistory
       });
+      showToast('Password updated successfully!', 'success');
     }
   };
 
