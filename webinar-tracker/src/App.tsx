@@ -642,6 +642,73 @@ function PasswordGateway({
   );
 }
 
+function LoginModal({
+  onLogin,
+  onCancel
+}: {
+  onLogin: (email: string, password: string) => Promise<void>;
+  onCancel: () => void;
+}) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await onLogin(email, password);
+    } catch (err: any) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content" style={{ maxWidth: '420px', textAlign: 'left' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>Admin Login</h2>
+        <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginBottom: '2rem', fontSize: '0.9rem' }}>
+          Sign in with your Supabase credentials to access settings.
+        </p>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="admin@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          {error && <p style={{ color: 'var(--danger)', fontSize: '0.85rem', marginBottom: '1rem' }}>{error}</p>}
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+            <button type="submit" disabled={loading} style={{ flex: 1 }}>
+              {loading ? 'Signing in...' : 'Sign In'}
+            </button>
+            <button type="button" className="secondary" onClick={onCancel} style={{ flex: 1 }}>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 // ==================== HELPER FUNCTIONS ====================
 const getMonthYear = (dateStr: string) => {
   const date = new Date(dateStr + 'T12:00:00');
@@ -2246,7 +2313,6 @@ function SettingsPage({
                   onChange={e => setPasswordForm({...passwordForm, target: e.target.value as 'analysis' | 'settings'})}
                 >
                   <option value="analysis">Analysis Page</option>
-                  <option value="settings">Settings Page</option>
                 </select>
               </div>
               <div className="form-group">
@@ -2434,6 +2500,9 @@ export default function App() {
     if (saved === 'light' || saved === 'dark') return saved;
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
+
+  const [user, setUser] = useState<any>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const [sessionUnlocked, setSessionUnlocked] = useState({
     analysis: false,
@@ -2641,6 +2710,31 @@ export default function App() {
     if (!isLoading) migrateData();
   }, [isLoading, entries.length]);
 
+  // Auth
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogin = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    setShowLoginModal(false);
+    showToast('Admin login successful!', 'success');
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    showToast('Logged out successfully.', 'info');
+  };
+
   // Theme
   useEffect(() => {
     document.body.className = theme;
@@ -2833,16 +2927,31 @@ export default function App() {
             <BarChart3 size={20} />
             <span>Analysis</span>
           </div>
-          <div
-            className={`nav-item ${currentPage === 'settings' && !expandedSection ? 'active' : ''}`}
-            onClick={() => handleNavigate('settings')}
-          >
-            <SettingsIcon size={20} />
-            <span>Settings</span>
-          </div>
+          {user ? (
+            <div
+              className={`nav-item ${currentPage === 'settings' && !expandedSection ? 'active' : ''}`}
+              onClick={() => handleNavigate('settings')}
+            >
+              <SettingsIcon size={20} />
+              <span>Settings</span>
+            </div>
+          ) : (
+            <div
+              className="nav-item"
+              onClick={() => setShowLoginModal(true)}
+            >
+              <Lock size={20} />
+              <span>Admin Login</span>
+            </div>
+          )}
         </nav>
 
-        <div className="sidebar-footer">
+        <div className="sidebar-footer" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {user && (
+            <button className="theme-toggle" onClick={handleLogout} style={{ color: 'var(--danger)' }}>
+              <Lock size={18} /> <span>Logout ({user.email})</span>
+            </button>
+          )}
           <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
             {theme === 'light' ? <><Moon size={18} /> <span>Dark Mode</span></> : <><Sun size={18} /> <span>Light Mode</span></>}
           </button>
@@ -2901,26 +3010,18 @@ export default function App() {
               )}
               
               {currentPage === 'settings' && (
-                !sessionUnlocked.settings ? (
-                  <PasswordGateway 
-                    target="Settings" 
-                    correctPassword={security.passwords.settings} 
-                    onUnlock={() => setSessionUnlocked({ ...sessionUnlocked, settings: true })}
-                  />
-                ) : (
-                  <SettingsPage 
-                    settings={settings} 
-                    entries={entries}
-                    security={security}
-                    onUpdate={updateSettings} 
-                    onUpdateEntry={updateEntry}
-                    onDeleteEntry={deleteEntry}
-                    onUpdatePasswords={updatePasswords}
-                    onExport={exportData} 
-                    onImport={importData}
-                    showToast={showToast}
-                  />
-                )
+                <SettingsPage 
+                  settings={settings} 
+                  entries={entries}
+                  security={security}
+                  onUpdate={updateSettings} 
+                  onUpdateEntry={updateEntry}
+                  onDeleteEntry={deleteEntry}
+                  onUpdatePasswords={updatePasswords}
+                  onExport={exportData} 
+                  onImport={importData}
+                  showToast={showToast}
+                />
               )}
             </>
           )}
@@ -2935,6 +3036,14 @@ export default function App() {
             setShowSuccessModal(false);
             setCurrentPage('analysis');
           }}
+        />
+      )}
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <LoginModal
+          onLogin={handleLogin}
+          onCancel={() => setShowLoginModal(false)}
         />
       )}
 
