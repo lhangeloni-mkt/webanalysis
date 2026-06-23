@@ -259,6 +259,32 @@ body {
   opacity: 0.9;
 }
 
+body.dark .logout-btn {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #FCA5A5;
+}
+
+body.dark .logout-btn:hover {
+  background: #DC2626;
+  color: white;
+  border-color: #DC2626;
+}
+
+@media (prefers-color-scheme: dark) {
+  body:not(.light) .logout-btn {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #FCA5A5;
+  }
+
+  body:not(.light) .logout-btn:hover {
+    background: #DC2626;
+    color: white;
+    border-color: #DC2626;
+  }
+}
+
 /* Sidebar Submenu */
 .nav-section {
   margin-bottom: 0.5rem;
