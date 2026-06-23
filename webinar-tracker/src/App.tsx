@@ -2035,7 +2035,7 @@ function SettingsPage({
   const addItem = (key: keyof Settings, field: keyof typeof inputs) => {
     if (!inputs[field]) return;
     if (key === 'mistakes') {
-      if (settings.mistakes.some(m => m.label === inputs[field])) {
+      if (settings.mistakes.some(m => m.label === inputs[field] && m.type === mistakeTypeFilter)) {
         showToast('Entry already exists in this registry.', 'warning');
         return;
       }
