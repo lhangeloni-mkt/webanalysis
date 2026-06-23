@@ -2948,8 +2948,12 @@ export default function App() {
 
         <div className="sidebar-footer" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {user && (
-            <button className="theme-toggle" onClick={handleLogout} style={{ color: 'var(--danger)' }}>
-              <Lock size={18} /> <span>Logout ({user.email})</span>
+            <button className="logout-btn" onClick={handleLogout}>
+              <Lock size={16} />
+              <div className="logout-text">
+                <span>Logout</span>
+                <span className="logout-email">{user.email}</span>
+              </div>
             </button>
           )}
           <button className="theme-toggle" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
