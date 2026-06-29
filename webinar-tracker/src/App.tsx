@@ -573,104 +573,58 @@ function MistakeSelect({
               </button>
             </div>
 
-            {colorPickerOpen ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem 0' }}>
-                <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginBottom: '0.5rem' }}>
-                  Select the error severity:
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedColor('red');
-                    setColorPickerOpen(false);
-                  }}
+            {hasMixedColors && (
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                <div
+                  onClick={() => { setSelectedColor('red'); setSearchTerm(''); }}
                   style={{
-                    padding: '1.5rem',
-                    borderRadius: '12px',
+                    flex: 1,
+                    padding: '0.75rem',
+                    borderRadius: '10px',
+                    textAlign: 'center',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    cursor: 'pointer',
+                    background: selectedColor === 'red' ? '#EF4444' : 'transparent',
+                    color: selectedColor === 'red' ? 'white' : '#EF4444',
                     border: '2px solid #EF4444',
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    color: '#EF4444',
-                    fontWeight: 700,
-                    fontSize: '1.2rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.75rem',
                     transition: 'all 0.2s'
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
                 >
-                  <AlertTriangle size={22} /> RED ERROR
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedColor('yellow');
-                    setColorPickerOpen(false);
-                  }}
-                  style={{
-                    padding: '1.5rem',
-                    borderRadius: '12px',
-                    border: '2px solid #EAB308',
-                    background: 'rgba(234, 179, 8, 0.1)',
-                    color: '#EAB308',
-                    fontWeight: 700,
-                    fontSize: '1.2rem',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.75rem',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(234, 179, 8, 0.2)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(234, 179, 8, 0.1)'; }}
-                >
-                  <AlertTriangle size={22} /> YELLOW ERROR
-                </button>
-              </div>
-            ) : (
-              <>
-                {hasMixedColors && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedColor(null);
-                      setColorPickerOpen(true);
-                      setSearchTerm('');
-                    }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      color: 'var(--primary)',
-                      padding: '0.25rem 0',
-                      marginBottom: '0.5rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.4rem',
-                      fontSize: '0.85rem',
-                      fontWeight: 600,
-                      alignSelf: 'flex-start'
-                    }}
-                  >
-                    ← Change severity ({selectedColor === 'red' ? 'RED ERROR' : 'YELLOW ERROR'})
-                  </button>
-                )}
-                <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
-                  <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
-                  <input
-                    autoFocus
-                    style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', marginBottom: 0, width: '100%' }}
-                    placeholder={`Search ${selectedColor === 'red' ? 'RED' : 'YELLOW'} errors...`}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+                  RED MISTAKE
                 </div>
-                <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <div
+                  onClick={() => { setSelectedColor('yellow'); setSearchTerm(''); }}
+                  style={{
+                    flex: 1,
+                    padding: '0.75rem',
+                    borderRadius: '10px',
+                    textAlign: 'center',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    cursor: 'pointer',
+                    background: selectedColor === 'yellow' ? '#EAB308' : 'transparent',
+                    color: selectedColor === 'yellow' ? 'white' : '#EAB308',
+                    border: '2px solid #EAB308',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  YELLOW MISTAKE
+                </div>
+              </div>
+            )}
+            <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
+              <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+              <input
+                autoFocus
+                style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', marginBottom: 0, width: '100%' }}
+                placeholder={`Search ${selectedColor === 'red' ? 'RED' : 'YELLOW'} errors...`}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                   {filteredOptions.length > 0 ? (
                     filteredOptions.map(opt => (
                       <div
@@ -709,14 +663,12 @@ function MistakeSelect({
                     <div style={{ padding: '1rem', opacity: 0.5, textAlign: 'center' }}>No results found</div>
                   )}
                 </div>
-              </>
-            )}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
+              </div>
+            </>
+          )}
+        </div>
+      );
+    }
 
 function PasswordGateway({ 
   target, 
