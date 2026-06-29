@@ -499,6 +499,9 @@ function MistakeSelect({
   const [selectedColor, setSelectedColor] = useState<'red' | 'yellow' | null>(null);
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
 
+  const uniqueColors = [...new Set(options.map(o => o.color))];
+  const hasMixedColors = uniqueColors.length > 1;
+
   const filteredOptions = options.filter(opt =>
     opt.label.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (selectedColor ? opt.color === selectedColor : true)
@@ -509,6 +512,9 @@ function MistakeSelect({
       const existing = value ? options.find(o => o.label === value) : null;
       if (existing) {
         setSelectedColor(existing.color);
+        setColorPickerOpen(false);
+      } else if (!hasMixedColors && uniqueColors[0]) {
+        setSelectedColor(uniqueColors[0]);
         setColorPickerOpen(false);
       } else {
         setSelectedColor(null);
@@ -627,30 +633,32 @@ function MistakeSelect({
               </div>
             ) : (
               <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedColor(null);
-                    setColorPickerOpen(true);
-                    setSearchTerm('');
-                  }}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: 'var(--primary)',
-                    padding: '0.25rem 0',
-                    marginBottom: '0.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    alignSelf: 'flex-start'
-                  }}
-                >
-                  ← Change severity ({selectedColor === 'red' ? 'RED ERROR' : 'YELLOW ERROR'})
-                </button>
+                {hasMixedColors && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedColor(null);
+                      setColorPickerOpen(true);
+                      setSearchTerm('');
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'var(--primary)',
+                      padding: '0.25rem 0',
+                      marginBottom: '0.5rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      alignSelf: 'flex-start'
+                    }}
+                  >
+                    ← Change severity ({selectedColor === 'red' ? 'RED ERROR' : 'YELLOW ERROR'})
+                  </button>
+                )}
                 <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
                   <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
                   <input
