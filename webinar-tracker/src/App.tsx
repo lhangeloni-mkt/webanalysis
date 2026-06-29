@@ -486,7 +486,8 @@ function MistakeSelect({
   options,
   value,
   onChange,
-  required = false
+  required = false,
+  noColor = false
 }: {
   label: string;
   options: MistakeItem[];
