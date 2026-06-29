@@ -493,6 +493,7 @@ function MistakeSelect({
   value: string;
   onChange: (val: string) => void;
   required?: boolean;
+  noColor?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -500,7 +501,7 @@ function MistakeSelect({
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
 
   const uniqueColors = [...new Set(options.map(o => o.color))];
-  const hasMixedColors = uniqueColors.length > 1;
+  const hasMixedColors = !noColor && uniqueColors.length > 1;
 
   const filteredOptions = options.filter(opt =>
     opt.label.toLowerCase().includes(searchTerm.toLowerCase()) &&
@@ -509,16 +510,18 @@ function MistakeSelect({
 
   const handleOpen = () => {
     if (!isOpen) {
-      const existing = value ? options.find(o => o.label === value) : null;
-      if (existing) {
-        setSelectedColor(existing.color);
-        setColorPickerOpen(false);
-      } else if (!hasMixedColors && uniqueColors[0]) {
-        setSelectedColor(uniqueColors[0]);
-        setColorPickerOpen(false);
-      } else {
-        setSelectedColor(null);
-        setColorPickerOpen(true);
+      if (!noColor) {
+        const existing = value ? options.find(o => o.label === value) : null;
+        if (existing) {
+          setSelectedColor(existing.color);
+          setColorPickerOpen(false);
+        } else if (!hasMixedColors && uniqueColors[0]) {
+          setSelectedColor(uniqueColors[0]);
+          setColorPickerOpen(false);
+        } else {
+          setSelectedColor(null);
+          setColorPickerOpen(true);
+        }
       }
       setSearchTerm('');
       setIsOpen(true);
@@ -529,10 +532,141 @@ function MistakeSelect({
 
   const handleClose = () => {
     setIsOpen(false);
-    setSelectedColor(null);
-    setColorPickerOpen(false);
+    if (!noColor) {
+      setSelectedColor(null);
+      setColorPickerOpen(false);
+    }
     setSearchTerm('');
   };
+
+  const getItemColor = (opt: MistakeItem) => {
+    if (opt.type === 'mod') return '#3B82F6';
+    if (opt.type === 'whatsapp') return '#22C55E';
+    return opt.color === 'red' ? '#EF4444' : '#EAB308';
+  };
+
+  const modal = isOpen ? (
+    <>
+      <div className="modal-overlay" onClick={handleClose} style={{ zIndex: 999 }} />
+      <div
+        className="glass-panel"
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 1000,
+          padding: '1.5rem',
+          maxHeight: '65vh',
+          width: 'min(90vw, 650px)',
+          display: 'flex',
+          flexDirection: 'column',
+          background: 'var(--bg-color)',
+          boxShadow: 'var(--shadow-lg)'
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <h4 style={{ margin: 0 }}>Select Mistake</h4>
+          <button type="button" onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0.25rem' }}>
+            <X size={20} />
+          </button>
+        </div>
+
+        {hasMixedColors && (
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+            <div
+              onClick={() => { setSelectedColor('red'); setSearchTerm(''); }}
+              style={{
+                flex: 1,
+                padding: '0.75rem',
+                borderRadius: '10px',
+                textAlign: 'center',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                cursor: 'pointer',
+                background: selectedColor === 'red' ? '#EF4444' : 'transparent',
+                color: selectedColor === 'red' ? 'white' : '#EF4444',
+                border: '2px solid #EF4444',
+                transition: 'all 0.2s'
+              }}
+            >
+              RED MISTAKE
+            </div>
+            <div
+              onClick={() => { setSelectedColor('yellow'); setSearchTerm(''); }}
+              style={{
+                flex: 1,
+                padding: '0.75rem',
+                borderRadius: '10px',
+                textAlign: 'center',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                cursor: 'pointer',
+                background: selectedColor === 'yellow' ? '#EAB308' : 'transparent',
+                color: selectedColor === 'yellow' ? 'white' : '#EAB308',
+                border: '2px solid #EAB308',
+                transition: 'all 0.2s'
+              }}
+            >
+              YELLOW MISTAKE
+            </div>
+          </div>
+        )}
+        <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
+          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+          <input
+            autoFocus
+            style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', marginBottom: 0, width: '100%' }}
+            placeholder={noColor ? "Search errors..." : `Search ${selectedColor === 'yellow' ? 'YELLOW' : 'RED'} errors...`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+        {(selectedColor || noColor) && (
+          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map(opt => (
+                <div
+                  key={opt.label + '-' + opt.type + '-' + opt.color}
+                  onClick={() => {
+                    onChange(opt.label);
+                    handleClose();
+                  }}
+                  style={{
+                    padding: '0.75rem 0.875rem',
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.6rem',
+                    background: value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
+                    fontWeight: value === opt.label ? '600' : '400',
+                    wordBreak: 'break-word',
+                    lineHeight: '1.4',
+                    fontSize: '0.9rem',
+                    borderLeft: `3px solid ${getItemColor(opt)}`
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.3)' : 'rgba(128, 128, 128, 0.2)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent'; }}
+                >
+                  <span style={{
+                    flexShrink: 0,
+                    fontSize: '0.8rem',
+                    lineHeight: '1.6',
+                    color: getItemColor(opt)
+                  }}>●</span>
+                  <span>{opt.label}</span>
+                </div>
+              ))
+            ) : (
+              <div style={{ padding: '1rem', opacity: 0.5, textAlign: 'center' }}>No results found</div>
+            )}
+          </div>
+        )}
+      </div>
+    </>
+  ) : null;
 
   return (
     <div className="form-group">
@@ -546,128 +680,9 @@ function MistakeSelect({
         <ChevronDown size={18} style={{ opacity: 0.5, flexShrink: 0 }} />
       </div>
 
-      {isOpen && (
-        <>
-          <div className="modal-overlay" onClick={handleClose} style={{ zIndex: 999 }} />
-          <div
-            className="glass-panel"
-            style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 1000,
-              padding: '1.5rem',
-              maxHeight: '65vh',
-              width: 'min(90vw, 650px)',
-              display: 'flex',
-              flexDirection: 'column',
-              background: 'var(--bg-color)',
-              boxShadow: 'var(--shadow-lg)'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h4 style={{ margin: 0 }}>Select Mistake</h4>
-              <button type="button" onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0.25rem' }}>
-                <X size={20} />
-              </button>
-            </div>
-
-            {hasMixedColors && (
-              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                <div
-                  onClick={() => { setSelectedColor('red'); setSearchTerm(''); }}
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem',
-                    borderRadius: '10px',
-                    textAlign: 'center',
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    cursor: 'pointer',
-                    background: selectedColor === 'red' ? '#EF4444' : 'transparent',
-                    color: selectedColor === 'red' ? 'white' : '#EF4444',
-                    border: '2px solid #EF4444',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  RED MISTAKE
-                </div>
-                <div
-                  onClick={() => { setSelectedColor('yellow'); setSearchTerm(''); }}
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem',
-                    borderRadius: '10px',
-                    textAlign: 'center',
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    cursor: 'pointer',
-                    background: selectedColor === 'yellow' ? '#EAB308' : 'transparent',
-                    color: selectedColor === 'yellow' ? 'white' : '#EAB308',
-                    border: '2px solid #EAB308',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  YELLOW MISTAKE
-                </div>
-              </div>
-            )}
-            <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
-              <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
-              <input
-                autoFocus
-                style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', marginBottom: 0, width: '100%' }}
-                placeholder={`Search ${selectedColor === 'red' ? 'RED' : 'YELLOW'} errors...`}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                  {filteredOptions.length > 0 ? (
-                    filteredOptions.map(opt => (
-                      <div
-                        key={opt.label + '-' + opt.type + '-' + opt.color}
-                        onClick={() => {
-                          onChange(opt.label);
-                          handleClose();
-                        }}
-                        style={{
-                          padding: '0.75rem 0.875rem',
-                          cursor: 'pointer',
-                          borderRadius: '8px',
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: '0.6rem',
-                          background: value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-                          fontWeight: value === opt.label ? '600' : '400',
-                          wordBreak: 'break-word',
-                          lineHeight: '1.4',
-                          fontSize: '0.9rem',
-                          borderLeft: `3px solid ${opt.color === 'red' ? '#EF4444' : '#EAB308'}`
-                        }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.3)' : 'rgba(128, 128, 128, 0.2)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent'; }}
-                      >
-                        <span style={{
-                          flexShrink: 0,
-                          fontSize: '0.8rem',
-                          lineHeight: '1.6',
-                          color: opt.color === 'red' ? '#EF4444' : '#EAB308'
-                        }}>●</span>
-                        <span>{opt.label}</span>
-                      </div>
-                    ))
-                  ) : (
-                    <div style={{ padding: '1rem', opacity: 0.5, textAlign: 'center' }}>No results found</div>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      );
+      {modal}
+    </div>
+  );
     }
 
 function PasswordGateway({ 
@@ -1370,6 +1385,7 @@ function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave:
               value={mistakeFields[i] || ''}
               onChange={val => { const updated = [...mistakeFields]; updated[i] = val; setMistakeFields(updated); }}
               required={i === 0}
+              noColor
             />
           ))}
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
@@ -1451,6 +1467,7 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
               value={mistakeFields[i] || ''}
               onChange={val => { const updated = [...mistakeFields]; updated[i] = val; setMistakeFields(updated); }}
               required={i === 0}
+              noColor
             />
           ))}
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
