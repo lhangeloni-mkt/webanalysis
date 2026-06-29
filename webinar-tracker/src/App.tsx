@@ -90,79 +90,79 @@ const INITIAL_SETTINGS: Settings = {
     'whoisjillea', 'xhosalessons', 'yeoni_korean', 'zeidsalfitiart'
   ],
   mistakes: [
-    { label: 'Webinar POST delivered after deadline (If delivered after deadline , rating is automatically 3/5 or lower)', type: 'post' },
-    { label: 'URLs (short/direct) & page external title and Page speed -> No marketing terms , avoid using capital letters', type: 'post' },
-    { label: 'CTAs in both Emails and landing pages (copyright and function-> where does it redirect)', type: 'post' },
-    { label: 'Countdowns , closing dates both Emails and Landing pages (ex. "Registrations close on Sunday 15th of March at 9PM EDT , this is incorrect)', type: 'post' },
-    { label: 'Guarantee should be consistent and correct across both emails and pages', type: 'post' },
-    { label: 'Checkout (correct offer linked, Card disclaimer text correct)', type: 'post' },
-    { label: 'Prices (Pricing is following the requested amount from the Account Manager)', type: 'post' },
-    { label: 'Mobile version (all content is coherent with Desktop version)', type: 'post' },
-    { label: 'Spelling mistakes in the landing pages and Emails', type: 'post' },
-    { label: 'Incorrect currency used in landing pages and emails', type: 'post' },
-    { label: 'Incorrect timezones mentioned in Reminder emails, Offer emails and in the landing pages', type: 'post' },
-    { label: 'Page or Email not finished, missing content or email fully missing', type: 'post' },
-    { label: 'CTA links within email banner images that lead to incorrect pages', type: 'post' },
-    { label: 'Emails with banner images that present a different course or a different topic would be incorrect', type: 'post' },
-    { label: 'Emails scheduling timing (If timing greater than 2-3 hours)', type: 'post' },
-    { label: 'Emails with banner images that have an incorrect page linked within the image', type: 'post' },
-    { label: 'Webinar topic (Webinar topic is following the requested narrative from the Account Manager)', type: 'post' },
-    { label: 'Segmentation mistakes (e.x Wrong Webinar form selected in emails)', type: 'post' },
-    { label: 'Incorrect Upsells being sold instead of requested ones', type: 'post' },
-    { label: 'Urgency/Scarcity narrative incorrectly used in pages and emails', type: 'post' },
-    { label: 'WebinarJam Slides and WebinarJam Copywriting + Landing page link (ex. copywriting mentions an urgency discount when it does not apply)', type: 'post' },
-    { label: 'Timing of the event incorrectly inputted into Webjam', type: 'post' },
-    { label: 'Discounted amounts depicted incorrectly (100$ off instead of 50$)', type: 'post' },
-    { label: 'Emails and landing pages should not presenting seasonal narrative', type: 'post' },
-    { label: 'Design changes on Emails and Checkouts (ex. Thumbnail image is low quality image)', type: 'post' },
-    { label: 'Amount of Video Lessons , Hours of Content and excercises (Course Content) , should be consistent across all emails , sales pages and offers', type: 'post' },
-    { label: 'Using COLD offers and pages in an ORG webinar is incorrect | Or using COLD A in one offer and COLD B in another offer (Even if this is done multiple times , it counts as 1 yellow mistake)', type: 'post' },
-    { label: 'Video settings (fully missing or partially missing)', type: 'post' },
-    { label: 'Upsell content mistakes (ex. Course has been released but the upsell copy suggests the opposite, or the other way around)', type: 'post' },
-    { label: 'Spelling mistakes on the FAQ Section of Sales pages', type: 'post' },
-    { label: 'If webinar happens on the weekend , replay email should be automated', type: 'post' },
-    { label: 'Footer (terms and conditions, privacy & policy, copyright, and no faq)', type: 'post' },
-    { label: 'First Quadrant (Header: no spaces, correctly positioned and aligned)', type: 'post' },
-    { label: 'CTA Size', type: 'post' },
-    { label: 'Page Distribution', type: 'post' },
-    { label: 'Timezones (Adding EST instead of EDT)', type: 'post' },
-    { label: 'URLs (short/direct) & page external title and Page speed', type: 'pre' },
-    { label: 'CTAs in both Emails and landing pages (copywriting and function-> where does it redirect)', type: 'pre' },
-    { label: 'Countdowns , timezones (Mentioning EST instead of CET)', type: 'pre' },
-    { label: 'Date of webinar presented incorrectly (ex. Wednesday 12th 9PM , instead of Friday 9th 1PM)', type: 'pre' },
-    { label: 'Spelling mistakes in the landing pages and Emails', type: 'pre' },
-    { label: 'Poor syntax & difficulty in understanding some copy components [On pages and emails]', type: 'pre' },
-    { label: 'Incorrect timezones mentioned in Invitation emails , confirmation emails', type: 'pre' },
-    { label: 'Copywriting within the registration page or thank you page that mentions a different creator or course (ex. Irish language found in Watercolor workshops , or Irish with Mollie mentioned in a different creators webinar)', type: 'pre' },
-    { label: 'Page or email not finished or missing content', type: 'pre' },
-    { label: 'Mobile version (all content is coherent with Desktop version)', type: 'pre' },
-    { label: 'Emails with banner images that present a different course or a different topic would be incorrect', type: 'pre' },
-    { label: 'Emails scheduling timing (Invitation emails or Confirmation email)', type: 'pre' },
-    { label: 'Webinar topic (Webinar topic is following the requested narrative from the Account Manager)', type: 'pre' },
-    { label: 'Segmentation mistakes (e.x Wrong Webinar form selected in invitation emails)', type: 'pre' },
-    { label: 'Timing of the event incorrectly inputted into Webjam', type: 'pre' },
-    { label: 'Confirmation email incorrectly set up or there is incorrect copywriting', type: 'pre' },
-    { label: 'Forms being incorrectly added into registration pages', type: 'pre' },
-    { label: 'Invitation emails correctly set up and scheduled', type: 'pre' },
-    { label: 'Forms redirecting to incorrect thank you pages', type: 'pre' },
-    { label: 'Forms should always be a "Single opt-in"', type: 'pre' },
-    { label: 'No two step opt in forms being included in CTAs of Registration pages', type: 'pre' },
-    { label: 'Multiple impactful design changes needed in pages and emails (if overall visual appearance of reg page is not desirable)', type: 'pre' },
-    { label: 'Invitation emails left unscheduled', type: 'pre' },
-    { label: 'Webinar Jam incorrectly set up (Creator\'s images , backgrounds , topic)', type: 'pre' },
-    { label: 'Minor design changes in pages and emails (ex. Thumbnail image is low quality image and it has to be updated)', type: 'pre' },
-    { label: 'Inside of the Calendar, invitation links are missing (ex. Live event link or group chat link missing from Calendar even invitation)', type: 'pre' },
-    { label: 'Minor Webinar jam waiting room design changes (Background image low quality)', type: 'pre' },
-    { label: 'Footer (terms and conditions, privacy & policy, copyright, and no faq)', type: 'pre' },
-    { label: 'CTA Size', type: 'pre' },
-    { label: 'Page Distribution', type: 'pre' },
-    { label: 'Timezones (Adding EST instead of EDT)', type: 'pre' },
-    { label: 'No Show - Track and log no-show events', type: 'mod' },
-    { label: 'Communicate Errors - AM', type: 'mod' },
-    { label: 'Communicate Errors - WS', type: 'mod' },
-    { label: 'Not sharing the offer during moderation', type: 'mod' },
-    { label: 'Sharing wrong links', type: 'whatsapp' },
-    { label: 'Miscommunication within group chat', type: 'whatsapp' }
+    { label: 'Webinar POST delivered after deadline (If delivered after deadline , rating is automatically 3/5 or lower)', type: 'post', color: 'red' },
+    { label: 'URLs (short/direct) & page external title and Page speed -> No marketing terms , avoid using capital letters', type: 'post', color: 'red' },
+    { label: 'CTAs in both Emails and landing pages (copyright and function-> where does it redirect)', type: 'post', color: 'red' },
+    { label: 'Countdowns , closing dates both Emails and Landing pages (ex. "Registrations close on Sunday 15th of March at 9PM EDT , this is incorrect)', type: 'post', color: 'red' },
+    { label: 'Guarantee should be consistent and correct across both emails and pages', type: 'post', color: 'red' },
+    { label: 'Checkout (correct offer linked, Card disclaimer text correct)', type: 'post', color: 'red' },
+    { label: 'Prices (Pricing is following the requested amount from the Account Manager)', type: 'post', color: 'red' },
+    { label: 'Mobile version (all content is coherent with Desktop version)', type: 'post', color: 'red' },
+    { label: 'Spelling mistakes in the landing pages and Emails', type: 'post', color: 'red' },
+    { label: 'Incorrect currency used in landing pages and emails', type: 'post', color: 'red' },
+    { label: 'Incorrect timezones mentioned in Reminder emails, Offer emails and in the landing pages', type: 'post', color: 'red' },
+    { label: 'Page or Email not finished, missing content or email fully missing', type: 'post', color: 'red' },
+    { label: 'CTA links within email banner images that lead to incorrect pages', type: 'post', color: 'red' },
+    { label: 'Emails with banner images that present a different course or a different topic would be incorrect', type: 'post', color: 'red' },
+    { label: 'Emails scheduling timing (If timing greater than 2-3 hours)', type: 'post', color: 'red' },
+    { label: 'Emails with banner images that have an incorrect page linked within the image', type: 'post', color: 'red' },
+    { label: 'Webinar topic (Webinar topic is following the requested narrative from the Account Manager)', type: 'post', color: 'red' },
+    { label: 'Segmentation mistakes (e.x Wrong Webinar form selected in emails)', type: 'post', color: 'red' },
+    { label: 'Incorrect Upsells being sold instead of requested ones', type: 'post', color: 'red' },
+    { label: 'Urgency/Scarcity narrative incorrectly used in pages and emails', type: 'post', color: 'red' },
+    { label: 'WebinarJam Slides and WebinarJam Copywriting + Landing page link (ex. copywriting mentions an urgency discount when it does not apply)', type: 'post', color: 'red' },
+    { label: 'Timing of the event incorrectly inputted into Webjam', type: 'post', color: 'red' },
+    { label: 'Discounted amounts depicted incorrectly (100$ off instead of 50$)', type: 'post', color: 'red' },
+    { label: 'Emails and landing pages should not presenting seasonal narrative', type: 'post', color: 'red' },
+    { label: 'Design changes on Emails and Checkouts (ex. Thumbnail image is low quality image)', type: 'post', color: 'red' },
+    { label: 'Amount of Video Lessons , Hours of Content and excercises (Course Content) , should be consistent across all emails , sales pages and offers', type: 'post', color: 'red' },
+    { label: 'Using COLD offers and pages in an ORG webinar is incorrect | Or using COLD A in one offer and COLD B in another offer (Even if this is done multiple times , it counts as 1 yellow mistake)', type: 'post', color: 'red' },
+    { label: 'Video settings (fully missing or partially missing)', type: 'post', color: 'red' },
+    { label: 'Upsell content mistakes (ex. Course has been released but the upsell copy suggests the opposite, or the other way around)', type: 'post', color: 'red' },
+    { label: 'Spelling mistakes on the FAQ Section of Sales pages', type: 'post', color: 'red' },
+    { label: 'If webinar happens on the weekend , replay email should be automated', type: 'post', color: 'red' },
+    { label: 'Footer (terms and conditions, privacy & policy, copyright, and no faq)', type: 'post', color: 'yellow' },
+    { label: 'First Quadrant (Header: no spaces, correctly positioned and aligned)', type: 'post', color: 'red' },
+    { label: 'CTA Size', type: 'post', color: 'yellow' },
+    { label: 'Page Distribution', type: 'post', color: 'yellow' },
+    { label: 'Timezones (Adding EST instead of EDT)', type: 'post', color: 'yellow' },
+    { label: 'URLs (short/direct) & page external title and Page speed', type: 'pre', color: 'red' },
+    { label: 'CTAs in both Emails and landing pages (copywriting and function-> where does it redirect)', type: 'pre', color: 'red' },
+    { label: 'Countdowns , timezones (Mentioning EST instead of CET)', type: 'pre', color: 'red' },
+    { label: 'Date of webinar presented incorrectly (ex. Wednesday 12th 9PM , instead of Friday 9th 1PM)', type: 'pre', color: 'red' },
+    { label: 'Spelling mistakes in the landing pages and Emails', type: 'pre', color: 'red' },
+    { label: 'Poor syntax & difficulty in understanding some copy components [On pages and emails]', type: 'pre', color: 'red' },
+    { label: 'Incorrect timezones mentioned in Invitation emails , confirmation emails', type: 'pre', color: 'red' },
+    { label: 'Copywriting within the registration page or thank you page that mentions a different creator or course (ex. Irish language found in Watercolor workshops , or Irish with Mollie mentioned in a different creators webinar)', type: 'pre', color: 'red' },
+    { label: 'Page or email not finished or missing content', type: 'pre', color: 'red' },
+    { label: 'Mobile version (all content is coherent with Desktop version)', type: 'pre', color: 'red' },
+    { label: 'Emails with banner images that present a different course or a different topic would be incorrect', type: 'pre', color: 'red' },
+    { label: 'Emails scheduling timing (Invitation emails or Confirmation email)', type: 'pre', color: 'red' },
+    { label: 'Webinar topic (Webinar topic is following the requested narrative from the Account Manager)', type: 'pre', color: 'red' },
+    { label: 'Segmentation mistakes (e.x Wrong Webinar form selected in invitation emails)', type: 'pre', color: 'red' },
+    { label: 'Timing of the event incorrectly inputted into Webjam', type: 'pre', color: 'red' },
+    { label: 'Confirmation email incorrectly set up or there is incorrect copywriting', type: 'pre', color: 'red' },
+    { label: 'Forms being incorrectly added into registration pages', type: 'pre', color: 'red' },
+    { label: 'Invitation emails correctly set up and scheduled', type: 'pre', color: 'red' },
+    { label: 'Forms redirecting to incorrect thank you pages', type: 'pre', color: 'red' },
+    { label: 'Forms should always be a "Single opt-in"', type: 'pre', color: 'red' },
+    { label: 'No two step opt in forms being included in CTAs of Registration pages', type: 'pre', color: 'red' },
+    { label: 'Multiple impactful design changes needed in pages and emails (if overall visual appearance of reg page is not desirable)', type: 'pre', color: 'red' },
+    { label: 'Invitation emails left unscheduled', type: 'pre', color: 'red' },
+    { label: 'Webinar Jam incorrectly set up (Creator\'s images , backgrounds , topic)', type: 'pre', color: 'red' },
+    { label: 'Minor design changes in pages and emails (ex. Thumbnail image is low quality image and it has to be updated)', type: 'pre', color: 'yellow' },
+    { label: 'Inside of the Calendar, invitation links are missing (ex. Live event link or group chat link missing from Calendar even invitation)', type: 'pre', color: 'yellow' },
+    { label: 'Minor Webinar jam waiting room design changes (Background image low quality)', type: 'pre', color: 'yellow' },
+    { label: 'Footer (terms and conditions, privacy & policy, copyright, and no faq)', type: 'pre', color: 'yellow' },
+    { label: 'CTA Size', type: 'pre', color: 'yellow' },
+    { label: 'Page Distribution', type: 'pre', color: 'yellow' },
+    { label: 'Timezones (Adding EST instead of EDT)', type: 'pre', color: 'yellow' },
+    { label: 'No Show - Track and log no-show events', type: 'mod', color: 'red' },
+    { label: 'Communicate Errors - AM', type: 'mod', color: 'red' },
+    { label: 'Communicate Errors - WS', type: 'mod', color: 'red' },
+    { label: 'Not sharing the offer during moderation', type: 'mod', color: 'red' },
+    { label: 'Sharing wrong links', type: 'whatsapp', color: 'red' },
+    { label: 'Miscommunication within group chat', type: 'whatsapp', color: 'red' }
   ],
   planets: ['Jupiter', 'Saturn', 'Innovation/LP', 'Mars', 'Uranus']
 };
@@ -496,17 +496,44 @@ function MistakeSelect({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedColor, setSelectedColor] = useState<'red' | 'yellow' | null>(null);
+  const [colorPickerOpen, setColorPickerOpen] = useState(false);
 
   const filteredOptions = options.filter(opt =>
-    opt.label.toLowerCase().includes(searchTerm.toLowerCase())
+    opt.label.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (selectedColor ? opt.color === selectedColor : true)
   );
+
+  const handleOpen = () => {
+    if (!isOpen) {
+      const existing = value ? options.find(o => o.label === value) : null;
+      if (existing) {
+        setSelectedColor(existing.color);
+        setColorPickerOpen(false);
+      } else {
+        setSelectedColor(null);
+        setColorPickerOpen(true);
+      }
+      setSearchTerm('');
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setSelectedColor(null);
+    setColorPickerOpen(false);
+    setSearchTerm('');
+  };
 
   return (
     <div className="form-group">
       <label>{label} {required && <span style={{ color: 'var(--danger)' }}>*</span>}</label>
       <div
         className="searchable-select-trigger"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleOpen}
         style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.875rem 1rem' }}
       >
         <span style={{ fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{value || 'Select Error'}</span>
@@ -515,7 +542,7 @@ function MistakeSelect({
 
       {isOpen && (
         <>
-          <div className="modal-overlay" onClick={() => setIsOpen(false)} style={{ zIndex: 999 }} />
+          <div className="modal-overlay" onClick={handleClose} style={{ zIndex: 999 }} />
           <div
             className="glass-panel"
             style={{
@@ -535,55 +562,147 @@ function MistakeSelect({
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h4 style={{ margin: 0 }}>Select Mistake</h4>
-              <button type="button" onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0.25rem' }}>
+              <button type="button" onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0.25rem' }}>
                 <X size={20} />
               </button>
             </div>
-            <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
-              <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
-              <input
-                autoFocus
-                style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', marginBottom: 0, width: '100%' }}
-                placeholder="Search mistakes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-            <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              {filteredOptions.length > 0 ? (
-                filteredOptions.map(opt => (
-                  <div
-                    key={opt.label}
-                    onClick={() => {
-                      onChange(opt.label);
-                      setIsOpen(false);
-                      setSearchTerm('');
-                    }}
-                    style={{
-                      padding: '0.75rem 0.875rem',
-                      cursor: 'pointer',
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '0.6rem',
-                      background: value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-                      fontWeight: value === opt.label ? '600' : '400',
-                      wordBreak: 'break-word',
-                      lineHeight: '1.4',
-                      fontSize: '0.9rem'
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.3)' : 'rgba(128, 128, 128, 0.2)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent'; }}
-                  >
-                    <span style={{ flexShrink: 0, opacity: 0.45, fontSize: '0.8rem', lineHeight: '1.6' }}>●</span>
-                    <span>{opt.label}</span>
-                  </div>
-                ))
-              ) : (
-                <div style={{ padding: '1rem', opacity: 0.5, textAlign: 'center' }}>No results found</div>
-              )}
-            </div>
+
+            {colorPickerOpen ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1rem 0' }}>
+                <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginBottom: '0.5rem' }}>
+                  Select the error severity:
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedColor('red');
+                    setColorPickerOpen(false);
+                  }}
+                  style={{
+                    padding: '1.5rem',
+                    borderRadius: '12px',
+                    border: '2px solid #EF4444',
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    color: '#EF4444',
+                    fontWeight: 700,
+                    fontSize: '1.2rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.75rem',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; }}
+                >
+                  <AlertTriangle size={22} /> RED ERROR
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedColor('yellow');
+                    setColorPickerOpen(false);
+                  }}
+                  style={{
+                    padding: '1.5rem',
+                    borderRadius: '12px',
+                    border: '2px solid #EAB308',
+                    background: 'rgba(234, 179, 8, 0.1)',
+                    color: '#EAB308',
+                    fontWeight: 700,
+                    fontSize: '1.2rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.75rem',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(234, 179, 8, 0.2)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(234, 179, 8, 0.1)'; }}
+                >
+                  <AlertTriangle size={22} /> YELLOW ERROR
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedColor(null);
+                    setColorPickerOpen(true);
+                    setSearchTerm('');
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--primary)',
+                    padding: '0.25rem 0',
+                    marginBottom: '0.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    alignSelf: 'flex-start'
+                  }}
+                >
+                  ← Change severity ({selectedColor === 'red' ? 'RED ERROR' : 'YELLOW ERROR'})
+                </button>
+                <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
+                  <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
+                  <input
+                    autoFocus
+                    style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', marginBottom: 0, width: '100%' }}
+                    placeholder={`Search ${selectedColor === 'red' ? 'RED' : 'YELLOW'} errors...`}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                  {filteredOptions.length > 0 ? (
+                    filteredOptions.map(opt => (
+                      <div
+                        key={opt.label + '-' + opt.type + '-' + opt.color}
+                        onClick={() => {
+                          onChange(opt.label);
+                          handleClose();
+                        }}
+                        style={{
+                          padding: '0.75rem 0.875rem',
+                          cursor: 'pointer',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '0.6rem',
+                          background: value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
+                          fontWeight: value === opt.label ? '600' : '400',
+                          wordBreak: 'break-word',
+                          lineHeight: '1.4',
+                          fontSize: '0.9rem',
+                          borderLeft: `3px solid ${opt.color === 'red' ? '#EF4444' : '#EAB308'}`
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.3)' : 'rgba(128, 128, 128, 0.2)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent'; }}
+                      >
+                        <span style={{
+                          flexShrink: 0,
+                          fontSize: '0.8rem',
+                          lineHeight: '1.6',
+                          color: opt.color === 'red' ? '#EF4444' : '#EAB308'
+                        }}>●</span>
+                        <span>{opt.label}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ padding: '1rem', opacity: 0.5, textAlign: 'center' }}>No results found</div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </>
       )}
@@ -2018,6 +2137,7 @@ function SettingsPage({
     planet: ''
   });
   const [mistakeTypeFilter, setMistakeTypeFilter] = useState<'post' | 'pre' | 'mod' | 'whatsapp'>('post');
+  const [mistakeColorFilter, setMistakeColorFilter] = useState<'red' | 'yellow'>('red');
   const [mistakeSearchTerm, setMistakeSearchTerm] = useState('');
 
   const [passwordForm, setPasswordForm] = useState({
@@ -2039,7 +2159,7 @@ function SettingsPage({
         showToast('Entry already exists in this registry.', 'warning');
         return;
       }
-      onUpdate('mistakes', [...settings.mistakes, { label: inputs[field], type: mistakeTypeFilter }]);
+      onUpdate('mistakes', [...settings.mistakes, { label: inputs[field], type: mistakeTypeFilter, color: mistakeColorFilter }]);
     } else {
       if ((settings[key] as string[]).includes(inputs[field])) {
         showToast('Entry already exists in this registry.', 'warning');
@@ -2190,6 +2310,42 @@ function SettingsPage({
                   <option value="mod">MODERATION</option>
                   <option value="whatsapp">WHATSAPP</option>
                 </select>
+                <div style={{ display: 'flex', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                  <button
+                    type="button"
+                    onClick={() => setMistakeColorFilter('red')}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      border: 'none',
+                      cursor: 'pointer',
+                      background: mistakeColorFilter === 'red' ? '#EF4444' : 'transparent',
+                      color: mistakeColorFilter === 'red' ? 'white' : '#EF4444',
+                      border: mistakeColorFilter === 'red' ? '2px solid #EF4444' : '2px solid #EF4444',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    RED
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMistakeColorFilter('yellow')}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      fontSize: '0.8rem',
+                      fontWeight: 700,
+                      border: 'none',
+                      cursor: 'pointer',
+                      background: mistakeColorFilter === 'yellow' ? '#EAB308' : 'transparent',
+                      color: mistakeColorFilter === 'yellow' ? 'white' : '#EAB308',
+                      border: mistakeColorFilter === 'yellow' ? '2px solid #EAB308' : '2px solid #EAB308',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    YELLOW
+                  </button>
+                </div>
                 <input 
                   placeholder="Add mistake..."
                   value={inputs.mistake}
@@ -2198,22 +2354,70 @@ function SettingsPage({
                 />
                 <button onClick={() => addItem('mistakes', 'mistake')} style={{ padding: '0.75rem 1rem' }}><Plus size={18} /></button>
               </div>
-              <div style={{ position: 'relative', marginBottom: '1rem' }}>
-                <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#999' }} />
-                <input 
-                  placeholder={`Search ${mistakeTypeFilter.toUpperCase()} mistakes...`}
-                  value={mistakeSearchTerm}
-                  onChange={e => setMistakeSearchTerm(e.target.value)}
-                  style={{ padding: '0.75rem 0.75rem 0.75rem 2.2rem', fontSize: '1rem', width: '100%' }}
-                />
+              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#999' }} />
+                  <input 
+                    placeholder={`Search ${mistakeTypeFilter.toUpperCase()} mistakes...`}
+                    value={mistakeSearchTerm}
+                    onChange={e => setMistakeSearchTerm(e.target.value)}
+                    style={{ padding: '0.75rem 0.75rem 0.75rem 2.2rem', fontSize: '1rem', width: '100%' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
+                  <button
+                    type="button"
+                    onClick={() => setMistakeColorFilter('red')}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      border: 'none',
+                      cursor: 'pointer',
+                      background: mistakeColorFilter === 'red' ? '#EF4444' : 'transparent',
+                      color: mistakeColorFilter === 'red' ? 'white' : '#EF4444',
+                      border: '2px solid #EF4444',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    RED
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMistakeColorFilter('yellow')}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      border: 'none',
+                      cursor: 'pointer',
+                      background: mistakeColorFilter === 'yellow' ? '#EAB308' : 'transparent',
+                      color: mistakeColorFilter === 'yellow' ? 'white' : '#EAB308',
+                      border: '2px solid #EAB308',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    YELLOW
+                  </button>
+                </div>
               </div>
               <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 {settings.mistakes
                   .filter(m => m.type === mistakeTypeFilter)
                   .filter(m => m.label.toLowerCase().includes(mistakeSearchTerm.toLowerCase()))
+                  .filter(m => m.color === mistakeColorFilter)
                   .map(m => (
-                  <div key={m.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid var(--border)' }}>
-                    <span style={{ fontSize: '0.9rem' }}>{m.label}</span>
+                  <div key={m.label + '-' + m.color} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: m.color === 'red' ? '#EF4444' : '#EAB308',
+                        flexShrink: 0
+                      }} />
+                      {m.label}
+                    </span>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button onClick={() => setEditRegistryItem({ key: 'mistakes', oldVal: m.label, newVal: m.label })} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)' }}>
                         <Pencil size={14} />
@@ -2454,10 +2658,14 @@ export default function App() {
           const parsed = JSON.parse(m);
           if (parsed && parsed.label && parsed.type) return parsed as MistakeItem;
         } catch { /* ignore parse errors */ }
-        return { label: m, type: 'post' };
+        return { label: m, type: 'post', color: 'red' };
       });
     }
-    return data as MistakeItem[];
+    return (data as any[]).map(m => ({
+      label: m.label,
+      type: m.type || 'post',
+      color: m.color || 'red'
+    }));
   };
 
   const [settings, setSettings] = useState<Settings>(() => {

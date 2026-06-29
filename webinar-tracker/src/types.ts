@@ -1,6 +1,7 @@
 export interface MistakeItem {
   label: string;
   type: 'post' | 'pre' | 'mod' | 'whatsapp';
+  color: 'red' | 'yellow';
 }
 
 export interface Entry {
