@@ -2650,23 +2650,32 @@ export default function App() {
       return [];
     }
   });
+  const yellowLookup = new Set(
+    INITIAL_SETTINGS.mistakes.filter(m => m.color === 'yellow').map(m => m.label + '||' + m.type)
+  );
+
+  const enrichMistakeColor = (m: { label: string; type?: string; color?: string }): MistakeItem => ({
+    label: m.label,
+    type: (m.type as MistakeItem['type']) || 'post',
+    color: m.color || (yellowLookup.has(m.label + '||' + (m.type || 'post')) ? 'yellow' : 'red')
+  });
+
   const migrateMistakes = (data: unknown): MistakeItem[] => {
     if (!Array.isArray(data)) return INITIAL_SETTINGS.mistakes;
     if (data.length > 0 && typeof data[0] === 'string') {
       return data.map((m: string) => {
         try {
           const parsed = JSON.parse(m);
-          if (parsed && parsed.label && parsed.type) return parsed as MistakeItem;
+          if (parsed && parsed.label && parsed.type) return enrichMistakeColor(parsed);
         } catch { /* ignore parse errors */ }
         return { label: m, type: 'post', color: 'red' };
       });
     }
-    return (data as any[]).map(m => ({
-      label: m.label,
-      type: m.type || 'post',
-      color: m.color || 'red'
-    }));
+    return (data as any[]).map(m => enrichMistakeColor(m));
   };
+
+  const ensureColorField = (data: MistakeItem[]): MistakeItem[] =>
+    data.map(m => m.color ? m : enrichMistakeColor(m));
 
   const [settings, setSettings] = useState<Settings>(() => {
     try {
@@ -2676,6 +2685,9 @@ export default function App() {
       if (parsed.mistakes && Array.isArray(parsed.mistakes) && parsed.mistakes.length > 0) {
         if (typeof parsed.mistakes[0] === 'string') {
           parsed.mistakes = migrateMistakes(parsed.mistakes);
+          try { localStorage.setItem('cached_webinar_settings', JSON.stringify(parsed)); } catch { /* storage full */ }
+        } else if (!parsed.mistakes[0].color) {
+          parsed.mistakes = ensureColorField(parsed.mistakes);
           try { localStorage.setItem('cached_webinar_settings', JSON.stringify(parsed)); } catch { /* storage full */ }
         }
       }
