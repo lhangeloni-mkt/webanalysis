@@ -20,6 +20,7 @@ import {
   Menu,
   X,
   FileInput,
+  TrendingDown,
   TrendingUp,
   Users,
   AlertTriangle,
@@ -27,6 +28,7 @@ import {
   Eye,
   Save,
   AlertOctagon,
+  Calendar,
   Check,
   FileText
 } from 'lucide-react';
@@ -840,6 +842,20 @@ const ENTRY_TYPE_LABELS: Record<string, string> = {
 
 const ENTRY_TYPE_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#94a3b8'];
 
+const getWeekRange = (weekOffset: number = 0): { start: string; end: string } => {
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - diffToMonday - (weekOffset * 7));
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  return {
+    start: monday.toISOString().split('T')[0],
+    end: sunday.toISOString().split('T')[0]
+  };
+};
+
 // ==================== SETTINGS SECTION COMPONENT ====================
 const SettingsSection = ({ 
   title, 
@@ -1482,12 +1498,36 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
 
 // ==================== ANALYSIS PAGE ====================
 function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: Settings }) {
-  const [activeTab, setActiveTab] = useState<'charts' | 'filtered' | 'performance' | 'raw'>('charts');
+  const [activeTab, setActiveTab] = useState<'charts' | 'filtered' | 'performance' | 'raw' | 'weekly'>('charts');
   const [filterPlanet, setFilterPlanet] = useState<string>('All');
   const [filterMonth, setFilterMonth] = useState<string>('All');
   const [filterType, setFilterType] = useState<string>('All');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-
+  const [filterDateStart, setFilterDateStart] = useState<string>(() => getWeekRange(1).start);
+  const [filterDateEnd, setFilterDateEnd] = useState<string>(() => getWeekRange(1).end);
+  const [compareMode, setCompareMode] = useState(false);
+  const [filterDateStart2, setFilterDateStart2] = useState<string>(() => getWeekRange(2).start);
+  const [filterDateEnd2, setFilterDateEnd2] = useState<string>(() => getWeekRange(2).end);
+  const [showExpandedTable, setShowExpandedTable] = useState(false);
+  const [showExpandedChart, setShowExpandedChart] = useState(false);
+  const [expandedChartIndex, setExpandedChartIndex] = useState(0);
+  const specialistDateRanges = useMemo(() => {
+    const ranges: Record<string, { min: string; max: string }> = {};
+    entries.forEach(e => {
+      if (!ranges[e.specialist]) { ranges[e.specialist] = { min: e.date, max: e.date }; }
+      else {
+        if (e.date < ranges[e.specialist].min) ranges[e.specialist].min = e.date;
+        if (e.date > ranges[e.specialist].max) ranges[e.specialist].max = e.date;
+      }
+    });
+    return ranges;
+  }, [entries]);
+  const fmtRange = (start: string, end: string) => {
+    const fmt = (d: string) => { const [y, m, day] = d.split('-'); return `${day}/${m}`; };
+    return `${start ? fmt(start) : '...'} to ${end ? fmt(end) : '...'}`;
+  };
+  const p1Label = `P1 - ${fmtRange(filterDateStart, filterDateEnd)}`;
+  const p2Label = `P2 - ${fmtRange(filterDateStart2, filterDateEnd2)}`;
   const toggleRow = (key: string) => {
     setExpandedRows(prev => {
       const next = new Set(prev);
@@ -1577,6 +1617,156 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
     };
   }, [entries, filterPlanet, filterMonth, filterType, settings]);
 
+  const weeklyFilteredEntries = useMemo(() => {
+    if (!filterDateStart && !filterDateEnd) return entries;
+    return entries.filter(e => {
+      if (filterDateStart && e.date < filterDateStart) return false;
+      if (filterDateEnd && e.date > filterDateEnd) return false;
+      return true;
+    });
+  }, [entries, filterDateStart, filterDateEnd]);
+
+  const weeklyStats = useMemo(() => {
+    const specialistMistakes: Record<string, number> = {};
+    const creatorMistakes: Record<string, number> = {};
+    const mistakeCounts: Record<string, number> = {};
+    const typeCounts: Record<string, number> = {};
+    const specMistakeMap: Record<string, Record<string, number>> = {};
+    const creatorMistakeMap: Record<string, Record<string, number>> = {};
+    weeklyFilteredEntries.forEach(e => {
+      const t = getEntryType(e, settings);
+      typeCounts[t] = (typeCounts[t] || 0) + 1;
+      e.mistakes.forEach(m => {
+        specialistMistakes[e.specialist] = (specialistMistakes[e.specialist] || 0) + 1;
+        creatorMistakes[e.creator] = (creatorMistakes[e.creator] || 0) + 1;
+        mistakeCounts[m] = (mistakeCounts[m] || 0) + 1;
+        if (!specMistakeMap[e.specialist]) specMistakeMap[e.specialist] = {};
+        specMistakeMap[e.specialist][m] = (specMistakeMap[e.specialist][m] || 0) + 1;
+        if (!creatorMistakeMap[e.creator]) creatorMistakeMap[e.creator] = {};
+        creatorMistakeMap[e.creator][m] = (creatorMistakeMap[e.creator][m] || 0) + 1;
+      });
+    });
+    const entriesArr = Object.entries(specialistMistakes).sort((a, b) => b[1] - a[1]);
+    const creatorsArr = Object.entries(creatorMistakes).sort((a, b) => b[1] - a[1]);
+    const mistakesArr = Object.entries(mistakeCounts).sort((a, b) => b[1] - a[1]);
+    return {
+      specialistMistakes, creatorMistakes, mistakeCounts, typeCounts,
+      specMistakeMap, creatorMistakeMap,
+      totalEntries: weeklyFilteredEntries.length,
+      totalMistakes: weeklyFilteredEntries.reduce((sum, e) => sum + e.mistakes.length, 0),
+      topSpecialist: entriesArr[0] || null,
+      topCreator: creatorsArr[0] || null,
+      topMistake: mistakesArr[0] || null,
+    };
+  }, [weeklyFilteredEntries, settings]);
+
+  const weeklyFilteredEntries2 = useMemo(() => {
+    if (!filterDateStart2 && !filterDateEnd2) return entries;
+    return entries.filter(e => {
+      if (filterDateStart2 && e.date < filterDateStart2) return false;
+      if (filterDateEnd2 && e.date > filterDateEnd2) return false;
+      return true;
+    });
+  }, [entries, filterDateStart2, filterDateEnd2]);
+
+  const weeklyStats2 = useMemo(() => {
+    const specialistMistakes: Record<string, number> = {};
+    const creatorMistakes: Record<string, number> = {};
+    const mistakeCounts: Record<string, number> = {};
+    const typeCounts: Record<string, number> = {};
+    const specMistakeMap: Record<string, Record<string, number>> = {};
+    const creatorMistakeMap: Record<string, Record<string, number>> = {};
+    weeklyFilteredEntries2.forEach(e => {
+      const t = getEntryType(e, settings);
+      typeCounts[t] = (typeCounts[t] || 0) + 1;
+      e.mistakes.forEach(m => {
+        specialistMistakes[e.specialist] = (specialistMistakes[e.specialist] || 0) + 1;
+        creatorMistakes[e.creator] = (creatorMistakes[e.creator] || 0) + 1;
+        mistakeCounts[m] = (mistakeCounts[m] || 0) + 1;
+        if (!specMistakeMap[e.specialist]) specMistakeMap[e.specialist] = {};
+        specMistakeMap[e.specialist][m] = (specMistakeMap[e.specialist][m] || 0) + 1;
+        if (!creatorMistakeMap[e.creator]) creatorMistakeMap[e.creator] = {};
+        creatorMistakeMap[e.creator][m] = (creatorMistakeMap[e.creator][m] || 0) + 1;
+      });
+    });
+    const entriesArr = Object.entries(specialistMistakes).sort((a, b) => b[1] - a[1]);
+    const creatorsArr = Object.entries(creatorMistakes).sort((a, b) => b[1] - a[1]);
+    const mistakesArr = Object.entries(mistakeCounts).sort((a, b) => b[1] - a[1]);
+    return {
+      specialistMistakes, creatorMistakes, mistakeCounts, typeCounts,
+      specMistakeMap, creatorMistakeMap,
+      totalEntries: weeklyFilteredEntries2.length,
+      totalMistakes: weeklyFilteredEntries2.reduce((sum, e) => sum + e.mistakes.length, 0),
+      topSpecialist: entriesArr[0] || null,
+      topCreator: creatorsArr[0] || null,
+      topMistake: mistakesArr[0] || null,
+    };
+  }, [weeklyFilteredEntries2, settings]);
+
+  const weeklyComparisonSpecs = useMemo(() => {
+    if (!compareMode) return [];
+    const allSpecs = new Set([...Object.keys(weeklyStats.specMistakeMap), ...Object.keys(weeklyStats2.specMistakeMap)]);
+    return Array.from(allSpecs).map(spec => {
+      const p1 = Object.values(weeklyStats.specMistakeMap[spec] || {}).reduce((s, v) => s + v, 0);
+      const p2 = Object.values(weeklyStats2.specMistakeMap[spec] || {}).reduce((s, v) => s + v, 0);
+      return { spec, p1, p2, diff: p2 - p1 };
+    }).sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
+  }, [compareMode, weeklyStats, weeklyStats2]);
+
+  const mistakeComparisonChartData = useMemo(() => {
+    if (!compareMode) return null;
+    const allMistakes = [...new Set([...weeklyFilteredEntries, ...weeklyFilteredEntries2].flatMap(e => e.mistakes))].sort();
+    const p1Counts = allMistakes.map(m => weeklyFilteredEntries.filter(e => e.mistakes.includes(m)).length);
+    const p2Counts = allMistakes.map(m => weeklyFilteredEntries2.filter(e => e.mistakes.includes(m)).length);
+    return {
+      labels: allMistakes.map(m => m.length > 30 ? m.slice(0, 30) + '...' : m),
+      datasets: [
+        { label: 'Period 1', data: p1Counts, backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 6 },
+        { label: 'Period 2', data: p2Counts, backgroundColor: 'rgba(245,158,11,0.7)', borderRadius: 6 }
+      ]
+    };
+  }, [compareMode, weeklyFilteredEntries, weeklyFilteredEntries2]);
+
+  const specialistComparisonChartData = useMemo(() => {
+    if (!compareMode) return null;
+    const allSpecs = [...new Set([...Object.keys(weeklyStats.specMistakeMap), ...Object.keys(weeklyStats2.specMistakeMap)])].sort();
+    const p1Counts = allSpecs.map(s => Object.values(weeklyStats.specMistakeMap[s] || {}).reduce((sum, v) => sum + v, 0));
+    const p2Counts = allSpecs.map(s => Object.values(weeklyStats2.specMistakeMap[s] || {}).reduce((sum, v) => sum + v, 0));
+    return {
+      labels: allSpecs,
+      datasets: [
+        { label: 'Period 1', data: p1Counts, backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 6 },
+        { label: 'Period 2', data: p2Counts, backgroundColor: 'rgba(245,158,11,0.7)', borderRadius: 6 }
+      ]
+    };
+  }, [compareMode, weeklyStats, weeklyStats2]);
+
+  const consolidatedMistakes = useMemo(() => {
+    const allMistakes = compareMode
+      ? [...new Set([...weeklyFilteredEntries, ...weeklyFilteredEntries2].flatMap(e => e.mistakes))]
+      : [...new Set(weeklyFilteredEntries.flatMap(e => e.mistakes))];
+    return allMistakes.sort().map(mistake => {
+      const mtype = settings.mistakes.find(sm => sm.label === mistake);
+      const p1Entries = weeklyFilteredEntries.filter(e => e.mistakes.includes(mistake));
+      const p1Specs: Record<string, number> = {};
+      const p1Cres: Record<string, number> = {};
+      p1Entries.forEach(e => { p1Specs[e.specialist] = (p1Specs[e.specialist] || 0) + 1; p1Cres[e.creator] = (p1Cres[e.creator] || 0) + 1; });
+      let p2Count = 0;
+      let p2Specs: Record<string, number> = {};
+      let p2Cres: Record<string, number> = {};
+      let diff = 0;
+      if (compareMode) {
+        const p2Entries = weeklyFilteredEntries2.filter(e => e.mistakes.includes(mistake));
+        p2Count = p2Entries.length;
+        p2Specs = {};
+        p2Cres = {};
+        p2Entries.forEach(e => { p2Specs[e.specialist] = (p2Specs[e.specialist] || 0) + 1; p2Cres[e.creator] = (p2Cres[e.creator] || 0) + 1; });
+        diff = p2Count - p1Entries.length;
+      }
+      return { mistake, type: mtype?.type || 'post', color: mtype?.color || 'red', p1Count: p1Entries.length, p1Specs, p1Cres, p2Count, p2Specs, p2Cres, diff };
+    });
+  }, [compareMode, weeklyFilteredEntries, weeklyFilteredEntries2, settings]);
+
   const top5Specialists = Object.entries(stats.specialistMistakes)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
@@ -1613,12 +1803,22 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
   const trendTypes = [...new Set(sortedMonths.flatMap(m => Object.keys(stats.monthlyTypeTrend[m])))]
     .filter(t => t !== 'unknown');
 
+  const allSpecialists = Object.entries(stats.specialistMistakes).sort((a, b) => b[1] - a[1]);
   const chartData = {
     topSpecialists: {
       labels: top5Specialists.map(s => s[0]),
       datasets: [{
         label: 'Total Errors',
         data: top5Specialists.map(s => s[1]),
+        backgroundColor: isDarkMode ? '#60A5FA' : '#3B82F6',
+        borderRadius: 8
+      }]
+    },
+    allSpecialists: {
+      labels: allSpecialists.map(s => s[0]),
+      datasets: [{
+        label: 'Total Errors',
+        data: allSpecialists.map(s => s[1]),
         backgroundColor: isDarkMode ? '#60A5FA' : '#3B82F6',
         borderRadius: 8
       }]
@@ -1634,10 +1834,10 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       }]
     },
     creatorBar: {
-      labels: Object.keys(stats.creatorMistakes),
+      labels: Object.entries(stats.creatorMistakes).sort((a, b) => b[1] - a[1]).map(e => e[0]),
       datasets: [{
         label: 'Total Errors',
-        data: Object.values(stats.creatorMistakes),
+        data: Object.entries(stats.creatorMistakes).sort((a, b) => b[1] - a[1]).map(e => e[1]),
         backgroundColor: isDarkMode ? '#60A5FA' : '#3B82F6',
         borderRadius: 8
       }]
@@ -1708,6 +1908,12 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
         >
           <Database size={18} /> Raw Data
         </button>
+        <button
+          className={`tab-btn ${activeTab === 'weekly' ? 'active' : ''}`}
+          onClick={() => setActiveTab('weekly')}
+        >
+          <Calendar size={18} /> Weekly Report
+        </button>
       </div>
 
       {activeTab === 'filtered' && (
@@ -1740,25 +1946,39 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
 
       {activeTab === 'charts' && (
         <div className="charts-container">
-          <div className="glass-panel chart-card">
-            <h3>Top 5 Specialists by Errors</h3>
+          <div className="glass-panel chart-card" style={{ cursor: 'pointer' }} onClick={() => { setExpandedChartIndex(0); setShowExpandedChart(true); }}>
+            <h3>Most Mistakes Made by Specialists</h3>
             <div style={{ width: '100%', height: '300px', position: 'relative' }}>
-              <Bar data={chartData.topSpecialists} options={commonOptions} />
+              <Bar data={chartData.topSpecialists} options={{
+                ...commonOptions,
+                plugins: {
+                  ...commonOptions.plugins,
+                  tooltip: {
+                    callbacks: {
+                      afterLabel: (context: any) => {
+                        const name = context.label;
+                        const range = specialistDateRanges[name];
+                        return range ? `from ${range.min} to ${range.max}` : '';
+                      }
+                    }
+                  }
+                }
+              }} />
             </div>
           </div>
-          <div className="glass-panel chart-card">
+          <div className="glass-panel chart-card" style={{ cursor: 'pointer' }} onClick={() => { setExpandedChartIndex(1); setShowExpandedChart(true); }}>
             <h3>Mistake Distribution by Planet</h3>
             <div style={{ width: '100%', height: '300px', position: 'relative' }}>
-              <Pie data={chartData.planetPie} options={{ ...commonOptions, scales: undefined }} />
+              <Pie data={chartData.planetPie} options={{ ...commonOptions, scales: undefined, plugins: { ...commonOptions.plugins, legend: { ...commonOptions.plugins.legend, position: 'bottom', labels: { ...commonOptions.plugins.legend.labels, usePointStyle: true, padding: 20 }, onClick: () => {} } } }} />
             </div>
           </div>
-          <div className="glass-panel chart-card">
+          <div className="glass-panel chart-card" style={{ cursor: 'pointer' }} onClick={() => { setExpandedChartIndex(2); setShowExpandedChart(true); }}>
             <h3>Errors per Creator</h3>
             <div style={{ width: '100%', height: '300px', position: 'relative' }}>
               <Bar data={chartData.creatorBar} options={commonOptions} />
             </div>
           </div>
-          <div className="glass-panel chart-card">
+          <div className="glass-panel chart-card" style={{ cursor: 'pointer' }} onClick={() => { setExpandedChartIndex(3); setShowExpandedChart(true); }}>
             <h3>Distribution by Entry Type</h3>
             <div style={{ width: '100%', height: '300px', position: 'relative' }}>
               {typeLabels.length > 0 ? (
@@ -1768,7 +1988,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
               )}
             </div>
           </div>
-          <div className="glass-panel chart-card chart-full-width">
+          <div className="glass-panel chart-card chart-full-width" style={{ cursor: 'pointer' }} onClick={() => { setExpandedChartIndex(4); setShowExpandedChart(true); }}>
             <h3>Monthly Trend by Entry Type</h3>
             <div style={{ width: '100%', height: '300px', position: 'relative' }}>
               {sortedMonths.length > 0 ? (
@@ -1783,6 +2003,40 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
               ) : (
                 <div className="empty-state"><BarChart3 size={40} /><p>No trend data</p></div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+      {showExpandedChart && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+          zIndex: 9999, display: 'flex', flexDirection: 'column',
+          padding: '0.5rem', overflow: 'auto'
+        }} onClick={() => setShowExpandedChart(false)}>
+          <div style={{
+            background: 'var(--card-bg)', border: '1px solid var(--glass-border)',
+            borderRadius: '12px', padding: '1.5rem',
+            width: '85vw', height: '80vh',
+            display: 'flex', flexDirection: 'column',
+            boxShadow: '0 25px 50px rgba(0,0,0,0.3)', margin: 'auto'
+          }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h2 style={{ margin: 0, fontSize: '1.2rem' }}>
+                {expandedChartIndex === 0 ? 'Top 5 Specialists by Errors' :
+                 expandedChartIndex === 1 ? 'Mistake Distribution by Planet' :
+                 expandedChartIndex === 2 ? 'Errors per Creator' :
+                 expandedChartIndex === 3 ? 'Distribution by Entry Type' :
+                 'Monthly Trend by Entry Type'}
+              </h2>
+              <button className="btn btn-sm" onClick={() => setShowExpandedChart(false)}>Close</button>
+            </div>
+            <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
+              {expandedChartIndex === 0 && <Bar data={chartData.allSpecialists} options={{ ...commonOptions, maintainAspectRatio: false, plugins: { ...commonOptions.plugins, tooltip: { callbacks: { afterLabel: (context: any) => { const name = context.label; const range = specialistDateRanges[name]; return range ? `from ${range.min} to ${range.max}` : ''; } } } } }} />}
+              {expandedChartIndex === 1 && <Pie data={chartData.planetPie} options={{ ...commonOptions, maintainAspectRatio: false, scales: undefined, plugins: { ...commonOptions.plugins, legend: { ...commonOptions.plugins.legend, position: 'bottom', labels: { ...commonOptions.plugins.legend.labels, usePointStyle: true, padding: 20 }, onClick: () => {} } } }} />}
+              {expandedChartIndex === 2 && <Bar data={chartData.creatorBar} options={{ ...commonOptions, maintainAspectRatio: false }} />}
+              {expandedChartIndex === 3 && <Pie data={chartData.typePie} options={{ ...commonOptions, maintainAspectRatio: false, scales: undefined, plugins: { ...commonOptions.plugins, legend: { ...commonOptions.plugins.legend, position: 'bottom' } } }} />}
+              {expandedChartIndex === 4 && <Line data={chartData.monthlyTrend} options={{ ...commonOptions, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { ...commonOptions.plugins, legend: { ...commonOptions.plugins.legend, position: 'bottom' } } }} />}
             </div>
           </div>
         </div>
@@ -2079,6 +2333,418 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
           </div>
         </div>
       )}
+      {activeTab === 'weekly' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div className="glass-panel card">
+            <div className="filter-row" style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap' }}>
+              <div className="form-group" style={{ minWidth: '160px' }}>
+                <label>Start Date</label>
+                <input type="date" value={filterDateStart} onChange={e => setFilterDateStart(e.target.value)} />
+              </div>
+              <div className="form-group" style={{ minWidth: '160px' }}>
+                <label>End Date</label>
+                <input type="date" value={filterDateEnd} onChange={e => setFilterDateEnd(e.target.value)} />
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', paddingBottom: '1px' }}>
+                <button className="btn btn-sm" onClick={() => { const r = getWeekRange(1); setFilterDateStart(r.start); setFilterDateEnd(r.end); }}>Last Week</button>
+                <button className="btn btn-sm" onClick={() => { const r = getWeekRange(0); setFilterDateStart(r.start); setFilterDateEnd(r.end); }}>This Week</button>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', paddingBottom: '1px' }}>
+                <button
+                  className={`btn btn-sm${compareMode ? ' btn-primary' : ''}`}
+                  onClick={() => setCompareMode(!compareMode)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    width: '22px', height: '22px', borderRadius: '4px',
+                    border: compareMode ? '2px solid var(--primary)' : '2px solid var(--glass-border)',
+                    background: compareMode ? 'var(--primary)' : 'transparent',
+                    transition: 'all 0.2s'
+                  }}>
+                    {compareMode && (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </span>
+                  Compare to Other Week
+                </button>
+              </div>
+            </div>
+            {compareMode && (
+              <div className="filter-row" style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap', marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>
+                <div className="form-group" style={{ minWidth: '160px' }}>
+                  <label>Compare Start Date</label>
+                  <input type="date" value={filterDateStart2} onChange={e => setFilterDateStart2(e.target.value)} />
+                </div>
+                <div className="form-group" style={{ minWidth: '160px' }}>
+                  <label>Compare End Date</label>
+                  <input type="date" value={filterDateEnd2} onChange={e => setFilterDateEnd2(e.target.value)} />
+                </div>
+              </div>
+            )}
+          </div>
+          {weeklyFilteredEntries.length > 0 ? (
+            <>
+              <div className="stats-grid" style={{ marginBottom: '0' }}>
+                {(() => {
+                  const totalEntries = compareMode ? weeklyStats.totalEntries + weeklyStats2.totalEntries : weeklyStats.totalEntries;
+                  const totalMistakes = compareMode ? weeklyStats.totalMistakes + weeklyStats2.totalMistakes : weeklyStats.totalMistakes;
+                  const specSet = compareMode ? new Set([...Object.keys(weeklyStats.specialistMistakes), ...Object.keys(weeklyStats2.specialistMistakes)]) : new Set(Object.keys(weeklyStats.specialistMistakes));
+                  const creSet = compareMode ? new Set([...Object.keys(weeklyStats.creatorMistakes), ...Object.keys(weeklyStats2.creatorMistakes)]) : new Set(Object.keys(weeklyStats.creatorMistakes));
+                  const combinedSpecMistakes = compareMode ? (() => {
+                    const m: Record<string, number> = {};
+                    [...weeklyFilteredEntries, ...weeklyFilteredEntries2].forEach(e => { m[e.specialist] = (m[e.specialist] || 0) + e.mistakes.length; });
+                    return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null;
+                  })() : weeklyStats.topSpecialist;
+                  const combinedMistakeCounts = compareMode ? (() => {
+                    const m: Record<string, number> = {};
+                    [...weeklyFilteredEntries, ...weeklyFilteredEntries2].forEach(e => e.mistakes.forEach(mk => { m[mk] = (m[mk] || 0) + 1; }));
+                    return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null;
+                  })() : weeklyStats.topMistake;
+                  return <>
+                    <div className="glass-panel stat-card">
+                      <div className="stat-icon primary"><FileText size={20} /></div>
+                      <div className="stat-info"><h3>{totalEntries}</h3><p>{compareMode ? 'P1 + P2 Entries' : 'Total Entries'}</p></div>
+                    </div>
+                    <div className="glass-panel stat-card">
+                      <div className="stat-icon danger"><AlertOctagon size={20} /></div>
+                      <div className="stat-info"><h3>{totalMistakes}</h3><p>{compareMode ? 'P1 + P2 Mistakes' : 'Total Mistakes'}</p></div>
+                    </div>
+                    <div className="glass-panel stat-card">
+                      <div className="stat-icon warning"><Users size={20} /></div>
+                      <div className="stat-info"><h3>{specSet.size}</h3><p>{compareMode ? 'Unique Specialists' : 'Specialists with Errors'}</p></div>
+                    </div>
+                    <div className="glass-panel stat-card">
+                      <div className="stat-icon info"><Users size={20} /></div>
+                      <div className="stat-info"><h3>{creSet.size}</h3><p>{compareMode ? 'Unique Creators' : 'Creators with Errors'}</p></div>
+                    </div>
+                    {combinedSpecMistakes && (
+                      <div className="glass-panel stat-card">
+                        <div className="stat-icon warning"><TrendingDown size={20} /></div>
+                        <div className="stat-info"><h3 style={{ fontSize: '0.85rem', whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' }}>{combinedSpecMistakes[0]}</h3><p>Top Specialist ({combinedSpecMistakes[1]} errors)</p></div>
+                      </div>
+                    )}
+                    {combinedMistakeCounts && (
+                      <div className="glass-panel stat-card">
+                        <div className="stat-icon danger"><AlertTriangle size={20} /></div>
+                        <div className="stat-info"><h3 style={{ fontSize: '0.85rem', whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' }}>{combinedMistakeCounts[0]}</h3><p>Most Common Error ({combinedMistakeCounts[1]}x)</p></div>
+                      </div>
+                    )}
+                  </>;
+                })()}
+              </div>
+              <div className="glass-panel card" style={{ cursor: 'pointer' }} onClick={() => setShowExpandedTable(true)}>
+                <h3><AlertOctagon size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Consolidated Analysis {compareMode ? `(${p1Label} vs ${p2Label})` : ''}</h3>
+                <div className="table-scroll-container">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Mistake</th>
+                        <th>Type</th>
+                        <th>Color</th>
+                        {compareMode ? (
+                          <>
+                            <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Count</th>
+                            <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Specialists</th>
+                            <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Creators</th>
+                            <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Count</th>
+                            <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Specialists</th>
+                            <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Creators</th>
+                            <th>Diff</th>
+                          </>
+                        ) : (
+                          <>
+                            <th>Count</th>
+                            <th>Specialists</th>
+                            <th>Creators</th>
+                          </>
+                        )}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {consolidatedMistakes.map(({ mistake, type, color, p1Count, p1Specs, p1Cres, p2Count, p2Specs, p2Cres, diff }) => {
+                        const typeIdx = ['post', 'pre', 'mod', 'whatsapp'].indexOf(type);
+                        const bgColor = ENTRY_TYPE_COLORS[typeIdx] || '#94a3b8';
+                        const colorDot = color === 'red' ? '#EF4444' : '#EAB308';
+                        return !compareMode ? (
+                          <tr key={mistake}>
+                            <td style={{ fontSize: '0.85rem' }}>{mistake}</td>
+                            <td><span className="badge" style={{ background: bgColor + '33', color: bgColor }}>{ENTRY_TYPE_LABELS[type] || type}</span></td>
+                            <td style={{ textAlign: 'center' }}><span style={{ display: 'inline-block', width: '18px', height: '18px', borderRadius: '50%', background: colorDot, verticalAlign: 'middle' }} /></td>
+                            <td style={{ textAlign: 'center' }}><span className="badge">{p1Count}</span></td>
+                            <td style={{ fontSize: '0.9rem' }}>{Object.entries(p1Specs).map(([s, c], i) => <span key={s}>{i > 0 ? ', ' : ''}{s} <span className="badge">{c}</span></span>)}</td>
+                            <td style={{ fontSize: '0.9rem' }}>{Object.entries(p1Cres).map(([cr, c], i) => <span key={cr}>{i > 0 ? ', ' : ''}{cr} <span className="badge">{c}</span></span>)}</td>
+                          </tr>
+                        ) : (
+                          <tr key={mistake}>
+                            <td style={{ fontSize: '0.85rem' }}>{mistake}</td>
+                            <td><span className="badge" style={{ background: bgColor + '33', color: bgColor }}>{ENTRY_TYPE_LABELS[type] || type}</span></td>
+                            <td style={{ textAlign: 'center' }}><span style={{ display: 'inline-block', width: '18px', height: '18px', borderRadius: '50%', background: colorDot, verticalAlign: 'middle' }} /></td>
+                            <td style={{ background: isDarkMode ? '#1a2e4a' : '#eff6ff', textAlign: 'center' }}><span className="badge">{p1Count}</span></td>
+                            <td style={{ background: isDarkMode ? '#1a2e4a' : '#eff6ff', fontSize: '0.9rem' }}>{Object.entries(p1Specs).map(([s, c], i) => <span key={s}>{i > 0 ? ', ' : ''}{s} <span className="badge">{c}</span></span>)}</td>
+                            <td style={{ background: isDarkMode ? '#1a2e4a' : '#eff6ff', fontSize: '0.9rem' }}>{Object.entries(p1Cres).map(([cr, c], i) => <span key={cr}>{i > 0 ? ', ' : ''}{cr} <span className="badge">{c}</span></span>)}</td>
+                            <td style={{ background: isDarkMode ? '#2a2000' : '#fffbeb', textAlign: 'center' }}><span className="badge">{p2Count}</span></td>
+                            <td style={{ background: isDarkMode ? '#2a2000' : '#fffbeb', fontSize: '0.9rem' }}>{Object.entries(p2Specs).map(([s, c], i) => <span key={s}>{i > 0 ? ', ' : ''}{s} <span className="badge">{c}</span></span>)}</td>
+                            <td style={{ background: isDarkMode ? '#2a2000' : '#fffbeb', fontSize: '0.9rem' }}>{Object.entries(p2Cres).map(([cr, c], i) => <span key={cr}>{i > 0 ? ', ' : ''}{cr} <span className="badge">{c}</span></span>)}</td>
+                            <td style={{ color: diff > 0 ? 'var(--danger)' : diff < 0 ? 'var(--success)' : 'inherit', fontWeight: 700 }}>{diff > 0 ? `+${diff}` : `${diff}`}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {compareMode && (
+                <div className="glass-panel card">
+                  <h3><TrendingUp size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Period Comparison</h3>
+                  <p style={{ opacity: 0.6, marginBottom: '1rem', fontSize: '0.85rem' }}>
+                    Period 1: {filterDateStart || 'earliest'} to {filterDateEnd || 'latest'} |
+                    Period 2: {filterDateStart2 || 'earliest'} to {filterDateEnd2 || 'latest'}
+                  </p>
+                  <div className="stats-grid" style={{ marginBottom: '1rem' }}>
+                    <div className="glass-panel stat-card" style={{ padding: '0.75rem' }}>
+                      <div className="stat-icon primary" style={{ width: '32px', height: '32px' }}><FileText size={16} /></div>
+                      <div className="stat-info"><h3 style={{ fontSize: '1.1rem' }}>{weeklyStats.totalEntries} <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>vs</span> {weeklyStats2.totalEntries}</h3><p>Total Entries</p></div>
+                    </div>
+                    <div className="glass-panel stat-card" style={{ padding: '0.75rem' }}>
+                      <div className="stat-icon danger" style={{ width: '32px', height: '32px' }}><AlertOctagon size={16} /></div>
+                      <div className="stat-info"><h3 style={{ fontSize: '1.1rem' }}>{weeklyStats.totalMistakes} <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>vs</span> {weeklyStats2.totalMistakes}</h3><p>Total Mistakes</p></div>
+                    </div>
+                    <div className="glass-panel stat-card" style={{ padding: '0.75rem' }}>
+                      <div className="stat-icon warning" style={{ width: '32px', height: '32px' }}><Users size={16} /></div>
+                      <div className="stat-info"><h3 style={{ fontSize: '1.1rem' }}>{Object.keys(weeklyStats.specialistMistakes).length} <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>vs</span> {Object.keys(weeklyStats2.specialistMistakes).length}</h3><p>Active Specialists</p></div>
+                    </div>
+                  </div>
+                  <div className="table-scroll-container">
+                    <table>
+                      <thead>
+                        <tr><th>Specialist</th><th>Period 1</th><th>Period 2</th><th>Diff</th></tr>
+                      </thead>
+                      <tbody>
+                        {weeklyComparisonSpecs.map(({ spec, p1, p2, diff }) => (
+                          <tr key={spec}>
+                            <td style={{ fontWeight: 600 }}>{spec}</td>
+                            <td>{p1}</td>
+                            <td>{p2}</td>
+                            <td style={{ color: diff > 0 ? 'var(--danger)' : diff < 0 ? 'var(--success)' : 'inherit', fontWeight: 700 }}>
+                              {diff > 0 ? `+${diff}` : `${diff}`}
+                            </td>
+                          </tr>
+                        ))}
+                        {weeklyComparisonSpecs.length === 0 && (
+                          <tr><td colSpan={4} style={{ textAlign: 'center', opacity: 0.5 }}>No data to compare</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+              {compareMode && mistakeComparisonChartData && specialistComparisonChartData && (
+                <div className="charts-container">
+                  <div className="glass-panel chart-card chart-full-width">
+                    <h3>Mistakes Comparison: P1 vs P2</h3>
+                    <div style={{ width: '100%', height: '300px', position: 'relative' }}>
+                      <Bar data={mistakeComparisonChartData} options={commonOptions} />
+                    </div>
+                  </div>
+                  <div className="glass-panel chart-card chart-full-width">
+                    <h3>Specialist Comparison: P1 vs P2</h3>
+                    <div style={{ width: '100%', height: '300px', position: 'relative' }}>
+                      <Bar data={specialistComparisonChartData} options={commonOptions} />
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="glass-panel card">
+                <h3><FileText size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Detailed Entries</h3>
+                <div className="table-scroll-container" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  <table>
+                    <thead><tr><th>Date</th><th>Planet</th><th>Specialist</th><th>Creator</th><th>Mistakes</th></tr></thead>
+                    <tbody>
+                      {[...weeklyFilteredEntries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(e => (
+                        <tr key={e.id}>
+                          <td>{e.date}</td><td>{e.planet}</td><td>{e.specialist}</td><td>{e.creator}</td>
+                          <td style={{ fontSize: '0.85rem' }}>{e.mistakes.join('; ')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="glass-panel card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                <div>
+                  <h3 style={{ margin: 0 }}>Export Report</h3>
+                  <p style={{ margin: '0.25rem 0 0', opacity: 0.6, fontSize: '0.85rem' }}>Download weekly data for analysis in Excel or Google Sheets</p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button className="btn" onClick={() => {
+                    const esc = (v: string) => v.includes(',') || v.includes('"') || v.includes('\n') ? '"' + v.replace(/"/g, '""') + '"' : v;
+                    const lines: string[] = ['\uFEFF'];
+                    const reportTitle = compareMode ? `Weekly Report: ${p1Label} vs ${p2Label}` : `Weekly Report: ${filterDateStart || 'earliest'} to ${filterDateEnd || 'latest'}`;
+                    lines.push(reportTitle);
+                    lines.push(`Generated: ${new Date().toISOString().split('T')[0]}`);
+                    lines.push('');
+
+                    // Summary Statistics
+                    const sTotalEntries = compareMode ? weeklyStats.totalEntries + weeklyStats2.totalEntries : weeklyStats.totalEntries;
+                    const sTotalMistakes = compareMode ? weeklyStats.totalMistakes + weeklyStats2.totalMistakes : weeklyStats.totalMistakes;
+                    const sSpecs = compareMode ? new Set([...Object.keys(weeklyStats.specialistMistakes), ...Object.keys(weeklyStats2.specialistMistakes)]) : new Set(Object.keys(weeklyStats.specialistMistakes));
+                    const sCres = compareMode ? new Set([...Object.keys(weeklyStats.creatorMistakes), ...Object.keys(weeklyStats2.creatorMistakes)]) : new Set(Object.keys(weeklyStats.creatorMistakes));
+                    const sTopSpec = compareMode ? (() => { const m: Record<string, number> = {}; [...weeklyFilteredEntries, ...weeklyFilteredEntries2].forEach(e => { m[e.specialist] = (m[e.specialist] || 0) + e.mistakes.length; }); return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null; })() : weeklyStats.topSpecialist;
+                    const sTopMist = compareMode ? (() => { const m: Record<string, number> = {}; [...weeklyFilteredEntries, ...weeklyFilteredEntries2].forEach(e => e.mistakes.forEach(mk => { m[mk] = (m[mk] || 0) + 1; })); return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null; })() : weeklyStats.topMistake;
+                    lines.push('=== Summary Statistics ===');
+                    lines.push(['Metric', 'Value'].join(','));
+                    lines.push(['Total Entries', sTotalEntries].join(','));
+                    lines.push(['Total Mistakes', sTotalMistakes].join(','));
+                    lines.push(['Unique Specialists', sSpecs.size].join(','));
+                    lines.push(['Unique Creators', sCres.size].join(','));
+                    if (sTopSpec) lines.push(['Top Specialist', `${sTopSpec[0]} (${sTopSpec[1]} errors)`].join(','));
+                    if (sTopMist) lines.push(['Most Common Error', `${sTopMist[0]} (${sTopMist[1]}x)`].join(','));
+                    lines.push('');
+
+                    // Consolidated Analysis
+                    lines.push(compareMode
+                      ? '=== Consolidated Analysis ===, ' + [p1Label + ' Count', p1Label + ' Specialists', p1Label + ' Creators', p2Label + ' Count', p2Label + ' Specialists', p2Label + ' Creators', 'Diff'].join(',')
+                      : '=== Consolidated Analysis ===');
+                    const caHeaders = compareMode
+                      ? ['Mistake', 'Type', 'Color', 'P1 Count', 'P1 Specialists', 'P1 Creators', 'P2 Count', 'P2 Specialists', 'P2 Creators', 'Diff']
+                      : ['Mistake', 'Type', 'Color', 'Count', 'Specialists', 'Creators'];
+                    lines.push(caHeaders.join(','));
+                    consolidatedMistakes.forEach(({ mistake, type, color, p1Count, p1Specs, p1Cres, p2Count, p2Specs, p2Cres, diff }) => {
+                      const p1SpecStr = Object.entries(p1Specs).map(([s, c]) => `${s}(${c})`).join('; ');
+                      const p1CreStr = Object.entries(p1Cres).map(([cr, c]) => `${cr}(${c})`).join('; ');
+                      const colorStr = color === 'red' ? 'Red' : 'Yellow';
+                      if (compareMode) {
+                        const p2SpecStr = Object.entries(p2Specs).map(([s, c]) => `${s}(${c})`).join('; ');
+                        const p2CreStr = Object.entries(p2Cres).map(([cr, c]) => `${cr}(${c})`).join('; ');
+                        lines.push([mistake, type, colorStr, p1Count, p1SpecStr, p1CreStr, p2Count, p2SpecStr, p2CreStr, diff].map(v => esc(String(v))).join(','));
+                      } else {
+                        lines.push([mistake, type, colorStr, p1Count, p1SpecStr, p1CreStr].map(v => esc(String(v))).join(','));
+                      }
+                    });
+                    lines.push('');
+
+                    // Raw Data
+                    lines.push('=== Raw Data ===');
+                    const rawHeaders = ['Date', 'Planet', 'Specialist', 'Creator', 'Mistake', 'Mistake Type', 'Entry Type'];
+                    lines.push(rawHeaders.join(','));
+                    const rawEntries = compareMode ? [...weeklyFilteredEntries, ...weeklyFilteredEntries2] : weeklyFilteredEntries;
+                    rawEntries.forEach(e => {
+                      const type = getEntryType(e, settings);
+                      e.mistakes.forEach(m => {
+                        const mType = settings.mistakes.find(sm => sm.label === m)?.type || '';
+                        const eType = ENTRY_TYPE_LABELS[type] || type;
+                        lines.push(rawHeaders.map(h => {
+                          const val = h === 'Date' ? e.date : h === 'Planet' ? e.planet : h === 'Specialist' ? e.specialist : h === 'Creator' ? e.creator : h === 'Mistake' ? m : h === 'Mistake Type' ? mType : eType;
+                          return esc(val);
+                        }).join(','));
+                      });
+                    });
+                    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `weekly_report_${filterDateStart || 'all'}_to_${filterDateEnd || 'all'}.csv`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}>
+                    <Download size={16} /> Export CSV
+                  </button>
+                </div>
+              </div>
+              {showExpandedTable && (
+                <div style={{
+                  position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                  background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)',
+                  zIndex: 9999, display: 'flex', flexDirection: 'column',
+                  padding: '0.5rem', overflow: 'auto'
+                }} onClick={() => setShowExpandedTable(false)}>
+                  <div style={{
+                    background: 'var(--card-bg)', border: '1px solid var(--glass-border)',
+                    borderRadius: '12px', padding: '1rem',
+                    width: '85vw', maxHeight: '80vh',
+                    display: 'flex', flexDirection: 'column',
+                    boxShadow: '0 25px 50px rgba(0,0,0,0.3)', margin: 'auto'
+                  }} onClick={e => e.stopPropagation()}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                      <h2 style={{ margin: 0, fontSize: '1.2rem' }}>Consolidated Analysis {compareMode ? `(${p1Label} vs ${p2Label})` : ''}</h2>
+                      <button className="btn btn-sm" onClick={() => setShowExpandedTable(false)}>Close</button>
+                    </div>
+                    <div style={{ overflow: 'auto' }}>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Mistake</th>
+                            <th>Type</th>
+                            <th>Color</th>
+                            {compareMode ? (
+                              <>
+                                <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Count</th>
+                                <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Specialists</th>
+                                <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Creators</th>
+                                <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Count</th>
+                                <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Specialists</th>
+                                <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Creators</th>
+                                <th>Diff</th>
+                              </>
+                            ) : (
+                              <>
+                                <th>Count</th>
+                                <th>Specialists</th>
+                                <th>Creators</th>
+                              </>
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {consolidatedMistakes.map(({ mistake, type, color, p1Count, p1Specs, p1Cres, p2Count, p2Specs, p2Cres, diff }) => {
+                            const typeIdx = ['post', 'pre', 'mod', 'whatsapp'].indexOf(type);
+                            const bgColor = ENTRY_TYPE_COLORS[typeIdx] || '#94a3b8';
+                            const colorDot = color === 'red' ? '#EF4444' : '#EAB308';
+                            return !compareMode ? (
+                              <tr key={mistake}>
+                                <td style={{ fontSize: '0.85rem' }}>{mistake}</td>
+                                <td><span className="badge" style={{ background: bgColor + '33', color: bgColor }}>{ENTRY_TYPE_LABELS[type] || type}</span></td>
+                                <td style={{ textAlign: 'center' }}><span style={{ display: 'inline-block', width: '18px', height: '18px', borderRadius: '50%', background: colorDot, verticalAlign: 'middle' }} /></td>
+                                <td style={{ textAlign: 'center' }}><span className="badge">{p1Count}</span></td>
+                                <td style={{ fontSize: '0.9rem' }}>{Object.entries(p1Specs).map(([s, c], i) => <span key={s}>{i > 0 ? ', ' : ''}{s} <span className="badge">{c}</span></span>)}</td>
+                                <td style={{ fontSize: '0.9rem' }}>{Object.entries(p1Cres).map(([cr, c], i) => <span key={cr}>{i > 0 ? ', ' : ''}{cr} <span className="badge">{c}</span></span>)}</td>
+                              </tr>
+                            ) : (
+                              <tr key={mistake}>
+                                <td style={{ fontSize: '0.85rem' }}>{mistake}</td>
+                                <td><span className="badge" style={{ background: bgColor + '33', color: bgColor }}>{ENTRY_TYPE_LABELS[type] || type}</span></td>
+                                <td style={{ textAlign: 'center' }}><span style={{ display: 'inline-block', width: '18px', height: '18px', borderRadius: '50%', background: colorDot, verticalAlign: 'middle' }} /></td>
+                                <td style={{ background: isDarkMode ? '#1a2e4a' : '#eff6ff', textAlign: 'center' }}><span className="badge">{p1Count}</span></td>
+                                <td style={{ background: isDarkMode ? '#1a2e4a' : '#eff6ff', fontSize: '0.9rem' }}>{Object.entries(p1Specs).map(([s, c], i) => <span key={s}>{i > 0 ? ', ' : ''}{s} <span className="badge">{c}</span></span>)}</td>
+                                <td style={{ background: isDarkMode ? '#1a2e4a' : '#eff6ff', fontSize: '0.9rem' }}>{Object.entries(p1Cres).map(([cr, c], i) => <span key={cr}>{i > 0 ? ', ' : ''}{cr} <span className="badge">{c}</span></span>)}</td>
+                                <td style={{ background: isDarkMode ? '#2a2000' : '#fffbeb', textAlign: 'center' }}><span className="badge">{p2Count}</span></td>
+                                <td style={{ background: isDarkMode ? '#2a2000' : '#fffbeb', fontSize: '0.9rem' }}>{Object.entries(p2Specs).map(([s, c], i) => <span key={s}>{i > 0 ? ', ' : ''}{s} <span className="badge">{c}</span></span>)}</td>
+                                <td style={{ background: isDarkMode ? '#2a2000' : '#fffbeb', fontSize: '0.9rem' }}>{Object.entries(p2Cres).map(([cr, c], i) => <span key={cr}>{i > 0 ? ', ' : ''}{cr} <span className="badge">{c}</span></span>)}</td>
+                                <td style={{ color: diff > 0 ? 'var(--danger)' : diff < 0 ? 'var(--success)' : 'inherit', fontWeight: 700 }}>{diff > 0 ? `+${diff}` : `${diff}`}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="glass-panel card">
+              <div className="empty-state">
+                <FileText size={40} />
+                <p>No entries found for the selected date range.</p>
+                <p style={{ opacity: 0.5, fontSize: '0.85rem' }}>Try selecting a different range or click "All Time" to view all data.</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -2143,7 +2809,7 @@ function SettingsPage({
         showToast('Entry already exists in this registry.', 'warning');
         return;
       }
-      onUpdate(key, [...(settings[key] as string[]), inputs[field]]);
+      onUpdate(key, [...(settings[key] as string[]), inputs[field]].sort((a, b) => a.localeCompare(b)));
     }
     setInputs({ ...inputs, [field]: '' });
     showToast(`${key} added successfully!`, 'success');
@@ -2669,6 +3335,8 @@ export default function App() {
           try { localStorage.setItem('cached_webinar_settings', JSON.stringify(parsed)); } catch { /* storage full */ }
         }
       }
+      if (parsed.specialists) parsed.specialists = [...parsed.specialists].sort((a, b) => a.localeCompare(b));
+      if (parsed.creators) parsed.creators = [...parsed.creators].sort((a, b) => a.localeCompare(b));
       return parsed;
     } catch {
       return INITIAL_SETTINGS;
@@ -2977,11 +3645,12 @@ export default function App() {
 
   const updateSettings = async (key: keyof Settings, value: string[] | MistakeItem[]) => {
     const previousSettings = settings;
-    setSettings(prev => ({ ...prev, [key]: value }));
+    const sorted = key !== 'mistakes' && Array.isArray(value) ? [...value].sort((a, b) => a.localeCompare(b)) : value;
+    setSettings(prev => ({ ...prev, [key]: sorted }));
     
     const { data, error } = await supabase
       .from('webinar_settings')
-      .update({ [key]: value })
+      .update({ [key]: sorted })
       .eq('id', 1)
       .select();
     
