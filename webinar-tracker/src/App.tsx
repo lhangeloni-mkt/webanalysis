@@ -4106,6 +4106,9 @@ export default function App() {
               )}
             </>
           )}
+          <div style={{ textAlign: 'center', marginTop: '3rem', paddingBottom: '1rem', fontSize: '0.75rem', opacity: 0.5, color: 'var(--text-muted)' }}>
+            Made by: Luiz H. Angeloni | Last update: 2026-08-27
+          </div>
         </div>
       </div>
 
