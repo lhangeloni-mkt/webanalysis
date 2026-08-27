@@ -726,7 +726,7 @@ function MistakeSelect({
           lineHeight: '1.4'
         }}
       >
-        <span style={{ fontSize: '0.95rem', wordBreak: 'break-word', whiteSpace: 'normal' }}>{value || 'Select Error'}</span>
+        <span style={{ fontSize: '0.95rem', wordBreak: 'break-word', whiteSpace: 'normal', flex: 1, minWidth: 0 }}>{value || 'Select Error'}</span>
         <ChevronDown size={18} style={{ opacity: 0.5, flexShrink: 0, marginLeft: '0.5rem' }} />
       </div>
 

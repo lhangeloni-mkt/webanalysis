@@ -1,0 +1,32 @@
+================================================================================
+WEBINAR TRACKER - UPDATE & REVERSION LOG
+================================================================================
+Generated on: 2026-08-27
+Current Stable Commit: 4d9cc8f
+
+SUMMARY OF RECENT UPDATES:
+--------------------------------------------------------------------------------
+1. Dynamic Mistake Entry Rows & Quantity Counter (1x - 10x):
+   - Removed the rigid "Number of Mistakes" dropdown.
+   - Added dynamic rows where choosing a mistake automatically spawns the next empty row.
+   - Added a quantity dropdown (1x to 10x) aligned to the right of each selected mistake box (matching 52px height).
+   - Added a compact red text link "Remove" positioned directly underneath the quantity counter.
+
+2. Responsive Mistake Select Box:
+   - Configured mistake entry select trigger to support multi-line wrapping and dynamic height adjustment (min-height: 52px, height: auto, word-break: break-word) so long error descriptions fit without clipping.
+
+3. Default Full List View in MistakeSelect Modal:
+   - Updated the mistake selection modal to display the full list of mistakes by default upon opening, sorted with RED errors first and YELLOW errors second, with interactive RED/YELLOW filter buttons.
+
+4. Analytics & Chart Compatibility:
+   - Maintained raw data storage supporting multiple occurrences per entry based on quantity selection, ensuring all dashboard statistics, charts, and weekly analytics function normally.
+
+HOW TO REVERT TO PREVIOUS VERSIONS (IF NEEDED):
+--------------------------------------------------------------------------------
+- To view recent git commit history:
+  git log --oneline -10
+
+- To rollback to a specific stable commit (e.g., 4d9cc8f or a0c2354):
+  git reset --hard <commit-hash>
+  git push origin main --force
+================================================================================
