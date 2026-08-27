@@ -215,26 +215,22 @@ function EditRecordModal({
   onCancel: () => void;
 }) {
   const [formData, setFormData] = useState({ ...entry });
-  const [mistakeCount, setMistakeCount] = useState(entry.mistakes.length);
-  const [mistakeFields, setMistakeFields] = useState<string[]>([...entry.mistakes]);
-  const mistakeScrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMistakeFields(prev => {
-      if (prev.length < mistakeCount) return [...prev, ...Array(mistakeCount - prev.length).fill('')];
-      return prev.slice(0, mistakeCount);
+  const [mistakeRows, setMistakeRows] = useState<Array<{ mistake: string; count: number }>>(() => {
+    if (!entry.mistakes || entry.mistakes.length === 0) return [{ mistake: '', count: 1 }];
+    const counts: Record<string, number> = {};
+    entry.mistakes.forEach(m => {
+      counts[m] = (counts[m] || 0) + 1;
     });
-    if (mistakeCount > 0) {
-      setTimeout(() => mistakeScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-    }
-  }, [mistakeCount]);
+    const rows = Object.entries(counts).map(([mistake, count]) => ({ mistake, count }));
+    rows.push({ mistake: '', count: 1 });
+    return rows;
+  });
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
       ...formData,
-      mistakes: mistakeFields.filter(m => m !== '')
+      mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
     });
   };
 
@@ -281,30 +277,81 @@ function EditRecordModal({
             required
           />
 
-          <div className="form-group" ref={mistakeScrollRef}>
-            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select value={mistakeCount} onChange={e => setMistakeCount(Number(e.target.value))}>
-              <option value={0}>Select the number of mistakes</option>
-              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
-          </div>
-
-          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
-            <MistakeSelect
-              key={i}
-              label={`Mistake ${i + 1}`}
-              options={settings.mistakes}
-              value={mistakeFields[i] || ''}
-              onChange={val => {
-                const updated = [...mistakeFields];
-                updated[i] = val;
-                setMistakeFields(updated);
-              }}
-              required={i === 0}
-            />
+          {mistakeRows.map((row, i) => (
+            <div key={i} style={{ marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <MistakeSelect
+                    label={`Mistake ${i + 1}`}
+                    options={settings.mistakes}
+                    value={row.mistake}
+                    onChange={val => {
+                      let updated = [...mistakeRows];
+                      updated[i] = { ...updated[i], mistake: val };
+                      if (val !== '' && i === updated.length - 1) {
+                        updated.push({ mistake: '', count: 1 });
+                      }
+                      while (updated.length > 1 && updated[updated.length - 1].mistake === '' && updated[updated.length - 2].mistake === '') {
+                        updated.pop();
+                      }
+                      setMistakeRows(updated);
+                    }}
+                    required={i === 0}
+                  />
+                </div>
+                {row.mistake !== '' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, width: '85px', paddingTop: '1.75rem' }}>
+                    <select
+                      value={row.count}
+                      onChange={e => {
+                        let updated = [...mistakeRows];
+                        updated[i] = { ...updated[i], count: Number(e.target.value) };
+                        setMistakeRows(updated);
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '52px',
+                        padding: '0.5rem',
+                        textAlign: 'center',
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        backgroundColor: 'var(--bg-color)',
+                        color: 'var(--text-main)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        marginBottom: '0.2rem'
+                      }}
+                      title="Quantity"
+                    >
+                      {Array.from({ length: 10 }, (_, n) => n + 1).map(n => (
+                        <option key={n} value={n}>{n}x</option>
+                      ))}
+                    </select>
+                    {(mistakeRows.length > 1 || row.mistake !== '') && (
+                      <span
+                        onClick={() => {
+                          let updated = mistakeRows.filter((_, idx) => idx !== i);
+                          if (updated.length === 0) updated = [{ mistake: '', count: 1 }];
+                          setMistakeRows(updated);
+                        }}
+                        style={{
+                          color: 'var(--danger)',
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          fontWeight: '500',
+                          paddingRight: '2px'
+                        }}
+                      >
+                        Remove
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
           <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-            <button type="submit" disabled={mistakeCount === 0 || !mistakeFields[0]} style={{ flex: 1 }}><Save size={18} /> Save Changes</button>
+            <button type="submit" disabled={!mistakeRows[0].mistake} style={{ flex: 1 }}><Save size={18} /> Save Changes</button>
             <button type="button" className="secondary" onClick={onCancel} style={{ flex: 1 }}>Cancel</button>
           </div>
         </form>
@@ -501,31 +548,25 @@ function MistakeSelect({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedColor, setSelectedColor] = useState<'red' | 'yellow' | null>(null);
-  const [colorPickerOpen, setColorPickerOpen] = useState(false);
 
   const uniqueColors = [...new Set(options.map(o => o.color))];
   const hasMixedColors = !noColor && uniqueColors.length > 1;
 
-  const filteredOptions = options.filter(opt =>
+  const sortedOptions = [...options].sort((a, b) => {
+    if (noColor) return 0;
+    if (a.color === 'red' && b.color !== 'red') return -1;
+    if (a.color !== 'red' && b.color === 'red') return 1;
+    return 0;
+  });
+
+  const filteredOptions = sortedOptions.filter(opt =>
     opt.label.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (selectedColor ? opt.color === selectedColor : true)
   );
 
   const handleOpen = () => {
     if (!isOpen) {
-      if (!noColor) {
-        const existing = value ? options.find(o => o.label === value) : null;
-        if (existing) {
-          setSelectedColor(existing.color);
-          setColorPickerOpen(false);
-        } else if (!hasMixedColors && uniqueColors[0]) {
-          setSelectedColor(uniqueColors[0]);
-          setColorPickerOpen(false);
-        } else {
-          setSelectedColor(null);
-          setColorPickerOpen(true);
-        }
-      }
+      setSelectedColor(null);
       setSearchTerm('');
       setIsOpen(true);
     } else {
@@ -535,10 +576,7 @@ function MistakeSelect({
 
   const handleClose = () => {
     setIsOpen(false);
-    if (!noColor) {
-      setSelectedColor(null);
-      setColorPickerOpen(false);
-    }
+    setSelectedColor(null);
     setSearchTerm('');
   };
 
@@ -578,7 +616,7 @@ function MistakeSelect({
         {hasMixedColors && (
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
             <div
-              onClick={() => { setSelectedColor('red'); setSearchTerm(''); }}
+              onClick={() => { setSelectedColor(prev => prev === 'red' ? null : 'red'); setSearchTerm(''); }}
               style={{
                 flex: 1,
                 padding: '0.75rem',
@@ -596,7 +634,7 @@ function MistakeSelect({
               RED MISTAKE
             </div>
             <div
-              onClick={() => { setSelectedColor('yellow'); setSearchTerm(''); }}
+              onClick={() => { setSelectedColor(prev => prev === 'yellow' ? null : 'yellow'); setSearchTerm(''); }}
               style={{
                 flex: 1,
                 padding: '0.75rem',
@@ -620,67 +658,76 @@ function MistakeSelect({
           <input
             autoFocus
             style={{ padding: '0.75rem 0.75rem 0.75rem 2.75rem', marginBottom: 0, width: '100%' }}
-            placeholder={noColor ? "Search errors..." : `Search ${selectedColor === 'yellow' ? 'YELLOW' : 'RED'} errors...`}
+            placeholder={noColor ? "Search errors..." : selectedColor === 'red' ? "Search RED errors..." : selectedColor === 'yellow' ? "Search YELLOW errors..." : "Search all errors..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onClick={(e) => e.stopPropagation()}
           />
         </div>
-        {(selectedColor || noColor) && (
-          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map(opt => (
-                <div
-                  key={opt.label + '-' + opt.type + '-' + opt.color}
-                  onClick={() => {
-                    onChange(opt.label);
-                    handleClose();
-                  }}
-                  style={{
-                    padding: '0.75rem 0.875rem',
-                    cursor: 'pointer',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '0.6rem',
-                    background: value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-                    fontWeight: value === opt.label ? '600' : '400',
-                    wordBreak: 'break-word',
-                    lineHeight: '1.4',
-                    fontSize: '0.9rem',
-                    borderLeft: `3px solid ${getItemColor(opt)}`
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.3)' : 'rgba(128, 128, 128, 0.2)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent'; }}
-                >
-                  <span style={{
-                    flexShrink: 0,
-                    fontSize: '0.8rem',
-                    lineHeight: '1.6',
-                    color: getItemColor(opt)
-                  }}>●</span>
-                  <span>{opt.label}</span>
-                </div>
-              ))
-            ) : (
-              <div style={{ padding: '1rem', opacity: 0.5, textAlign: 'center' }}>No results found</div>
-            )}
-          </div>
-        )}
+        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map(opt => (
+              <div
+                key={opt.label + '-' + opt.type + '-' + opt.color}
+                onClick={() => {
+                  onChange(opt.label);
+                  handleClose();
+                }}
+                style={{
+                  padding: '0.75rem 0.875rem',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '0.6rem',
+                  background: value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
+                  fontWeight: value === opt.label ? '600' : '400',
+                  wordBreak: 'break-word',
+                  lineHeight: '1.4',
+                  fontSize: '0.9rem',
+                  borderLeft: `3px solid ${getItemColor(opt)}`
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.3)' : 'rgba(128, 128, 128, 0.2)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = value === opt.label ? 'rgba(59, 130, 246, 0.15)' : 'transparent'; }}
+              >
+                <span style={{
+                  flexShrink: 0,
+                  fontSize: '0.8rem',
+                  lineHeight: '1.6',
+                  color: getItemColor(opt)
+                }}>●</span>
+                <span>{opt.label}</span>
+              </div>
+            ))
+          ) : (
+            <div style={{ padding: '1rem', opacity: 0.5, textAlign: 'center' }}>No results found</div>
+          )}
+        </div>
       </div>
     </>
   ) : null;
 
   return (
-    <div className="form-group">
+    <div className="form-group" style={{ marginBottom: 0 }}>
       <label>{label} {required && <span style={{ color: 'var(--danger)' }}>*</span>}</label>
       <div
         className="searchable-select-trigger"
         onClick={handleOpen}
-        style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.875rem 1rem' }}
+        style={{
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '0.75rem 1rem',
+          minHeight: '52px',
+          height: 'auto',
+          wordBreak: 'break-word',
+          whiteSpace: 'normal',
+          lineHeight: '1.4'
+        }}
       >
-        <span style={{ fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{value || 'Select Error'}</span>
-        <ChevronDown size={18} style={{ opacity: 0.5, flexShrink: 0 }} />
+        <span style={{ fontSize: '0.95rem', wordBreak: 'break-word', whiteSpace: 'normal' }}>{value || 'Select Error'}</span>
+        <ChevronDown size={18} style={{ opacity: 0.5, flexShrink: 0, marginLeft: '0.5rem' }} />
       </div>
 
       {modal}
@@ -1075,24 +1122,9 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
     specialist: '',
     creator: ''
   });
-  const [mistakeCount, setMistakeCount] = useState(0);
-  const [mistakeFields, setMistakeFields] = useState<string[]>([]);
-  const mistakeScrollRef = useRef<HTMLDivElement>(null);
+  const [mistakeRows, setMistakeRows] = useState<Array<{ mistake: string; count: number }>>([{ mistake: '', count: 1 }]);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMistakeFields(prev => {
-      if (prev.length < mistakeCount) {
-        return [...prev, ...Array(mistakeCount - prev.length).fill('')];
-      }
-      return prev.slice(0, mistakeCount);
-    });
-    if (mistakeCount > 0) {
-      setTimeout(() => mistakeScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-    }
-  }, [mistakeCount]);
-
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeCount > 0 && mistakeFields[0] !== '';
+  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeRows[0].mistake !== '';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1102,7 +1134,7 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
       planet: formData.planet,
       specialist: formData.specialist,
       creator: formData.creator,
-      mistakes: mistakeFields.filter(m => m !== '')
+      mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
     });
     setFormData({
       date: new Date().toISOString().split('T')[0],
@@ -1110,8 +1142,7 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
       specialist: '',
       creator: ''
     });
-    setMistakeCount(0);
-    setMistakeFields([]);
+    setMistakeRows([{ mistake: '', count: 1 }]);
   };
 
   return (
@@ -1163,32 +1194,78 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
             placeholder="Search creator..."
           />
 
-          <div className="form-group" ref={mistakeScrollRef}>
-            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select
-              value={mistakeCount}
-              onChange={e => setMistakeCount(Number(e.target.value))}
-            >
-              <option value={0}>Select the number of mistakes</option>
-              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-
-          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
-            <MistakeSelect
-              key={i}
-              label={`Mistake ${i + 1}`}
-              options={settings.mistakes.filter(m => m.type === 'post')}
-              value={mistakeFields[i] || ''}
-              onChange={val => {
-                const updated = [...mistakeFields];
-                updated[i] = val;
-                setMistakeFields(updated);
-              }}
-              required={i === 0}
-            />
+          {mistakeRows.map((row, i) => (
+            <div key={i} style={{ marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <MistakeSelect
+                    label={`Mistake ${i + 1}`}
+                    options={settings.mistakes.filter(m => m.type === 'post')}
+                    value={row.mistake}
+                    onChange={val => {
+                      let updated = [...mistakeRows];
+                      updated[i] = { ...updated[i], mistake: val };
+                      if (val !== '' && i === updated.length - 1) {
+                        updated.push({ mistake: '', count: 1 });
+                      }
+                      while (updated.length > 1 && updated[updated.length - 1].mistake === '' && updated[updated.length - 2].mistake === '') {
+                        updated.pop();
+                      }
+                      setMistakeRows(updated);
+                    }}
+                    required={i === 0}
+                  />
+                </div>
+                {row.mistake !== '' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, width: '85px', paddingTop: '1.75rem' }}>
+                    <select
+                      value={row.count}
+                      onChange={e => {
+                        let updated = [...mistakeRows];
+                        updated[i] = { ...updated[i], count: Number(e.target.value) };
+                        setMistakeRows(updated);
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '52px',
+                        padding: '0.5rem',
+                        textAlign: 'center',
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        backgroundColor: 'var(--bg-color)',
+                        color: 'var(--text-main)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        marginBottom: '0.2rem'
+                      }}
+                      title="Quantity"
+                    >
+                      {Array.from({ length: 10 }, (_, n) => n + 1).map(n => (
+                        <option key={n} value={n}>{n}x</option>
+                      ))}
+                    </select>
+                    {(mistakeRows.length > 1 || row.mistake !== '') && (
+                      <span
+                        onClick={() => {
+                          let updated = mistakeRows.filter((_, idx) => idx !== i);
+                          if (updated.length === 0) updated = [{ mistake: '', count: 1 }];
+                          setMistakeRows(updated);
+                        }}
+                        style={{
+                          color: 'var(--danger)',
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          fontWeight: '500',
+                          paddingRight: '2px'
+                        }}
+                      >
+                        Remove
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
             <Save size={18} /> Submit Entry
@@ -1207,24 +1284,9 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
     specialist: '',
     creator: ''
   });
-  const [mistakeCount, setMistakeCount] = useState(0);
-  const [mistakeFields, setMistakeFields] = useState<string[]>([]);
-  const mistakeScrollRef = useRef<HTMLDivElement>(null);
+  const [mistakeRows, setMistakeRows] = useState<Array<{ mistake: string; count: number }>>([{ mistake: '', count: 1 }]);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMistakeFields(prev => {
-      if (prev.length < mistakeCount) {
-        return [...prev, ...Array(mistakeCount - prev.length).fill('')];
-      }
-      return prev.slice(0, mistakeCount);
-    });
-    if (mistakeCount > 0) {
-      setTimeout(() => mistakeScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-    }
-  }, [mistakeCount]);
-
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeCount > 0 && mistakeFields[0] !== '';
+  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeRows[0].mistake !== '';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1234,7 +1296,7 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
       planet: formData.planet,
       specialist: formData.specialist,
       creator: formData.creator,
-      mistakes: mistakeFields.filter(m => m !== '')
+      mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
     });
     setFormData({
       date: new Date().toISOString().split('T')[0],
@@ -1242,8 +1304,7 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
       specialist: '',
       creator: ''
     });
-    setMistakeCount(0);
-    setMistakeFields([]);
+    setMistakeRows([{ mistake: '', count: 1 }]);
   };
 
   return (
@@ -1295,32 +1356,78 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
             placeholder="Search creator..."
           />
 
-          <div className="form-group" ref={mistakeScrollRef}>
-            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select
-              value={mistakeCount}
-              onChange={e => setMistakeCount(Number(e.target.value))}
-            >
-              <option value={0}>Select the number of mistakes</option>
-              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
-                <option key={n} value={n}>{n}</option>
-              ))}
-            </select>
-          </div>
-
-          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
-            <MistakeSelect
-              key={i}
-              label={`Mistake ${i + 1}`}
-              options={settings.mistakes.filter(m => m.type === 'pre')}
-              value={mistakeFields[i] || ''}
-              onChange={val => {
-                const updated = [...mistakeFields];
-                updated[i] = val;
-                setMistakeFields(updated);
-              }}
-              required={i === 0}
-            />
+          {mistakeRows.map((row, i) => (
+            <div key={i} style={{ marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <MistakeSelect
+                    label={`Mistake ${i + 1}`}
+                    options={settings.mistakes.filter(m => m.type === 'pre')}
+                    value={row.mistake}
+                    onChange={val => {
+                      let updated = [...mistakeRows];
+                      updated[i] = { ...updated[i], mistake: val };
+                      if (val !== '' && i === updated.length - 1) {
+                        updated.push({ mistake: '', count: 1 });
+                      }
+                      while (updated.length > 1 && updated[updated.length - 1].mistake === '' && updated[updated.length - 2].mistake === '') {
+                        updated.pop();
+                      }
+                      setMistakeRows(updated);
+                    }}
+                    required={i === 0}
+                  />
+                </div>
+                {row.mistake !== '' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, width: '85px', paddingTop: '1.75rem' }}>
+                    <select
+                      value={row.count}
+                      onChange={e => {
+                        let updated = [...mistakeRows];
+                        updated[i] = { ...updated[i], count: Number(e.target.value) };
+                        setMistakeRows(updated);
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '52px',
+                        padding: '0.5rem',
+                        textAlign: 'center',
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        backgroundColor: 'var(--bg-color)',
+                        color: 'var(--text-main)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        marginBottom: '0.2rem'
+                      }}
+                      title="Quantity"
+                    >
+                      {Array.from({ length: 10 }, (_, n) => n + 1).map(n => (
+                        <option key={n} value={n}>{n}x</option>
+                      ))}
+                    </select>
+                    {(mistakeRows.length > 1 || row.mistake !== '') && (
+                      <span
+                        onClick={() => {
+                          let updated = mistakeRows.filter((_, idx) => idx !== i);
+                          if (updated.length === 0) updated = [{ mistake: '', count: 1 }];
+                          setMistakeRows(updated);
+                        }}
+                        style={{
+                          color: 'var(--danger)',
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          fontWeight: '500',
+                          paddingRight: '2px'
+                        }}
+                      >
+                        Remove
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
             <Save size={18} /> Submit Pre Webinar Entry
@@ -1336,33 +1443,19 @@ function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave:
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: ''
   });
-  const [mistakeCount, setMistakeCount] = useState(0);
-  const [mistakeFields, setMistakeFields] = useState<string[]>([]);
-  const mistakeScrollRef = useRef<HTMLDivElement>(null);
+  const [mistakeRows, setMistakeRows] = useState<Array<{ mistake: string; count: number }>>([{ mistake: '', count: 1 }]);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMistakeFields(prev => {
-      if (prev.length < mistakeCount) return [...prev, ...Array(mistakeCount - prev.length).fill('')];
-      return prev.slice(0, mistakeCount);
-    });
-    if (mistakeCount > 0) {
-      setTimeout(() => mistakeScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-    }
-  }, [mistakeCount]);
-
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeCount > 0 && mistakeFields[0] !== '';
+  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeRows[0].mistake !== '';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
     onSave({
       date: formData.date, planet: formData.planet, specialist: formData.specialist,
-      creator: formData.creator, mistakes: mistakeFields.filter(m => m !== '')
+      creator: formData.creator, mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
     });
     setFormData({ date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '' });
-    setMistakeCount(0);
-    setMistakeFields([]);
+    setMistakeRows([{ mistake: '', count: 1 }]);
   };
   return (
     <div className="container-narrow">
@@ -1387,23 +1480,79 @@ function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave:
             onChange={val => setFormData({ ...formData, specialist: val })} placeholder="Search specialist..." />
           <SearchableSelect required label="Creator" options={settings.creators} value={formData.creator}
             onChange={val => setFormData({ ...formData, creator: val })} placeholder="Search creator..." />
-          <div className="form-group" ref={mistakeScrollRef}>
-            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select value={mistakeCount} onChange={e => setMistakeCount(Number(e.target.value))}>
-              <option value={0}>Select the number of mistakes</option>
-              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
-          </div>
-          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
-            <MistakeSelect
-              key={i}
-              label={`Mistake ${i + 1}`}
-              options={settings.mistakes.filter(m => m.type === 'mod')}
-              value={mistakeFields[i] || ''}
-              onChange={val => { const updated = [...mistakeFields]; updated[i] = val; setMistakeFields(updated); }}
-              required={i === 0}
-              noColor
-            />
+          {mistakeRows.map((row, i) => (
+            <div key={i} style={{ marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <MistakeSelect
+                    label={`Mistake ${i + 1}`}
+                    options={settings.mistakes.filter(m => m.type === 'mod')}
+                    value={row.mistake}
+                    onChange={val => {
+                      let updated = [...mistakeRows];
+                      updated[i] = { ...updated[i], mistake: val };
+                      if (val !== '' && i === updated.length - 1) {
+                        updated.push({ mistake: '', count: 1 });
+                      }
+                      while (updated.length > 1 && updated[updated.length - 1].mistake === '' && updated[updated.length - 2].mistake === '') {
+                        updated.pop();
+                      }
+                      setMistakeRows(updated);
+                    }}
+                    required={i === 0}
+                    noColor
+                  />
+                </div>
+                {row.mistake !== '' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, width: '85px', paddingTop: '1.75rem' }}>
+                    <select
+                      value={row.count}
+                      onChange={e => {
+                        let updated = [...mistakeRows];
+                        updated[i] = { ...updated[i], count: Number(e.target.value) };
+                        setMistakeRows(updated);
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '52px',
+                        padding: '0.5rem',
+                        textAlign: 'center',
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        backgroundColor: 'var(--bg-color)',
+                        color: 'var(--text-main)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        marginBottom: '0.2rem'
+                      }}
+                      title="Quantity"
+                    >
+                      {Array.from({ length: 10 }, (_, n) => n + 1).map(n => (
+                        <option key={n} value={n}>{n}x</option>
+                      ))}
+                    </select>
+                    {(mistakeRows.length > 1 || row.mistake !== '') && (
+                      <span
+                        onClick={() => {
+                          let updated = mistakeRows.filter((_, idx) => idx !== i);
+                          if (updated.length === 0) updated = [{ mistake: '', count: 1 }];
+                          setMistakeRows(updated);
+                        }}
+                        style={{
+                          color: 'var(--danger)',
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          fontWeight: '500',
+                          paddingRight: '2px'
+                        }}
+                      >
+                        Remove
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
             <Save size={18} /> Submit Entry
@@ -1418,33 +1567,19 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: ''
   });
-  const [mistakeCount, setMistakeCount] = useState(0);
-  const [mistakeFields, setMistakeFields] = useState<string[]>([]);
-  const mistakeScrollRef = useRef<HTMLDivElement>(null);
+  const [mistakeRows, setMistakeRows] = useState<Array<{ mistake: string; count: number }>>([{ mistake: '', count: 1 }]);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMistakeFields(prev => {
-      if (prev.length < mistakeCount) return [...prev, ...Array(mistakeCount - prev.length).fill('')];
-      return prev.slice(0, mistakeCount);
-    });
-    if (mistakeCount > 0) {
-      setTimeout(() => mistakeScrollRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
-    }
-  }, [mistakeCount]);
-
-  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeCount > 0 && mistakeFields[0] !== '';
+  const isFormValid = formData.date && formData.planet && formData.specialist && formData.creator && mistakeRows[0].mistake !== '';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
     onSave({
       date: formData.date, planet: formData.planet, specialist: formData.specialist,
-      creator: formData.creator, mistakes: mistakeFields.filter(m => m !== '')
+      creator: formData.creator, mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
     });
     setFormData({ date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '' });
-    setMistakeCount(0);
-    setMistakeFields([]);
+    setMistakeRows([{ mistake: '', count: 1 }]);
   };
   return (
     <div className="container-narrow">
@@ -1469,23 +1604,79 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
             onChange={val => setFormData({ ...formData, specialist: val })} placeholder="Search specialist..." />
           <SearchableSelect required label="Creator" options={settings.creators} value={formData.creator}
             onChange={val => setFormData({ ...formData, creator: val })} placeholder="Search creator..." />
-          <div className="form-group" ref={mistakeScrollRef}>
-            <label>Number of Mistakes <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <select value={mistakeCount} onChange={e => setMistakeCount(Number(e.target.value))}>
-              <option value={0}>Select the number of mistakes</option>
-              {Array.from({ length: 10 }, (_, i) => i + 1).map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
-          </div>
-          {mistakeCount > 0 && Array.from({ length: mistakeCount }, (_, i) => (
-            <MistakeSelect
-              key={i}
-              label={`Mistake ${i + 1}`}
-              options={settings.mistakes.filter(m => m.type === 'whatsapp')}
-              value={mistakeFields[i] || ''}
-              onChange={val => { const updated = [...mistakeFields]; updated[i] = val; setMistakeFields(updated); }}
-              required={i === 0}
-              noColor
-            />
+          {mistakeRows.map((row, i) => (
+            <div key={i} style={{ marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <MistakeSelect
+                    label={`Mistake ${i + 1}`}
+                    options={settings.mistakes.filter(m => m.type === 'whatsapp')}
+                    value={row.mistake}
+                    onChange={val => {
+                      let updated = [...mistakeRows];
+                      updated[i] = { ...updated[i], mistake: val };
+                      if (val !== '' && i === updated.length - 1) {
+                        updated.push({ mistake: '', count: 1 });
+                      }
+                      while (updated.length > 1 && updated[updated.length - 1].mistake === '' && updated[updated.length - 2].mistake === '') {
+                        updated.pop();
+                      }
+                      setMistakeRows(updated);
+                    }}
+                    required={i === 0}
+                    noColor
+                  />
+                </div>
+                {row.mistake !== '' && (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, width: '85px', paddingTop: '1.75rem' }}>
+                    <select
+                      value={row.count}
+                      onChange={e => {
+                        let updated = [...mistakeRows];
+                        updated[i] = { ...updated[i], count: Number(e.target.value) };
+                        setMistakeRows(updated);
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '52px',
+                        padding: '0.5rem',
+                        textAlign: 'center',
+                        fontWeight: 600,
+                        fontSize: '1rem',
+                        backgroundColor: 'var(--bg-color)',
+                        color: 'var(--text-main)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        marginBottom: '0.2rem'
+                      }}
+                      title="Quantity"
+                    >
+                      {Array.from({ length: 10 }, (_, n) => n + 1).map(n => (
+                        <option key={n} value={n}>{n}x</option>
+                      ))}
+                    </select>
+                    {(mistakeRows.length > 1 || row.mistake !== '') && (
+                      <span
+                        onClick={() => {
+                          let updated = mistakeRows.filter((_, idx) => idx !== i);
+                          if (updated.length === 0) updated = [{ mistake: '', count: 1 }];
+                          setMistakeRows(updated);
+                        }}
+                        style={{
+                          color: 'var(--danger)',
+                          fontSize: '0.78rem',
+                          cursor: 'pointer',
+                          fontWeight: '500',
+                          paddingRight: '2px'
+                        }}
+                      >
+                        Remove
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
           <button type="submit" style={{ width: '100%' }} disabled={!isFormValid}>
             <Save size={18} /> Submit Entry
