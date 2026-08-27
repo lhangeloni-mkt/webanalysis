@@ -459,10 +459,20 @@ function SearchableSelect({
       <div
         className="searchable-select-trigger"
         onClick={() => setIsOpen(!isOpen)}
-        style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.875rem 1rem' }}
+        style={{
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '0.875rem 1rem',
+          minHeight: '52px',
+          height: 'auto'
+        }}
       >
-        <span style={{ fontSize: '1rem' }}>{value || 'Select an option'}</span>
-        <ChevronDown size={18} style={{ opacity: 0.5 }} />
+        <div style={{ flex: 1, minWidth: 0, paddingRight: '0.5rem', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal', lineHeight: '1.4', fontSize: '1rem' }}>
+          {value || 'Select an option'}
+        </div>
+        <ChevronDown size={18} style={{ opacity: 0.5, flexShrink: 0 }} />
       </div>
 
       {isOpen && (
@@ -720,14 +730,13 @@ function MistakeSelect({
           alignItems: 'center',
           padding: '0.75rem 1rem',
           minHeight: '52px',
-          height: 'auto',
-          wordBreak: 'break-word',
-          whiteSpace: 'normal',
-          lineHeight: '1.4'
+          height: 'auto'
         }}
       >
-        <span style={{ fontSize: '0.95rem', wordBreak: 'break-word', whiteSpace: 'normal', flex: 1, minWidth: 0 }}>{value || 'Select Error'}</span>
-        <ChevronDown size={18} style={{ opacity: 0.5, flexShrink: 0, marginLeft: '0.5rem' }} />
+        <div style={{ flex: 1, minWidth: 0, paddingRight: '0.5rem', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal', lineHeight: '1.4', fontSize: '0.95rem' }}>
+          {value || 'Select Error'}
+        </div>
+        <ChevronDown size={18} style={{ opacity: 0.5, flexShrink: 0 }} />
       </div>
 
       {modal}
