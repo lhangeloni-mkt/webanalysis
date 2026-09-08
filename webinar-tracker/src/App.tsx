@@ -230,7 +230,13 @@ function EditRecordModal({
     e.preventDefault();
     onSave({
       ...formData,
-      mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
+      mistakes: mistakeRows.flatMap(row => {
+        if (!row.mistake) return [];
+        const { type, cleanLabel } = getMistakeTypeAndCleanLabel(row.mistake);
+        const found = settings.mistakes.find(sm => sm.label === cleanLabel);
+        const targetType = type || (found ? found.type : 'post');
+        return Array(row.count).fill(tagMistake(cleanLabel, targetType));
+      })
     });
   };
 
@@ -284,10 +290,12 @@ function EditRecordModal({
                   <MistakeSelect
                     label={`Mistake ${i + 1}`}
                     options={settings.mistakes}
-                    value={row.mistake}
+                    value={getCleanMistakeLabel(row.mistake)}
                     onChange={val => {
                       let updated = [...mistakeRows];
-                      updated[i] = { ...updated[i], mistake: val };
+                      const found = settings.mistakes.find(sm => sm.label === val);
+                      const targetType = found ? found.type : 'post';
+                      updated[i] = { ...updated[i], mistake: tagMistake(val, targetType) };
                       if (val !== '' && i === updated.length - 1) {
                         updated.push({ mistake: '', count: 1 });
                       }
@@ -876,15 +884,126 @@ const formatDate = (dateStr: string) => {
   });
 };
 
-const getEntryType = (entry: Entry, settings: Settings): string => {
-  const types = new Set<string>();
-  for (const m of entry.mistakes) {
-    const found = settings.mistakes.find(sm => sm.label === m);
-    if (found) types.add(found.type);
+const TAG_PREFIX_REGEX = /^(POST|PRE|MOD|WHATSAPP)::/i;
+
+const tagMistake = (label: string, type: string): string => {
+  if (!label) return '';
+  const clean = label.replace(TAG_PREFIX_REGEX, '');
+  return `${type.toUpperCase()}::${clean}`;
+};
+
+const getCleanMistakeLabel = (label: string): string => {
+  if (!label) return '';
+  return label.replace(TAG_PREFIX_REGEX, '');
+};
+
+const getMistakeTypeAndCleanLabel = (label: string): { type?: string; cleanLabel: string } => {
+  if (!label) return { cleanLabel: '' };
+  const match = label.match(TAG_PREFIX_REGEX);
+  if (match) {
+    const type = match[1].toLowerCase();
+    const cleanLabel = label.replace(TAG_PREFIX_REGEX, '');
+    return { type, cleanLabel };
   }
+  return { cleanLabel: label };
+};
+
+const getEntryType = (entry: Entry, settings: Settings): string => {
+  if (!entry || !entry.mistakes || entry.mistakes.length === 0) return 'post';
+
+  const types = new Set<string>();
+
+  for (const m of entry.mistakes) {
+    const { type: tagType, cleanLabel } = getMistakeTypeAndCleanLabel(m);
+    if (tagType) {
+      types.add(tagType);
+    } else {
+      const matchingItems = settings.mistakes.filter(sm => sm.label === cleanLabel);
+      if (matchingItems.length === 1) {
+        types.add(matchingItems[0].type);
+      } else {
+        const found = settings.mistakes.find(sm => sm.label === cleanLabel);
+        if (found) types.add(found.type);
+      }
+    }
+  }
+
+  if (types.size !== 1) {
+    const candidateTypes = ['post', 'pre', 'mod', 'whatsapp'];
+    const validCandidates: string[] = [];
+
+    for (const cand of candidateTypes) {
+      const allMatch = entry.mistakes.every(m => {
+        const { type: tagType, cleanLabel } = getMistakeTypeAndCleanLabel(m);
+        if (tagType) return tagType === cand;
+        return settings.mistakes.some(sm => sm.label === cleanLabel && sm.type === cand);
+      });
+      if (allMatch) validCandidates.push(cand);
+    }
+
+    if (validCandidates.length === 1) {
+      return validCandidates[0];
+    } else if (validCandidates.length > 1) {
+      return validCandidates[0];
+    }
+  }
+
   if (types.size === 1) return types.values().next().value;
   if (types.size > 1) return 'mixed';
   return 'post';
+};
+
+const autoCorrectEntries = (entries: Entry[], settings: Settings): { correctedEntries: Entry[]; changedCount: number } => {
+  let changedCount = 0;
+  const candidateTypes = ['post', 'pre', 'mod', 'whatsapp'];
+
+  const correctedEntries = entries.map(entry => {
+    if (!entry.mistakes || entry.mistakes.length === 0) return entry;
+
+    let entryChanged = false;
+    const hasUntagged = entry.mistakes.some(m => !getMistakeTypeAndCleanLabel(m).type);
+    if (!hasUntagged) return entry;
+
+    const validCandidates = candidateTypes.filter(cand => {
+      return entry.mistakes.every(item => {
+        const { type: itemTag, cleanLabel: itemClean } = getMistakeTypeAndCleanLabel(item);
+        if (itemTag) return itemTag === cand;
+        return settings.mistakes.some(sm => sm.label === itemClean && sm.type === cand);
+      });
+    });
+
+    let targetType: string | null = null;
+    if (validCandidates.length === 1) {
+      targetType = validCandidates[0];
+    } else if (validCandidates.length > 1) {
+      targetType = validCandidates[0];
+    }
+
+    const newMistakes = entry.mistakes.map(m => {
+      const { type: itemTag, cleanLabel: itemClean } = getMistakeTypeAndCleanLabel(m);
+      if (itemTag) return m;
+
+      if (targetType) {
+        entryChanged = true;
+        return tagMistake(itemClean, targetType);
+      }
+
+      const matches = settings.mistakes.filter(sm => sm.label === itemClean);
+      if (matches.length === 1) {
+        entryChanged = true;
+        return tagMistake(itemClean, matches[0].type);
+      }
+      return m;
+    });
+
+    if (entryChanged) {
+      changedCount++;
+      return { ...entry, mistakes: newMistakes };
+    }
+    return entry;
+  });
+
+  return { correctedEntries, changedCount };
 };
 
 const ENTRY_TYPE_LABELS: Record<string, string> = {
@@ -996,7 +1115,8 @@ function DashboardPage({ entries }: { entries: Entry[] }) {
     const mistakeCounts: Record<string, number> = {};
     entries.forEach(e => {
       e.mistakes.forEach(m => {
-        mistakeCounts[m] = (mistakeCounts[m] || 0) + 1;
+        const clean = getCleanMistakeLabel(m);
+        mistakeCounts[clean] = (mistakeCounts[clean] || 0) + 1;
       });
     });
     
@@ -1143,7 +1263,7 @@ function DataInputPage({ settings, onSave }: { settings: Settings, onSave: (entr
       planet: formData.planet,
       specialist: formData.specialist,
       creator: formData.creator,
-      mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
+      mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(tagMistake(row.mistake, 'post')) : [])
     });
     setFormData({
       date: new Date().toISOString().split('T')[0],
@@ -1305,7 +1425,7 @@ function PreWebinarInputPage({ settings, onSave }: { settings: Settings, onSave:
       planet: formData.planet,
       specialist: formData.specialist,
       creator: formData.creator,
-      mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
+      mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(tagMistake(row.mistake, 'pre')) : [])
     });
     setFormData({
       date: new Date().toISOString().split('T')[0],
@@ -1461,7 +1581,7 @@ function ModerationInputPage({ settings, onSave }: { settings: Settings, onSave:
     if (!isFormValid) return;
     onSave({
       date: formData.date, planet: formData.planet, specialist: formData.specialist,
-      creator: formData.creator, mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
+      creator: formData.creator, mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(tagMistake(row.mistake, 'mod')) : [])
     });
     setFormData({ date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '' });
     setMistakeRows([{ mistake: '', count: 1 }]);
@@ -1585,7 +1705,7 @@ function WhatsappInputPage({ settings, onSave }: { settings: Settings, onSave: (
     if (!isFormValid) return;
     onSave({
       date: formData.date, planet: formData.planet, specialist: formData.specialist,
-      creator: formData.creator, mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(row.mistake) : [])
+      creator: formData.creator, mistakes: mistakeRows.flatMap(row => row.mistake ? Array(row.count).fill(tagMistake(row.mistake, 'whatsapp')) : [])
     });
     setFormData({ date: new Date().toISOString().split('T')[0], planet: '', specialist: '', creator: '' });
     setMistakeRows([{ mistake: '', count: 1 }]);
@@ -1755,16 +1875,17 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
 
     entries.forEach(e => {
       e.mistakes.forEach(m => {
+        const cleanM = getCleanMistakeLabel(m);
         specialistMistakes[e.specialist] = (specialistMistakes[e.specialist] || 0) + 1;
         planetMistakes[e.planet] = (planetMistakes[e.planet] || 0) + 1;
         creatorMistakes[e.creator] = (creatorMistakes[e.creator] || 0) + 1;
-        mistakeCounts[m] = (mistakeCounts[m] || 0) + 1;
+        mistakeCounts[cleanM] = (mistakeCounts[cleanM] || 0) + 1;
 
         if (!specMistakeMap[e.specialist]) specMistakeMap[e.specialist] = {};
-        specMistakeMap[e.specialist][m] = (specMistakeMap[e.specialist][m] || 0) + 1;
+        specMistakeMap[e.specialist][cleanM] = (specMistakeMap[e.specialist][cleanM] || 0) + 1;
 
         if (!creatorMistakeMap[e.creator]) creatorMistakeMap[e.creator] = {};
-        creatorMistakeMap[e.creator][m] = (creatorMistakeMap[e.creator][m] || 0) + 1;
+        creatorMistakeMap[e.creator][cleanM] = (creatorMistakeMap[e.creator][cleanM] || 0) + 1;
       });
     });
 
@@ -1794,11 +1915,12 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
 
     filteredEntries.forEach(e => {
       e.mistakes.forEach(m => {
+        const cleanM = getCleanMistakeLabel(m);
         if (!filteredSpecMistakeMap[e.specialist]) filteredSpecMistakeMap[e.specialist] = {};
-        filteredSpecMistakeMap[e.specialist][m] = (filteredSpecMistakeMap[e.specialist][m] || 0) + 1;
+        filteredSpecMistakeMap[e.specialist][cleanM] = (filteredSpecMistakeMap[e.specialist][cleanM] || 0) + 1;
 
         if (!filteredCreatorMistakeMap[e.creator]) filteredCreatorMistakeMap[e.creator] = {};
-        filteredCreatorMistakeMap[e.creator][m] = (filteredCreatorMistakeMap[e.creator][m] || 0) + 1;
+        filteredCreatorMistakeMap[e.creator][cleanM] = (filteredCreatorMistakeMap[e.creator][cleanM] || 0) + 1;
       });
     });
 
@@ -1942,12 +2064,13 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
   }, [compareMode, weeklyStats, weeklyStats2]);
 
   const consolidatedMistakes = useMemo(() => {
-    const allMistakes = compareMode
+    const allMistakesRaw = compareMode
       ? [...new Set([...weeklyFilteredEntries, ...weeklyFilteredEntries2].flatMap(e => e.mistakes))]
       : [...new Set(weeklyFilteredEntries.flatMap(e => e.mistakes))];
-    return allMistakes.sort().map(mistake => {
-      const mtype = settings.mistakes.find(sm => sm.label === mistake);
-      const p1Entries = weeklyFilteredEntries.filter(e => e.mistakes.includes(mistake));
+    const uniqueCleanMistakes = [...new Set(allMistakesRaw.map(getCleanMistakeLabel))].sort();
+    return uniqueCleanMistakes.map(cleanMistake => {
+      const mtype = settings.mistakes.find(sm => sm.label === cleanMistake);
+      const p1Entries = weeklyFilteredEntries.filter(e => e.mistakes.some(m => getCleanMistakeLabel(m) === cleanMistake));
       const p1Specs: Record<string, number> = {};
       const p1Cres: Record<string, number> = {};
       p1Entries.forEach(e => { p1Specs[e.specialist] = (p1Specs[e.specialist] || 0) + 1; p1Cres[e.creator] = (p1Cres[e.creator] || 0) + 1; });
@@ -1956,14 +2079,14 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       let p2Cres: Record<string, number> = {};
       let diff = 0;
       if (compareMode) {
-        const p2Entries = weeklyFilteredEntries2.filter(e => e.mistakes.includes(mistake));
+        const p2Entries = weeklyFilteredEntries2.filter(e => e.mistakes.some(m => getCleanMistakeLabel(m) === cleanMistake));
         p2Count = p2Entries.length;
         p2Specs = {};
         p2Cres = {};
         p2Entries.forEach(e => { p2Specs[e.specialist] = (p2Specs[e.specialist] || 0) + 1; p2Cres[e.creator] = (p2Cres[e.creator] || 0) + 1; });
         diff = p2Count - p1Entries.length;
       }
-      return { mistake, type: mtype?.type || 'post', color: mtype?.color || 'red', p1Count: p1Entries.length, p1Specs, p1Cres, p2Count, p2Specs, p2Cres, diff };
+      return { mistake: cleanMistake, type: mtype?.type || 'post', color: mtype?.color || 'red', p1Count: p1Entries.length, p1Specs, p1Cres, p2Count, p2Specs, p2Cres, diff };
     });
   }, [compareMode, weeklyFilteredEntries, weeklyFilteredEntries2, settings]);
 
@@ -3320,7 +3443,7 @@ function SettingsPage({
                     <td style={{ fontSize: '0.9rem' }}>{e.planet}</td>
                     <td style={{ fontSize: '0.9rem' }}>{e.specialist}</td>
                     <td style={{ fontSize: '0.9rem' }}>{e.creator}</td>
-                    <td style={{ fontSize: '0.85rem' }}>{e.mistakes.join(', ')}</td>
+                    <td style={{ fontSize: '0.85rem' }}>{e.mistakes.map(getCleanMistakeLabel).join(', ')}</td>
                     <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                         <button 
@@ -3612,15 +3735,7 @@ export default function App() {
             .single()
         ]);
 
-        if (entriesRes.data) {
-          setEntries(entriesRes.data);
-          try {
-            localStorage.setItem('cached_webinar_entries', JSON.stringify(entriesRes.data));
-          } catch (err) {
-            console.error('Failed to cache entries:', err);
-          }
-        }
-
+        let currentSettings = settings;
         if (settingsRes.data) {
           const freshSettings = {
             planets: settingsRes.data.planets,
@@ -3628,11 +3743,30 @@ export default function App() {
             creators: settingsRes.data.creators,
             mistakes: migrateMistakes(settingsRes.data.mistakes)
           };
+          currentSettings = freshSettings;
           setSettings(freshSettings);
           try {
             localStorage.setItem('cached_webinar_settings', JSON.stringify(freshSettings));
           } catch (err) {
             console.error('Failed to cache settings:', err);
+          }
+        }
+
+        if (entriesRes.data) {
+          const { correctedEntries, changedCount } = autoCorrectEntries(entriesRes.data, currentSettings);
+          setEntries(correctedEntries);
+          try {
+            localStorage.setItem('cached_webinar_entries', JSON.stringify(correctedEntries));
+          } catch (err) {
+            console.error('Failed to cache entries:', err);
+          }
+          if (changedCount > 0) {
+            correctedEntries.forEach(async (entry, idx) => {
+              const orig = entriesRes.data[idx];
+              if (orig && JSON.stringify(entry.mistakes) !== JSON.stringify(orig.mistakes)) {
+                await supabase.from('webinar_entries').update({ mistakes: entry.mistakes }).eq('id', entry.id);
+              }
+            });
           }
         }
 
