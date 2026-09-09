@@ -725,6 +725,27 @@ function MistakeSelect({
     </>
   ) : null;
 
+  const selectedOpt = value ? options.find(o => o.label === value) : null;
+  const itemColor = selectedOpt ? getItemColor(selectedOpt) : null;
+
+  const getLightBgColor = (color: string | null) => {
+    if (!color) return undefined;
+    if (color === '#EF4444') return 'rgba(239, 68, 68, 0.14)';
+    if (color === '#EAB308') return 'rgba(234, 179, 8, 0.16)';
+    if (color === '#22C55E') return 'rgba(34, 197, 94, 0.14)';
+    if (color === '#3B82F6') return 'rgba(59, 130, 246, 0.14)';
+    return undefined;
+  };
+
+  const getBorderColor = (color: string | null) => {
+    if (!color) return undefined;
+    if (color === '#EF4444') return 'rgba(239, 68, 68, 0.4)';
+    if (color === '#EAB308') return 'rgba(234, 179, 8, 0.45)';
+    if (color === '#22C55E') return 'rgba(34, 197, 94, 0.4)';
+    if (color === '#3B82F6') return 'rgba(59, 130, 246, 0.4)';
+    return undefined;
+  };
+
   return (
     <div className="form-group" style={{ marginBottom: 0 }}>
       <label>{label} {required && <span style={{ color: 'var(--danger)' }}>*</span>}</label>
@@ -738,13 +759,37 @@ function MistakeSelect({
           alignItems: 'center',
           padding: '0.75rem 1rem',
           minHeight: '52px',
-          height: 'auto'
+          height: 'auto',
+          backgroundColor: getLightBgColor(itemColor),
+          borderColor: getBorderColor(itemColor)
         }}
       >
-        <div style={{ flex: 1, minWidth: 0, paddingRight: '0.5rem', wordWrap: 'break-word', overflowWrap: 'break-word', whiteSpace: 'normal', lineHeight: '1.4', fontSize: '0.95rem' }}>
-          {value || 'Select Error'}
+        <div style={{
+          flex: 1,
+          minWidth: 0,
+          paddingRight: '0.5rem',
+          wordWrap: 'break-word',
+          overflowWrap: 'break-word',
+          whiteSpace: 'normal',
+          lineHeight: '1.4',
+          fontSize: '0.95rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
+        }}>
+          {itemColor && (
+            <span style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              backgroundColor: itemColor,
+              flexShrink: 0,
+              display: 'inline-block'
+            }} />
+          )}
+          <span>{value || 'Select Error'}</span>
         </div>
-        <ChevronDown size={18} style={{ opacity: 0.5, flexShrink: 0 }} />
+        <ChevronDown size={18} style={{ opacity: itemColor ? 0.8 : 0.5, color: itemColor || 'inherit', flexShrink: 0 }} />
       </div>
 
       {modal}
