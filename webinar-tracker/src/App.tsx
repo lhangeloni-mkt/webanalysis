@@ -3069,7 +3069,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                     boxShadow: '0 25px 50px rgba(0,0,0,0.3)', margin: 'auto'
                   }} onClick={e => e.stopPropagation()}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                      <h2 style={{ margin: 0, fontSize: '1.2rem' }}>Consolidated Analysis {compareMode ? `(${p1Label} vs ${p2Label})` : ''}</h2>
+                      <h2 style={{ margin: 0, fontSize: '1.2rem' }}>Consolidated Analysis {compareMode ? `(${p1LabelEffective} vs ${p2LabelEffective})` : ''}</h2>
                       <button className="btn btn-sm" onClick={() => setShowExpandedTable(false)}>Close</button>
                     </div>
                     <div style={{ overflow: 'auto' }}>
@@ -3081,12 +3081,12 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                             <th>Color</th>
                             {compareMode ? (
                               <>
-                                <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Count</th>
-                                <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Specialists</th>
-                                <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Creators</th>
-                                <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Count</th>
-                                <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Specialists</th>
-                                <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Creators</th>
+                                <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1LabelEffective}<br />Count</th>
+                                <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1LabelEffective}<br />Specialists</th>
+                                <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1LabelEffective}<br />Creators</th>
+                                <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2LabelEffective}<br />Count</th>
+                                <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2LabelEffective}<br />Specialists</th>
+                                <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2LabelEffective}<br />Creators</th>
                                 <th>Diff</th>
                               </>
                             ) : (
