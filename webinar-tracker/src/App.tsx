@@ -30,7 +30,8 @@ import {
   AlertOctagon,
   Calendar,
   Check,
-  FileText
+  FileText,
+  FileSpreadsheet
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -47,6 +48,7 @@ import {
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import type { Entry, Settings, MistakeItem, SecuritySettings, SecurityRecord } from './types';
 import { createClient } from './utils/supabase/client';
+import { exportToGoogleSheets } from './utils/exportGoogleSheets';
 import Logo from './assets/logo.svg';
 import './styles.css';
 
@@ -2944,7 +2946,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
               <div className="glass-panel card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                   <h3 style={{ margin: 0 }}>Export Report</h3>
-                  <p style={{ margin: '0.25rem 0 0', opacity: 0.6, fontSize: '0.85rem' }}>Download weekly data for analysis in Excel or Google Sheets</p>
+                  <p style={{ margin: '0.25rem 0 0', opacity: 0.6, fontSize: '0.85rem' }}>Download weekly data for import in Excel or Google Sheets</p>
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button className="btn" onClick={() => {
@@ -3019,6 +3021,28 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                     URL.revokeObjectURL(url);
                   }}>
                     <Download size={16} /> Export CSV
+                  </button>
+                  <button
+                    className="btn"
+                    title="Export rich .xlsx for Google Sheets (5 formatted sheets with colors)"
+                    style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                    onClick={() => {
+                      const suffix = compareMode
+                        ? `${p1Label.replace(/\s+/g, '_')}_vs_${p2Label.replace(/\s+/g, '_')}`
+                        : `${filterDateStart || 'all'}_to_${filterDateEnd || 'all'}`;
+                      exportToGoogleSheets({
+                        filteredEntries: weeklyFilteredEntries,
+                        filteredEntries2: weeklyFilteredEntries2,
+                        settings,
+                        compareMode,
+                        periodLabel: p1Label,
+                        periodLabel2: p2Label,
+                        allEntries: entries,
+                        filenameSuffix: suffix
+                      });
+                    }}
+                  >
+                    <FileSpreadsheet size={16} /> Export Google Sheets
                   </button>
                 </div>
               </div>
