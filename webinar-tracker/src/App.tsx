@@ -2072,21 +2072,29 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
     };
   }, [weeklyFilteredEntries2, settings]);
 
+  const isP1Older = (!compareMode) || (filterDateStart || '') <= (filterDateStart2 || '');
+  const p1Entries = isP1Older ? weeklyFilteredEntries : weeklyFilteredEntries2;
+  const p2Entries = isP1Older ? weeklyFilteredEntries2 : weeklyFilteredEntries;
+  const p1Stats = isP1Older ? weeklyStats : weeklyStats2;
+  const p2Stats = isP1Older ? weeklyStats2 : weeklyStats;
+  const p1LabelEffective = isP1Older ? p1Label : p2Label;
+  const p2LabelEffective = isP1Older ? p2Label : p1Label;
+
   const weeklyComparisonSpecs = useMemo(() => {
     if (!compareMode) return [];
-    const allSpecs = new Set([...Object.keys(weeklyStats.specMistakeMap), ...Object.keys(weeklyStats2.specMistakeMap)]);
+    const allSpecs = new Set([...Object.keys(p1Stats.specMistakeMap), ...Object.keys(p2Stats.specMistakeMap)]);
     return Array.from(allSpecs).map(spec => {
-      const p1 = Object.values(weeklyStats.specMistakeMap[spec] || {}).reduce((s, v) => s + v, 0);
-      const p2 = Object.values(weeklyStats2.specMistakeMap[spec] || {}).reduce((s, v) => s + v, 0);
+      const p1 = Object.values(p1Stats.specMistakeMap[spec] || {}).reduce((s, v) => s + v, 0);
+      const p2 = Object.values(p2Stats.specMistakeMap[spec] || {}).reduce((s, v) => s + v, 0);
       return { spec, p1, p2, diff: p2 - p1 };
     }).sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
-  }, [compareMode, weeklyStats, weeklyStats2]);
+  }, [compareMode, p1Stats, p2Stats]);
 
   const mistakeComparisonChartData = useMemo(() => {
     if (!compareMode) return null;
-    const allMistakes = [...new Set([...weeklyFilteredEntries, ...weeklyFilteredEntries2].flatMap(e => e.mistakes))].sort();
-    const p1Counts = allMistakes.map(m => weeklyFilteredEntries.filter(e => e.mistakes.includes(m)).length);
-    const p2Counts = allMistakes.map(m => weeklyFilteredEntries2.filter(e => e.mistakes.includes(m)).length);
+    const allMistakes = [...new Set([...p1Entries, ...p2Entries].flatMap(e => e.mistakes))].sort();
+    const p1Counts = allMistakes.map(m => p1Entries.filter(e => e.mistakes.includes(m)).length);
+    const p2Counts = allMistakes.map(m => p2Entries.filter(e => e.mistakes.includes(m)).length);
     return {
       labels: allMistakes.map(m => m.length > 30 ? m.slice(0, 30) + '...' : m),
       datasets: [
@@ -2094,13 +2102,13 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
         { label: 'Period 2', data: p2Counts, backgroundColor: 'rgba(245,158,11,0.7)', borderRadius: 6 }
       ]
     };
-  }, [compareMode, weeklyFilteredEntries, weeklyFilteredEntries2]);
+  }, [compareMode, p1Entries, p2Entries]);
 
   const specialistComparisonChartData = useMemo(() => {
     if (!compareMode) return null;
-    const allSpecs = [...new Set([...Object.keys(weeklyStats.specMistakeMap), ...Object.keys(weeklyStats2.specMistakeMap)])].sort();
-    const p1Counts = allSpecs.map(s => Object.values(weeklyStats.specMistakeMap[s] || {}).reduce((sum, v) => sum + v, 0));
-    const p2Counts = allSpecs.map(s => Object.values(weeklyStats2.specMistakeMap[s] || {}).reduce((sum, v) => sum + v, 0));
+    const allSpecs = [...new Set([...Object.keys(p1Stats.specMistakeMap), ...Object.keys(p2Stats.specMistakeMap)])].sort();
+    const p1Counts = allSpecs.map(s => Object.values(p1Stats.specMistakeMap[s] || {}).reduce((sum, v) => sum + v, 0));
+    const p2Counts = allSpecs.map(s => Object.values(p2Stats.specMistakeMap[s] || {}).reduce((sum, v) => sum + v, 0));
     return {
       labels: allSpecs,
       datasets: [
@@ -2108,34 +2116,34 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
         { label: 'Period 2', data: p2Counts, backgroundColor: 'rgba(245,158,11,0.7)', borderRadius: 6 }
       ]
     };
-  }, [compareMode, weeklyStats, weeklyStats2]);
+  }, [compareMode, p1Stats, p2Stats]);
 
   const consolidatedMistakes = useMemo(() => {
     const allMistakesRaw = compareMode
-      ? [...new Set([...weeklyFilteredEntries, ...weeklyFilteredEntries2].flatMap(e => e.mistakes))]
-      : [...new Set(weeklyFilteredEntries.flatMap(e => e.mistakes))];
+      ? [...new Set([...p1Entries, ...p2Entries].flatMap(e => e.mistakes))]
+      : [...new Set(p1Entries.flatMap(e => e.mistakes))];
     const uniqueCleanMistakes = [...new Set(allMistakesRaw.map(getCleanMistakeLabel))].sort();
     return uniqueCleanMistakes.map(cleanMistake => {
       const mtype = settings.mistakes.find(sm => sm.label === cleanMistake);
-      const p1Entries = weeklyFilteredEntries.filter(e => e.mistakes.some(m => getCleanMistakeLabel(m) === cleanMistake));
+      const p1EntriesList = p1Entries.filter(e => e.mistakes.some(m => getCleanMistakeLabel(m) === cleanMistake));
       const p1Specs: Record<string, number> = {};
       const p1Cres: Record<string, number> = {};
-      p1Entries.forEach(e => { p1Specs[e.specialist] = (p1Specs[e.specialist] || 0) + 1; p1Cres[e.creator] = (p1Cres[e.creator] || 0) + 1; });
+      p1EntriesList.forEach(e => { p1Specs[e.specialist] = (p1Specs[e.specialist] || 0) + 1; p1Cres[e.creator] = (p1Cres[e.creator] || 0) + 1; });
       let p2Count = 0;
       let p2Specs: Record<string, number> = {};
       let p2Cres: Record<string, number> = {};
       let diff = 0;
       if (compareMode) {
-        const p2Entries = weeklyFilteredEntries2.filter(e => e.mistakes.some(m => getCleanMistakeLabel(m) === cleanMistake));
-        p2Count = p2Entries.length;
+        const p2EntriesList = p2Entries.filter(e => e.mistakes.some(m => getCleanMistakeLabel(m) === cleanMistake));
+        p2Count = p2EntriesList.length;
         p2Specs = {};
         p2Cres = {};
-        p2Entries.forEach(e => { p2Specs[e.specialist] = (p2Specs[e.specialist] || 0) + 1; p2Cres[e.creator] = (p2Cres[e.creator] || 0) + 1; });
-        diff = p2Count - p1Entries.length;
+        p2EntriesList.forEach(e => { p2Specs[e.specialist] = (p2Specs[e.specialist] || 0) + 1; p2Cres[e.creator] = (p2Cres[e.creator] || 0) + 1; });
+        diff = p2Count - p1EntriesList.length;
       }
-      return { mistake: cleanMistake, type: mtype?.type || 'post', color: mtype?.color || 'red', p1Count: p1Entries.length, p1Specs, p1Cres, p2Count, p2Specs, p2Cres, diff };
+      return { mistake: cleanMistake, type: mtype?.type || 'post', color: mtype?.color || 'red', p1Count: p1EntriesList.length, p1Specs, p1Cres, p2Count, p2Specs, p2Cres, diff };
     });
-  }, [compareMode, weeklyFilteredEntries, weeklyFilteredEntries2, settings]);
+  }, [compareMode, p1Entries, p2Entries, settings]);
 
   const top5Specialists = Object.entries(stats.specialistMistakes)
     .sort((a, b) => b[1] - a[1])
@@ -2752,24 +2760,24 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
               </div>
             )}
           </div>
-          {weeklyFilteredEntries.length > 0 ? (
+          {p1Entries.length > 0 ? (
             <>
               <div className="stats-grid" style={{ marginBottom: '0' }}>
                 {(() => {
-                  const totalEntries = compareMode ? weeklyStats.totalEntries + weeklyStats2.totalEntries : weeklyStats.totalEntries;
-                  const totalMistakes = compareMode ? weeklyStats.totalMistakes + weeklyStats2.totalMistakes : weeklyStats.totalMistakes;
-                  const specSet = compareMode ? new Set([...Object.keys(weeklyStats.specialistMistakes), ...Object.keys(weeklyStats2.specialistMistakes)]) : new Set(Object.keys(weeklyStats.specialistMistakes));
-                  const creSet = compareMode ? new Set([...Object.keys(weeklyStats.creatorMistakes), ...Object.keys(weeklyStats2.creatorMistakes)]) : new Set(Object.keys(weeklyStats.creatorMistakes));
+                  const totalEntries = compareMode ? p1Stats.totalEntries + p2Stats.totalEntries : p1Stats.totalEntries;
+                  const totalMistakes = compareMode ? p1Stats.totalMistakes + p2Stats.totalMistakes : p1Stats.totalMistakes;
+                  const specSet = compareMode ? new Set([...Object.keys(p1Stats.specialistMistakes), ...Object.keys(p2Stats.specialistMistakes)]) : new Set(Object.keys(p1Stats.specialistMistakes));
+                  const creSet = compareMode ? new Set([...Object.keys(p1Stats.creatorMistakes), ...Object.keys(p2Stats.creatorMistakes)]) : new Set(Object.keys(p1Stats.creatorMistakes));
                   const combinedSpecMistakes = compareMode ? (() => {
                     const m: Record<string, number> = {};
-                    [...weeklyFilteredEntries, ...weeklyFilteredEntries2].forEach(e => { m[e.specialist] = (m[e.specialist] || 0) + e.mistakes.length; });
+                    [...p1Entries, ...p2Entries].forEach(e => { m[e.specialist] = (m[e.specialist] || 0) + e.mistakes.length; });
                     return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null;
-                  })() : weeklyStats.topSpecialist;
+                  })() : p1Stats.topSpecialist;
                   const combinedMistakeCounts = compareMode ? (() => {
                     const m: Record<string, number> = {};
-                    [...weeklyFilteredEntries, ...weeklyFilteredEntries2].forEach(e => e.mistakes.forEach(mk => { m[mk] = (m[mk] || 0) + 1; }));
+                    [...p1Entries, ...p2Entries].forEach(e => e.mistakes.forEach(mk => { m[mk] = (m[mk] || 0) + 1; }));
                     return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null;
-                  })() : weeklyStats.topMistake;
+                  })() : p1Stats.topMistake;
                   return <>
                     <div className="glass-panel stat-card">
                       <div className="stat-icon primary"><FileText size={20} /></div>
@@ -2803,7 +2811,10 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                 })()}
               </div>
               <div className="glass-panel card" style={{ cursor: 'pointer' }} onClick={() => setShowExpandedTable(true)}>
-                <h3><AlertOctagon size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Consolidated Analysis {compareMode ? `(${p1Label} vs ${p2Label})` : ''}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                  <h3 style={{ margin: 0 }}><AlertOctagon size={18} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} />Consolidated Analysis {compareMode ? `(${p1LabelEffective} vs ${p2LabelEffective})` : ''}</h3>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 400, opacity: 0.7 }}>click here to expand</span>
+                </div>
                 <div className="table-scroll-container">
                   <table>
                     <thead>
@@ -2813,12 +2824,12 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                         <th>Color</th>
                         {compareMode ? (
                           <>
-                            <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Count</th>
-                            <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Specialists</th>
-                            <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1Label}<br />Creators</th>
-                            <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Count</th>
-                            <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Specialists</th>
-                            <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2Label}<br />Creators</th>
+                            <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1LabelEffective}<br />Count</th>
+                            <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1LabelEffective}<br />Specialists</th>
+                            <th style={{ background: isDarkMode ? '#1e3a5f' : '#dbeafe' }}>{p1LabelEffective}<br />Creators</th>
+                            <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2LabelEffective}<br />Count</th>
+                            <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2LabelEffective}<br />Specialists</th>
+                            <th style={{ background: isDarkMode ? '#3d2e00' : '#fef3c7' }}>{p2LabelEffective}<br />Creators</th>
                             <th>Diff</th>
                           </>
                         ) : (
@@ -2873,15 +2884,15 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                   <div className="stats-grid" style={{ marginBottom: '1rem' }}>
                     <div className="glass-panel stat-card" style={{ padding: '0.75rem' }}>
                       <div className="stat-icon primary" style={{ width: '32px', height: '32px' }}><FileText size={16} /></div>
-                      <div className="stat-info"><h3 style={{ fontSize: '1.1rem' }}>{weeklyStats.totalEntries} <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>vs</span> {weeklyStats2.totalEntries}</h3><p>Total Entries</p></div>
+                      <div className="stat-info"><h3 style={{ fontSize: '1.1rem' }}>{p1Stats.totalEntries} <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>vs</span> {p2Stats.totalEntries}</h3><p>Total Entries</p></div>
                     </div>
                     <div className="glass-panel stat-card" style={{ padding: '0.75rem' }}>
                       <div className="stat-icon danger" style={{ width: '32px', height: '32px' }}><AlertOctagon size={16} /></div>
-                      <div className="stat-info"><h3 style={{ fontSize: '1.1rem' }}>{weeklyStats.totalMistakes} <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>vs</span> {weeklyStats2.totalMistakes}</h3><p>Total Mistakes</p></div>
+                      <div className="stat-info"><h3 style={{ fontSize: '1.1rem' }}>{p1Stats.totalMistakes} <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>vs</span> {p2Stats.totalMistakes}</h3><p>Total Mistakes</p></div>
                     </div>
                     <div className="glass-panel stat-card" style={{ padding: '0.75rem' }}>
                       <div className="stat-icon warning" style={{ width: '32px', height: '32px' }}><Users size={16} /></div>
-                      <div className="stat-info"><h3 style={{ fontSize: '1.1rem' }}>{Object.keys(weeklyStats.specialistMistakes).length} <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>vs</span> {Object.keys(weeklyStats2.specialistMistakes).length}</h3><p>Active Specialists</p></div>
+                      <div className="stat-info"><h3 style={{ fontSize: '1.1rem' }}>{Object.keys(p1Stats.specialistMistakes).length} <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>vs</span> {Object.keys(p2Stats.specialistMistakes).length}</h3><p>Active Specialists</p></div>
                     </div>
                   </div>
                   <div className="table-scroll-container">
@@ -2930,7 +2941,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                   <table>
                     <thead><tr><th>Date</th><th>Planet</th><th>Specialist</th><th>Creator</th><th>Mistakes</th></tr></thead>
                     <tbody>
-                      {[...weeklyFilteredEntries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(e => (
+                      {[...p1Entries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map(e => (
                         <tr key={e.id}>
                           <td>{e.date}</td><td>{e.planet}</td><td>{e.specialist}</td><td>{e.creator}</td>
                           <td style={{ fontSize: '0.85rem' }}>{e.mistakes.join('; ')}</td>
@@ -2949,18 +2960,18 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                   <button className="btn" onClick={() => {
                     const esc = (v: string) => v.includes(',') || v.includes('"') || v.includes('\n') ? '"' + v.replace(/"/g, '""') + '"' : v;
                     const lines: string[] = ['\uFEFF'];
-                    const reportTitle = compareMode ? `Complete Report: ${p1Label} vs ${p2Label}` : `Complete Report: ${filterDateStart || 'earliest'} to ${filterDateEnd || 'latest'}`;
+                    const reportTitle = compareMode ? `Complete Report: ${p1LabelEffective} vs ${p2LabelEffective}` : `Complete Report: ${filterDateStart || 'earliest'} to ${filterDateEnd || 'latest'}`;
                     lines.push(reportTitle);
                     lines.push(`Generated: ${new Date().toISOString().split('T')[0]}`);
                     lines.push('');
 
                     // Summary Statistics
-                    const sTotalEntries = compareMode ? weeklyStats.totalEntries + weeklyStats2.totalEntries : weeklyStats.totalEntries;
-                    const sTotalMistakes = compareMode ? weeklyStats.totalMistakes + weeklyStats2.totalMistakes : weeklyStats.totalMistakes;
-                    const sSpecs = compareMode ? new Set([...Object.keys(weeklyStats.specialistMistakes), ...Object.keys(weeklyStats2.specialistMistakes)]) : new Set(Object.keys(weeklyStats.specialistMistakes));
-                    const sCres = compareMode ? new Set([...Object.keys(weeklyStats.creatorMistakes), ...Object.keys(weeklyStats2.creatorMistakes)]) : new Set(Object.keys(weeklyStats.creatorMistakes));
-                    const sTopSpec = compareMode ? (() => { const m: Record<string, number> = {}; [...weeklyFilteredEntries, ...weeklyFilteredEntries2].forEach(e => { m[e.specialist] = (m[e.specialist] || 0) + e.mistakes.length; }); return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null; })() : weeklyStats.topSpecialist;
-                    const sTopMist = compareMode ? (() => { const m: Record<string, number> = {}; [...weeklyFilteredEntries, ...weeklyFilteredEntries2].forEach(e => e.mistakes.forEach(mk => { m[mk] = (m[mk] || 0) + 1; })); return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null; })() : weeklyStats.topMistake;
+                    const sTotalEntries = compareMode ? p1Stats.totalEntries + p2Stats.totalEntries : p1Stats.totalEntries;
+                    const sTotalMistakes = compareMode ? p1Stats.totalMistakes + p2Stats.totalMistakes : p1Stats.totalMistakes;
+                    const sSpecs = compareMode ? new Set([...Object.keys(p1Stats.specialistMistakes), ...Object.keys(p2Stats.specialistMistakes)]) : new Set(Object.keys(p1Stats.specialistMistakes));
+                    const sCres = compareMode ? new Set([...Object.keys(p1Stats.creatorMistakes), ...Object.keys(p2Stats.creatorMistakes)]) : new Set(Object.keys(p1Stats.creatorMistakes));
+                    const sTopSpec = compareMode ? (() => { const m: Record<string, number> = {}; [...p1Entries, ...p2Entries].forEach(e => { m[e.specialist] = (m[e.specialist] || 0) + e.mistakes.length; }); return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null; })() : p1Stats.topSpecialist;
+                    const sTopMist = compareMode ? (() => { const m: Record<string, number> = {}; [...p1Entries, ...p2Entries].forEach(e => e.mistakes.forEach(mk => { m[mk] = (m[mk] || 0) + 1; })); return Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null; })() : p1Stats.topMistake;
                     lines.push('=== Summary Statistics ===');
                     lines.push(['Metric', 'Value'].join(','));
                     lines.push(['Total Entries', sTotalEntries].join(','));
@@ -2973,7 +2984,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
 
                     // Consolidated Analysis
                     lines.push(compareMode
-                      ? '=== Consolidated Analysis ===, ' + [p1Label + ' Count', p1Label + ' Specialists', p1Label + ' Creators', p2Label + ' Count', p2Label + ' Specialists', p2Label + ' Creators', 'Diff'].join(',')
+                      ? '=== Consolidated Analysis ===, ' + [p1LabelEffective + ' Count', p1LabelEffective + ' Specialists', p1LabelEffective + ' Creators', p2LabelEffective + ' Count', p2LabelEffective + ' Specialists', p2LabelEffective + ' Creators', 'Diff'].join(',')
                       : '=== Consolidated Analysis ===');
                     const caHeaders = compareMode
                       ? ['Mistake', 'Type', 'Color', 'P1 Count', 'P1 Specialists', 'P1 Creators', 'P2 Count', 'P2 Specialists', 'P2 Creators', 'Diff']
@@ -2997,7 +3008,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                     lines.push('=== Raw Data ===');
                     const rawHeaders = ['Date', 'Planet', 'Specialist', 'Creator', 'Mistake', 'Mistake Type', 'Entry Type'];
                     lines.push(rawHeaders.join(','));
-                    const rawEntries = compareMode ? [...weeklyFilteredEntries, ...weeklyFilteredEntries2] : weeklyFilteredEntries;
+                    const rawEntries = compareMode ? [...p1Entries, ...p2Entries] : p1Entries;
                     rawEntries.forEach(e => {
                       const type = getEntryType(e, settings);
                       e.mistakes.forEach(m => {
@@ -3025,15 +3036,15 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                     style={{ background: 'linear-gradient(135deg, #16a34a, #15803d)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
                     onClick={() => {
                       const suffix = compareMode
-                        ? `${p1Label.replace(/\s+/g, '_')}_vs_${p2Label.replace(/\s+/g, '_')}`
+                        ? `${p1LabelEffective.replace(/\s+/g, '_')}_vs_${p2LabelEffective.replace(/\s+/g, '_')}`
                         : `${filterDateStart || 'all'}_to_${filterDateEnd || 'all'}`;
                       exportToGoogleSheets({
-                        filteredEntries: weeklyFilteredEntries,
-                        filteredEntries2: weeklyFilteredEntries2,
+                        filteredEntries: p1Entries,
+                        filteredEntries2: p2Entries,
                         settings,
                         compareMode,
-                        periodLabel: p1Label,
-                        periodLabel2: p2Label,
+                        periodLabel: p1LabelEffective,
+                        periodLabel2: p2LabelEffective,
                         allEntries: entries,
                         filenameSuffix: suffix
                       });
