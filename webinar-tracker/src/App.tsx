@@ -2282,7 +2282,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
           className={`tab-btn ${activeTab === 'weekly' ? 'active' : ''}`}
           onClick={() => setActiveTab('weekly')}
         >
-          <Calendar size={18} /> Weekly Report
+          <Calendar size={18} /> Complete Report
         </button>
       </div>
 
@@ -2706,24 +2706,21 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
       {activeTab === 'weekly' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div className="glass-panel card">
-            <div className="filter-row" style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap' }}>
-              <div className="form-group" style={{ minWidth: '160px' }}>
+            <h4 style={{ textAlign: 'center', marginBottom: '1.5rem', fontWeight: 600 }}>Please select the Start and End date of the Complete Report</h4>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '1.5rem', flexWrap: 'wrap' }}>
+              <div className="form-group" style={{ minWidth: '160px', marginBottom: 0 }}>
                 <label>Start Date</label>
                 <input type="date" value={filterDateStart} onChange={e => setFilterDateStart(e.target.value)} />
               </div>
-              <div className="form-group" style={{ minWidth: '160px' }}>
+              <div className="form-group" style={{ minWidth: '160px', marginBottom: 0 }}>
                 <label>End Date</label>
                 <input type="date" value={filterDateEnd} onChange={e => setFilterDateEnd(e.target.value)} />
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem', paddingBottom: '1px' }}>
-                <button className="btn btn-sm" onClick={() => { const r = getWeekRange(1); setFilterDateStart(r.start); setFilterDateEnd(r.end); }}>Last Week</button>
-                <button className="btn btn-sm" onClick={() => { const r = getWeekRange(0); setFilterDateStart(r.start); setFilterDateEnd(r.end); }}>This Week</button>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', paddingBottom: '1px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', paddingBottom: '1px' }}>
                 <button
                   className={`btn btn-sm${compareMode ? ' btn-primary' : ''}`}
                   onClick={() => setCompareMode(!compareMode)}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', height: '52px' }}
                 >
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -2738,17 +2735,17 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                       </svg>
                     )}
                   </span>
-                  Compare to Other Week
+                  Compare to another time period
                 </button>
               </div>
             </div>
             {compareMode && (
-              <div className="filter-row" style={{ display: 'flex', alignItems: 'flex-end', gap: '1rem', flexWrap: 'wrap', marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--glass-border)' }}>
-                <div className="form-group" style={{ minWidth: '160px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: '1.5rem', flexWrap: 'wrap', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--glass-border)' }}>
+                <div className="form-group" style={{ minWidth: '160px', marginBottom: 0 }}>
                   <label>Compare Start Date</label>
                   <input type="date" value={filterDateStart2} onChange={e => setFilterDateStart2(e.target.value)} />
                 </div>
-                <div className="form-group" style={{ minWidth: '160px' }}>
+                <div className="form-group" style={{ minWidth: '160px', marginBottom: 0 }}>
                   <label>Compare End Date</label>
                   <input type="date" value={filterDateEnd2} onChange={e => setFilterDateEnd2(e.target.value)} />
                 </div>
@@ -2952,7 +2949,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                   <button className="btn" onClick={() => {
                     const esc = (v: string) => v.includes(',') || v.includes('"') || v.includes('\n') ? '"' + v.replace(/"/g, '""') + '"' : v;
                     const lines: string[] = ['\uFEFF'];
-                    const reportTitle = compareMode ? `Weekly Report: ${p1Label} vs ${p2Label}` : `Weekly Report: ${filterDateStart || 'earliest'} to ${filterDateEnd || 'latest'}`;
+                    const reportTitle = compareMode ? `Complete Report: ${p1Label} vs ${p2Label}` : `Complete Report: ${filterDateStart || 'earliest'} to ${filterDateEnd || 'latest'}`;
                     lines.push(reportTitle);
                     lines.push(`Generated: ${new Date().toISOString().split('T')[0]}`);
                     lines.push('');
@@ -3016,7 +3013,7 @@ function DataAnalysisPage({ entries, settings }: { entries: Entry[], settings: S
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `weekly_report_${filterDateStart || 'all'}_to_${filterDateEnd || 'all'}.csv`;
+                    a.download = `complete_report_${filterDateStart || 'all'}_to_${filterDateEnd || 'all'}.csv`;
                     a.click();
                     URL.revokeObjectURL(url);
                   }}>
