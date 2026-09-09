@@ -3674,6 +3674,8 @@ function SettingsPage({
 }
 
 // ==================== MAIN APP ====================
+const filterJuly2026 = (list: Entry[]) => list.filter(e => e.date >= '2026-07-01');
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'input' | 'analysis' | 'settings' | 'pre-webinar' | 'moderation' | 'whatsapp'>('dashboard');
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
@@ -3681,7 +3683,7 @@ export default function App() {
   const [entries, setEntries] = useState<Entry[]>(() => {
     try {
       const cached = localStorage.getItem('cached_webinar_entries');
-      return cached ? JSON.parse(cached) : [];
+      return cached ? filterJuly2026(JSON.parse(cached)) : [];
     } catch {
       return [];
     }
@@ -3822,7 +3824,8 @@ export default function App() {
         }
 
         if (entriesRes.data) {
-          const { correctedEntries, changedCount } = autoCorrectEntries(entriesRes.data, currentSettings);
+          const filtered = filterJuly2026(entriesRes.data);
+          const { correctedEntries, changedCount } = autoCorrectEntries(filtered, currentSettings);
           setEntries(correctedEntries);
           try {
             localStorage.setItem('cached_webinar_entries', JSON.stringify(correctedEntries));
@@ -3869,18 +3872,24 @@ export default function App() {
         { event: '*', schema: 'public', table: 'webinar_entries' },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setEntries(prev => {
-              const updated = [payload.new as Entry, ...prev];
-              try {
-                localStorage.setItem('cached_webinar_entries', JSON.stringify(updated));
-              } catch (err) {
-                console.error('Failed to cache entries:', err);
-              }
-              return updated;
-            });
+            const newEntry = payload.new as Entry;
+            if (newEntry.date >= '2026-07-01') {
+              setEntries(prev => {
+                const updated = [newEntry, ...prev];
+                try {
+                  localStorage.setItem('cached_webinar_entries', JSON.stringify(updated));
+                } catch (err) {
+                  console.error('Failed to cache entries:', err);
+                }
+                return updated;
+              });
+            }
           } else if (payload.eventType === 'UPDATE') {
+            const updatedEntry = payload.new as Entry;
             setEntries(prev => {
-              const updated = prev.map(e => e.id === payload.new.id ? (payload.new as Entry) : e);
+              const updated = updatedEntry.date >= '2026-07-01'
+                ? prev.map(e => e.id === updatedEntry.id ? updatedEntry : e)
+                : prev.filter(e => e.id !== updatedEntry.id);
               try {
                 localStorage.setItem('cached_webinar_entries', JSON.stringify(updated));
               } catch (err) {
@@ -3971,7 +3980,7 @@ export default function App() {
           if (!error) {
             localStorage.setItem('supabase_migrated', 'true');
             const { data } = await supabase.from('webinar_entries').select('*');
-            if (data) setEntries(data);
+            if (data) setEntries(filterJuly2026(data));
           }
         }
       }
@@ -4123,7 +4132,7 @@ export default function App() {
     try {
       const data = JSON.parse(content);
       if (data.entries && data.settings) {
-        setEntries(data.entries);
+        setEntries(filterJuly2026(data.entries));
         setSettings(data.settings);
         showToast('Data imported successfully!', 'success');
       }
@@ -4310,7 +4319,7 @@ export default function App() {
             </>
           )}
           <div style={{ textAlign: 'center', marginTop: '3rem', paddingBottom: '1rem', fontSize: '0.75rem', opacity: 0.5, color: 'var(--text-muted)' }}>
-            Made by: Luiz H. Angeloni | Last update: 2026-08-27
+            Made by: Luiz H. Angeloni | Last update: 2026-09-09
           </div>
         </div>
       </div>
